@@ -1,9 +1,7 @@
-
 language: rust
 rust:
-  - stable
   - nightly
 script:
   - cargo build
   - cargo test
-  - cargo +nightly bench
+  - cargo bench
