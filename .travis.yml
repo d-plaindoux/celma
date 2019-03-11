@@ -4,4 +4,4 @@ rust:
 script:
   - cargo build
   - cargo test
-  - cargo bench
+  - cargo +nightly bench
