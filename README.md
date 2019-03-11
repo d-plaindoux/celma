@@ -1,4 +1,4 @@
-# celma 
+# Celma 
 
 [![Build Status](https://travis-ci.org/d-plaindoux/celma.svg?branch=master)](https://travis-ci.org/d-plaindoux/celma)
 
