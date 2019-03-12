@@ -34,7 +34,7 @@ impl<'a> Stream for CharStream<'a> {
 }
 
 impl<'a> Len for CharStream<'a> {
-    fn len(&self) -> Option<usize> {
-        Some(self.0.len())
+    fn len(&self) -> usize {
+        self.0.len()
     }
 }

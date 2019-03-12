@@ -93,7 +93,7 @@ where
     P: Parse<A, S> + Combine<A>,
     S: Stream + Len,
 {
-    bencher.bytes = stream.len().unwrap() as u64;
+    bencher.bytes = stream.len() as u64;
 
     bencher.iter(|| match parser.parse(black_box(stream.clone())) {
         Success(_, _, _) => (),

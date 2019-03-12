@@ -5,9 +5,9 @@ use crate::stream::stream::Stream;
 
 pub trait Combine<A> {}
 
-pub trait Parse<A, S>
+pub trait Parse<A, O>
 where
-    S: Stream,
+    O: Stream,
 {
-    fn parse(&self, s: S) -> Response<A, S>;
+    fn parse(&self, s: O) -> Response<A, O>;
 }

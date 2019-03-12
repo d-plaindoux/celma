@@ -61,13 +61,16 @@ where
     }
 }
 
+type LeftProjection<'a, L, R, A, B> = FMap<And<L, R, A, B>, (A, B), &'a Fn((A, B)) -> A, A>;
+type RightProjection<'a, L, R, A, B> = FMap<And<L, R, A, B>, (A, B), &'a Fn((A, B)) -> B, B>;
+
 pub trait AndProjection<L, R, A, B>
 where
     L: Combine<A>,
     R: Combine<B>,
 {
-    fn left<'a>(self) -> FMap<And<L, R, A, B>, (A, B), &'a Fn((A, B)) -> A, A>;
-    fn right<'a>(self) -> FMap<And<L, R, A, B>, (A, B), &'a Fn((A, B)) -> B, B>;
+    fn left<'a>(self) -> LeftProjection<'a, L, R, A, B>;
+    fn right<'a>(self) -> RightProjection<'a, L, R, A, B>;
 }
 
 impl<L, R, A, B> AndProjection<L, R, A, B> for And<L, R, A, B>
@@ -75,11 +78,11 @@ where
     L: Combine<A>,
     R: Combine<B>,
 {
-    fn left<'a>(self) -> FMap<And<L, R, A, B>, (A, B), &'a Fn((A, B)) -> A, A> {
+    fn left<'a>(self) -> LeftProjection<'a, L, R, A, B> {
         self.fmap(&|(l, _)| l)
     }
 
-    fn right<'a>(self) -> FMap<And<L, R, A, B>, (A, B), &'a Fn((A, B)) -> B, B> {
+    fn right<'a>(self) -> RightProjection<'a, L, R, A, B> {
         self.fmap(&|(_, r)| r)
     }
 }

@@ -11,5 +11,9 @@ pub trait Stream: Clone {
 }
 
 pub trait Len {
-    fn len(&self) -> Option<usize>;
+    fn len(&self) -> usize;
+
+    fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 }

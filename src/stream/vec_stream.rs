@@ -4,10 +4,10 @@ use crate::stream::stream::Len;
 use crate::stream::stream::Stream;
 
 #[derive(Clone)]
-pub struct VecStream<'a, A>(&'a Vec<A>, usize);
+pub struct VecStream<'a, A>(&'a [A], usize);
 
 impl<'a, A> VecStream<'a, A> {
-    pub fn new(v: &'a Vec<A>) -> VecStream<'a, A> {
+    pub fn new(v: &'a [A]) -> VecStream<'a, A> {
         VecStream(v, 0)
     }
 }
@@ -34,7 +34,7 @@ where
 }
 
 impl<'a, A> Len for VecStream<'a, A> {
-    fn len(&self) -> Option<usize> {
-        Some(self.0.len())
+    fn len(&self) -> usize {
+        self.0.len()
     }
 }
