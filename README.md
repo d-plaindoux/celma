@@ -15,7 +15,7 @@ seminal paper the source is a string. In this approach It's a parametric stream.
 it's possible to parse stream of `char`, `u8` or `user defined tokens`. One direct application
 is the capability to design parser based on pipelined parsers and separate parsers regarding
 their semantic level.        
-  b
+
 # License
 
 Copyright 2019 D. Plaindoux.
