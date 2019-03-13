@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use crate::stream::stream::Stream;
 
 #[derive(Debug)]

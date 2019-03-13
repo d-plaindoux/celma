@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response;

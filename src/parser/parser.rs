@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use crate::parser::response::Response;
 use crate::stream::stream::Stream;
 

@@ -14,7 +14,7 @@ Celma provides usual parser combinator like `returns`, `fails`, `eos`, `satisfy`
 seminal paper the source is a string. In this approach It's a parametric stream. Therefore
 it's possible to parse stream of `char`, `u8` or `user defined tokens`. One direct application
 is the capability to design parser based on pipelined parsers and separate parsers regarding
-their semantic level.        
+their semantic level.
 
 # License
 
