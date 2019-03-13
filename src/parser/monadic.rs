@@ -101,8 +101,8 @@ where
 impl<P, A, F, R, B> BindOperation<P, A, F, R, B> for P
 where
     P: Combine<A>,
-    R: Combine<B>,
     F: Fn(A) -> R,
+    R: Combine<B>,
 {
     fn bind(self, f: F) -> Bind<P, A, F, R, B> {
         Bind(self, f, PhantomData, PhantomData)

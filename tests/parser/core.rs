@@ -18,9 +18,9 @@ mod tests_core {
 
     #[test]
     fn it_parse_and_fails_on_demand() {
-        let response = fail::<()>().parse(CharStream::new("a"));
+        let response = fail::<()>(true).parse(CharStream::new("a"));
 
-        assert_eq!(response.fold(|_, _, _| false, |_| true), true);
+        assert_eq!(response.fold(|_, _, _| false, |v| v), true);
     }
 
     #[test]

@@ -22,13 +22,13 @@ impl<A> Combine<A> for Returns<A> {}
 
 impl<A, S> Parse<A, S> for Returns<A>
 where
-    A: Copy,
+    A: Clone,
     S: Stream,
 {
     fn parse(&self, s: S) -> Response<A, S> {
         let Self(v) = self;
 
-        Success(*v, s, false)
+        Success(v.clone(), s, false)
     }
 }
 
@@ -41,7 +41,7 @@ where
 
 // -------------------------------------------------------------------------------------------------
 
-pub struct Fail<A>(PhantomData<A>);
+pub struct Fail<A>(bool, PhantomData<A>);
 
 impl<A> Combine<A> for Fail<A> {}
 
@@ -50,12 +50,12 @@ where
     S: Stream,
 {
     fn parse(&self, _s: S) -> Response<A, S> {
-        Reject(false)
+        Reject(self.0)
     }
 }
 
-pub fn fail<A>() -> Fail<A> {
-    Fail(PhantomData)
+pub fn fail<A>(consumed: bool) -> Fail<A> {
+    Fail(consumed, PhantomData)
 }
 
 // -------------------------------------------------------------------------------------------------
