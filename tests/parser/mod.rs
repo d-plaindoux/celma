@@ -1,4 +1,5 @@
 pub mod and;
+pub mod lazy;
 pub mod char;
 pub mod core;
 pub mod literal;

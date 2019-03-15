@@ -7,6 +7,7 @@ use celma::parser::repeat::RepeatOperation;
 use celma::parser::response::Response::Success;
 use celma::stream::char_stream::CharStream;
 use celma::stream::stream::Stream;
+use celma::parser::lazy::lazy;
 
 #[derive(Debug, Clone)]
 enum Token {
@@ -16,9 +17,9 @@ enum Token {
     Record(Vec<Token>),
 }
 
-fn skip<S>() -> impl Combine<()> + Parse<(), S>
-where
-    S: Stream<Item = char>,
+fn skip<S>() -> impl Combine<()> + Parse<(), S> + Clone
+    where
+        S: Stream<Item=char>,
 {
     char_in_set(vec!['\n', '\r', '\t', ' '])
         .opt_rep()
@@ -26,8 +27,8 @@ where
 }
 
 fn number<S>() -> impl Combine<Token> + Parse<Token, S> + Clone
-where
-    S: Stream<Item = char>,
+    where
+        S: Stream<Item=char>,
 {
     digit()
         .rep()
@@ -36,8 +37,8 @@ where
 }
 
 fn ident<S>() -> impl Combine<Token> + Parse<Token, S> + Clone
-where
-    S: Stream<Item = char>,
+    where
+        S: Stream<Item=char>,
 {
     alpha()
         .rep()
@@ -45,8 +46,8 @@ where
 }
 
 fn string<S>() -> impl Combine<Token> + Parse<Token, S> + Clone
-where
-    S: Stream<Item = char>,
+    where
+        S: Stream<Item=char>,
 {
     char('"')
         .and(not_char('"').opt_rep())
@@ -57,16 +58,16 @@ where
 }
 
 fn item<S>() -> impl Combine<Token> + Parse<Token, S> + Clone
-where
-    S: Stream<Item = char>,
+    where
+        S: Stream<Item=char>,
 {
     number().or(ident()).or(string())
 }
 
-fn sequence<P, S>(p: P, s: char) -> impl Combine<Vec<Token>> + Parse<Vec<Token>, S>
-where
-    P: Combine<Token> + Parse<Token, S> + Clone,
-    S: Stream<Item = char>,
+fn sequence<P, S>(p: P, s: char) -> impl Combine<Vec<Token>> + Parse<Vec<Token>, S> + Clone
+    where
+        P: Combine<Token> + Parse<Token, S> + Clone,
+        S: Stream<Item=char>,
 {
     p.clone()
         .and(skip())
@@ -80,16 +81,13 @@ where
         .fmap(|(e, v)| [vec![e], v].concat())
 }
 
-fn record<S>() -> impl Combine<Token> + Parse<Token, S>
-where
-    S: Stream<Item = char>,
+fn record<S>() -> impl Combine<Token> + Parse<Token, S> + Clone
+    where
+        S: Stream<Item=char>,
 {
-    char('[')
-        .and(skip())
-        .and(sequence(item(), ','))
-        .right()
-        .and(char(']').and(skip()))
-        .left()
+    char('[').and(skip())
+        .and(sequence(item(), ',')).right()
+        .and(char(']').and(skip())).left()
         .fmap(|v| Token::Record(v))
 }
 
