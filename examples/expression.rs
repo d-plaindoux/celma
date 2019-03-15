@@ -1,5 +1,5 @@
 use celma::parser::and::{AndOperation, AndProjection};
-use celma::parser::char::{alpha, char, digit, not_char};
+use celma::parser::char::{alpha, char, char_in_set, digit, not_char};
 use celma::parser::monadic::FMapOperation;
 use celma::parser::or::OrOperation;
 use celma::parser::parser::{Combine, Parse};
@@ -8,14 +8,24 @@ use celma::parser::response::Response::Success;
 use celma::stream::char_stream::CharStream;
 use celma::stream::stream::Stream;
 
-#[derive(Eq, PartialEq)]
+#[derive(Debug, Clone)]
 enum Token {
     Number(i32),
     Ident(String),
     String(String),
+    Record(Vec<Token>),
 }
 
-fn number<S>() -> impl Combine<Token> + Parse<Token, S>
+fn skip<S>() -> impl Combine<()> + Parse<(), S>
+where
+    S: Stream<Item = char>,
+{
+    char_in_set(vec!['\n', '\r', '\t', ' '])
+        .opt_rep()
+        .fmap({ |_| () })
+}
+
+fn number<S>() -> impl Combine<Token> + Parse<Token, S> + Clone
 where
     S: Stream<Item = char>,
 {
@@ -25,7 +35,7 @@ where
         .fmap(|s| Token::Number(s.parse::<i32>().unwrap()))
 }
 
-fn ident<S>() -> impl Combine<Token> + Parse<Token, S>
+fn ident<S>() -> impl Combine<Token> + Parse<Token, S> + Clone
 where
     S: Stream<Item = char>,
 {
@@ -34,7 +44,7 @@ where
         .fmap(|v| Token::Ident(v.into_iter().collect::<String>()))
 }
 
-fn string<S>() -> impl Combine<Token> + Parse<Token, S>
+fn string<S>() -> impl Combine<Token> + Parse<Token, S> + Clone
 where
     S: Stream<Item = char>,
 {
@@ -46,22 +56,41 @@ where
         .fmap(|v| Token::String(v.into_iter().collect::<String>()))
 }
 
-fn item<S>() -> impl Combine<Token> + Parse<Token, S>
+fn item<S>() -> impl Combine<Token> + Parse<Token, S> + Clone
 where
     S: Stream<Item = char>,
 {
     number().or(ident()).or(string())
 }
 
-fn record<S>() -> impl Combine<Vec<Token>> + Parse<Vec<Token>, S>
+fn sequence<P, S>(p: P, s: char) -> impl Combine<Vec<Token>> + Parse<Vec<Token>, S>
+where
+    P: Combine<Token> + Parse<Token, S> + Clone,
+    S: Stream<Item = char>,
+{
+    p.clone()
+        .and(skip())
+        .left()
+        .and(
+            (char(s).and(skip()))
+                .and(p.clone().and(skip()).left())
+                .right()
+                .opt_rep(),
+        )
+        .fmap(|(e, v)| [vec![e], v].concat())
+}
+
+fn record<S>() -> impl Combine<Token> + Parse<Token, S>
 where
     S: Stream<Item = char>,
 {
     char('[')
-        .and(item().opt_rep())
+        .and(skip())
+        .and(sequence(item(), ','))
         .right()
-        .and(char(']'))
+        .and(char(']').and(skip()))
         .left()
+        .fmap(|v| Token::Record(v))
 }
 
 fn main() {
@@ -84,8 +113,8 @@ fn main() {
         _ => println!("KO"),
     }
 
-    match record().parse(CharStream::new(r#"["Toto"123]"#)) {
-        Success(ref s, _, _) if s.len() == 2 => println!("Record"),
+    match record().parse(CharStream::new(r#"[ "Hello" , 123 , World ]"#)) {
+        Success(Token::Record(ref s), _, _) if s.len() == 3 => println!("Record = {:?}", s),
         _ => println!("KO"),
     }
 }

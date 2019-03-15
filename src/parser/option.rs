@@ -7,6 +7,7 @@ use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
 
+#[derive(Clone)]
 pub struct Optional<L, A>(L, PhantomData<A>)
 where
     L: Combine<A>;

@@ -16,9 +16,12 @@ pub fn any<I>() -> Satisfy<impl Fn(&I) -> bool, I> {
 
 // -------------------------------------------------------------------------------------------------
 
-pub struct Returns<A>(A);
+#[derive(Clone)]
+pub struct Returns<A>(A)
+where
+    A: Clone;
 
-impl<A> Combine<A> for Returns<A> {}
+impl<A> Combine<A> for Returns<A> where A: Clone {}
 
 impl<A, S> Parse<A, S> for Returns<A>
 where
@@ -41,6 +44,7 @@ where
 
 // -------------------------------------------------------------------------------------------------
 
+#[derive(Clone)]
 pub struct Fail<A>(bool, PhantomData<A>);
 
 impl<A> Combine<A> for Fail<A> {}

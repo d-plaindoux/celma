@@ -7,7 +7,7 @@ use crate::parser::satisfy::Satisfy;
 use crate::stream::stream::Stream;
 
 #[inline]
-pub fn char<S>(c: char) -> impl Parse<char, S> + Combine<char>
+pub fn char<S>(c: char) -> impl Parse<char, S> + Combine<char> + Clone
 where
     S: Stream<Item = char>,
 {
@@ -15,7 +15,7 @@ where
 }
 
 #[inline]
-pub fn not_char<S>(c: char) -> impl Parse<char, S> + Combine<char>
+pub fn not_char<S>(c: char) -> impl Parse<char, S> + Combine<char> + Clone
 where
     S: Stream<Item = char>,
 {
@@ -23,7 +23,7 @@ where
 }
 
 #[inline]
-pub fn char_in<S>(r: Range<char>) -> impl Parse<char, S> + Combine<char>
+pub fn char_in_range<S>(r: Range<char>) -> impl Parse<char, S> + Combine<char> + Clone
 where
     S: Stream<Item = char>,
 {
@@ -31,31 +31,39 @@ where
 }
 
 #[inline]
-pub fn digit<S>() -> impl Parse<char, S> + Combine<char>
+pub fn char_in_set<S>(r: Vec<char>) -> impl Parse<char, S> + Combine<char> + Clone
 where
     S: Stream<Item = char>,
 {
-    char_in('0'..'9')
+    Satisfy::new(move |v| r.contains(v))
 }
 
 #[inline]
-pub fn alpha_lower<S>() -> impl Parse<char, S> + Combine<char>
+pub fn digit<S>() -> impl Parse<char, S> + Combine<char> + Clone
 where
     S: Stream<Item = char>,
 {
-    char_in('a'..'z')
+    char_in_range('0'..'9')
 }
 
 #[inline]
-pub fn alpha_upper<S>() -> impl Parse<char, S> + Combine<char>
+pub fn alpha_lower<S>() -> impl Parse<char, S> + Combine<char> + Clone
 where
     S: Stream<Item = char>,
 {
-    char_in('A'..'Z')
+    char_in_range('a'..'z')
 }
 
 #[inline]
-pub fn alpha<S>() -> impl Parse<char, S> + Combine<char>
+pub fn alpha_upper<S>() -> impl Parse<char, S> + Combine<char> + Clone
+where
+    S: Stream<Item = char>,
+{
+    char_in_range('A'..'Z')
+}
+
+#[inline]
+pub fn alpha<S>() -> impl Parse<char, S> + Combine<char> + Clone
 where
     S: Stream<Item = char>,
 {

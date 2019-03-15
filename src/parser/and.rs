@@ -9,6 +9,7 @@ use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
 
+#[derive(Clone)]
 pub struct And<L, R, A, B>(L, R, PhantomData<A>, PhantomData<B>)
 where
     L: Combine<A>,
