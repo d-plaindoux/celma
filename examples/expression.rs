@@ -1,8 +1,10 @@
 use celma::parser::and::{AndOperation, AndProjection};
 use celma::parser::char::{alpha, char, char_in_set, digit, not_char};
+use celma::parser::core::{parser, Parser};
+use celma::parser::lazy::lazy;
 use celma::parser::monadic::FMapOperation;
 use celma::parser::or::OrOperation;
-use celma::parser::parser::{Combine, Parse};
+use celma::parser::parser::Parse;
 use celma::parser::repeat::RepeatOperation;
 use celma::parser::response::Response::Success;
 use celma::stream::char_stream::CharStream;
@@ -16,81 +18,92 @@ enum Token {
     Record(Vec<Token>),
 }
 
-fn skip<S>() -> impl Combine<()> + Parse<(), S> + Clone
+fn skip<S: 'static>() -> Parser<(), S>
 where
     S: Stream<Item = char>,
 {
-    char_in_set(vec!['\n', '\r', '\t', ' '])
-        .opt_rep()
-        .fmap({ |_| () })
+    parser(
+        char_in_set(vec!['\n', '\r', '\t', ' '])
+            .opt_rep()
+            .fmap({ |_| () }),
+    )
 }
 
-fn number<S>() -> impl Combine<Token> + Parse<Token, S> + Clone
+fn number<S: 'static>() -> Parser<Token, S>
 where
     S: Stream<Item = char>,
 {
-    digit()
-        .rep()
-        .fmap(|v| v.into_iter().collect::<String>())
-        .fmap(|s| Token::Number(s.parse::<i32>().unwrap()))
+    parser(
+        digit()
+            .rep()
+            .fmap(|v| v.into_iter().collect::<String>())
+            .fmap(|s| Token::Number(s.parse::<i32>().unwrap())),
+    )
 }
 
-fn ident<S>() -> impl Combine<Token> + Parse<Token, S> + Clone
+fn ident<S: 'static>() -> Parser<Token, S>
 where
     S: Stream<Item = char>,
 {
-    alpha()
-        .rep()
-        .fmap(|v| Token::Ident(v.into_iter().collect::<String>()))
+    parser(
+        alpha()
+            .rep()
+            .fmap(|v| Token::Ident(v.into_iter().collect::<String>())),
+    )
 }
 
-fn string<S>() -> impl Combine<Token> + Parse<Token, S> + Clone
+fn string<S: 'static>() -> Parser<Token, S>
 where
     S: Stream<Item = char>,
 {
-    char('"')
-        .and(not_char('"').opt_rep())
-        .right()
-        .and(char('"'))
-        .left()
-        .fmap(|v| Token::String(v.into_iter().collect::<String>()))
+    parser(
+        char('"')
+            .and(not_char('"').opt_rep())
+            .right()
+            .and(char('"'))
+            .left()
+            .fmap(|v| Token::String(v.into_iter().collect::<String>())),
+    )
 }
 
-fn item<S>() -> impl Combine<Token> + Parse<Token, S> + Clone
+fn item<S: 'static>() -> Parser<Token, S>
 where
     S: Stream<Item = char>,
 {
-    number().or(ident()).or(string())
+    parser(number().or(ident()).or(string()).or(record()))
 }
 
-fn sequence<P, S>(p: P, s: char) -> impl Combine<Vec<Token>> + Parse<Vec<Token>, S> + Clone
+fn sequence<S: 'static>() -> Parser<Vec<Token>, S>
 where
-    P: Combine<Token> + Parse<Token, S> + Clone,
     S: Stream<Item = char>,
 {
-    p.clone()
-        .and(skip())
-        .left()
-        .and(
-            (char(s).and(skip()))
-                .and(p.clone().and(skip()).left())
-                .right()
-                .opt_rep(),
-        )
-        .fmap(|(e, v)| [vec![e], v].concat())
+    parser(
+        item()
+            .and(skip())
+            .left()
+            .and(
+                (char(',').and(skip()))
+                    .and(item().and(skip()).left())
+                    .right()
+                    .opt_rep(),
+            )
+            .fmap(|(e, v)| [vec![e], v].concat()),
+    )
 }
 
-fn record<S>() -> impl Combine<Token> + Parse<Token, S> + Clone
+fn record<S: 'static>() -> Parser<Token, S>
 where
     S: Stream<Item = char>,
 {
-    char('[')
-        .and(skip())
-        .and(sequence(item(), ','))
-        .right()
-        .and(char(']').and(skip()))
-        .left()
-        .fmap(|v| Token::Record(v))
+    parser(
+        char('[')
+            .and(skip())
+            .and(lazy(|| sequence()))
+            .right()
+            .and(char(']').and(skip()))
+            .left()
+            .fmap(|v| Token::Record(v)),
+    )
 }
 
 fn main() {
@@ -113,7 +126,9 @@ fn main() {
         _ => println!("KO"),
     }
 
-    match record().parse(CharStream::new(r#"[ "Hello" , 123 , World ]"#)) {
+    match record().parse(CharStream::new(
+        r#"[ "Hello" , 123 , World, [ "Hello" , 123 , World ] ]"#,
+    )) {
         Success(Token::Record(ref s), _, _) if s.len() == 3 => println!("Record = {:?}", s),
         _ => println!("KO"),
     }

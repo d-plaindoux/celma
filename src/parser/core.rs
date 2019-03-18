@@ -83,3 +83,31 @@ where
 pub fn eos() -> Eos {
     Eos
 }
+
+// -------------------------------------------------------------------------------------------------
+
+// #[derive(Clone)]
+pub struct Parser<A, S>(Box<dyn Parse<A, S>>)
+where
+    S: Stream;
+
+impl<A, S> Combine<A> for Parser<A, S> where S: Stream {}
+
+impl<A, S> Parse<A, S> for Parser<A, S>
+where
+    S: Stream,
+{
+    fn parse(&self, s: S) -> Response<A, S> {
+        let Self(p) = self;
+
+        p.parse(s)
+    }
+}
+
+pub fn parser<P: 'static, A, S>(p: P) -> Parser<A, S>
+where
+    P: Parse<A, S>,
+    S: Stream,
+{
+    Parser(Box::new(p))
+}
