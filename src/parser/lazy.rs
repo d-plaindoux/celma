@@ -19,9 +19,9 @@ where
 
 impl<F, P, A, S> Parse<A, S> for Lazy<F, P, A>
 where
-    S: Stream,
     P: Parse<A, S> + Combine<A>,
     F: Fn() -> P,
+    S: Stream,
 {
     fn parse(&self, s: S) -> Response<A, S> {
         let Self(f, _, _) = self;
@@ -30,10 +30,11 @@ where
     }
 }
 
-pub fn lazy<F, P, A, S>(f: F) -> impl Parse<A, S> + Combine<A>
+pub fn lazy<F, P, A, S>(f: F) -> impl Parse<A, S> + Combine<A> + Clone
 where
+    A: Clone,
     S: Stream,
-    P: Parse<A, S> + Combine<A>,
+    P: Parse<A, S> + Combine<A> + Clone,
     F: Fn() -> P + Clone,
 {
     Lazy(f, PhantomData, PhantomData)

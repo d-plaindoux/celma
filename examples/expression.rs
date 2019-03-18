@@ -1,10 +1,10 @@
 use celma::parser::and::{AndOperation, AndProjection};
 use celma::parser::char::{alpha, char, char_in_set, digit, not_char};
-use celma::parser::core::{parser, Parser};
+use celma::parser::core::parser;
 use celma::parser::lazy::lazy;
 use celma::parser::monadic::FMapOperation;
 use celma::parser::or::OrOperation;
-use celma::parser::parser::Parse;
+use celma::parser::parser::{Combine, Parse};
 use celma::parser::repeat::RepeatOperation;
 use celma::parser::response::Response::Success;
 use celma::stream::char_stream::CharStream;
@@ -18,92 +18,94 @@ enum Token {
     Record(Vec<Token>),
 }
 
-fn skip<S: 'static>() -> Parser<(), S>
+#[inline]
+fn skip<S: 'static>() -> impl Parse<(), S> + Combine<()> + Clone
 where
     S: Stream<Item = char>,
 {
-    parser(
-        char_in_set(vec!['\n', '\r', '\t', ' '])
-            .opt_rep()
-            .fmap({ |_| () }),
-    )
+    char_in_set(vec!['\n', '\r', '\t', ' '])
+        .opt_rep()
+        .fmap({ |_| () })
 }
 
-fn number<S: 'static>() -> Parser<Token, S>
+#[inline]
+fn number<S: 'static>() -> impl Parse<Token, S> + Combine<Token> + Clone
 where
     S: Stream<Item = char>,
 {
-    parser(
-        digit()
-            .rep()
-            .fmap(|v| v.into_iter().collect::<String>())
-            .fmap(|s| Token::Number(s.parse::<i32>().unwrap())),
-    )
+    digit()
+        .rep()
+        .fmap(|v| v.into_iter().collect::<String>())
+        .fmap(|s| Token::Number(s.parse::<i32>().unwrap()))
 }
 
-fn ident<S: 'static>() -> Parser<Token, S>
+#[inline]
+fn ident<S: 'static>() -> impl Parse<Token, S> + Combine<Token> + Clone
 where
     S: Stream<Item = char>,
 {
-    parser(
-        alpha()
-            .rep()
-            .fmap(|v| Token::Ident(v.into_iter().collect::<String>())),
-    )
+    alpha()
+        .rep()
+        .fmap(|v| Token::Ident(v.into_iter().collect::<String>()))
 }
 
-fn string<S: 'static>() -> Parser<Token, S>
+#[inline]
+fn string<S: 'static>() -> impl Parse<Token, S> + Combine<Token> + Clone
 where
     S: Stream<Item = char>,
 {
-    parser(
-        char('"')
-            .and(not_char('"').opt_rep())
-            .right()
-            .and(char('"'))
-            .left()
-            .fmap(|v| Token::String(v.into_iter().collect::<String>())),
-    )
+    char('"')
+        .and(not_char('"').opt_rep())
+        .right()
+        .and(char('"'))
+        .left()
+        .fmap(|v| Token::String(v.into_iter().collect::<String>()))
 }
 
-fn item<S: 'static>() -> Parser<Token, S>
+#[inline]
+fn item<S: 'static>() -> impl Parse<Token, S> + Combine<Token> + Clone
 where
     S: Stream<Item = char>,
 {
-    parser(number().or(ident()).or(string()).or(record()))
+    number()
+        .or(ident())
+        .or(string())
+        .or(lazy(|| parser(record())))
 }
 
-fn sequence<S: 'static>() -> Parser<Vec<Token>, S>
+fn sequence<A: 'static, P, S: 'static>(
+    p: P,
+    s: char,
+) -> impl Combine<Vec<A>> + Parse<Vec<A>, S> + Clone
 where
+    A: Clone,
+    P: Combine<A> + Parse<A, S> + Clone,
     S: Stream<Item = char>,
 {
-    parser(
-        item()
-            .and(skip())
-            .left()
-            .and(
-                (char(',').and(skip()))
-                    .and(item().and(skip()).left())
-                    .right()
-                    .opt_rep(),
-            )
-            .fmap(|(e, v)| [vec![e], v].concat()),
-    )
+    p.clone()
+        .and(skip())
+        .left()
+        .and(
+            (char(s).and(skip()))
+                .and(p.and(skip()).left())
+                .right()
+                .opt_rep(),
+        )
+        .fmap(|(e, v)| [vec![e], v].concat())
 }
 
-fn record<S: 'static>() -> Parser<Token, S>
+#[inline]
+fn record<S: 'static>() -> impl Parse<Token, S> + Combine<Token> + Clone
 where
     S: Stream<Item = char>,
 {
-    parser(
-        char('[')
-            .and(skip())
-            .and(lazy(|| sequence()))
-            .right()
-            .and(char(']').and(skip()))
-            .left()
-            .fmap(|v| Token::Record(v)),
-    )
+    char('[')
+        .and(skip())
+        .and(sequence(item(), ','))
+        .right()
+        .and(char(']').and(skip()))
+        .left()
+        .fmap(|v| Token::Record(v))
 }
 
 fn main() {

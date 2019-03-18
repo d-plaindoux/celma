@@ -7,6 +7,7 @@ use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
 
+#[derive(Clone)]
 pub struct FMap<P, A, F, B>(P, F, PhantomData<A>, PhantomData<B>)
 where
     P: Combine<A>,
@@ -55,6 +56,7 @@ where
 
 // -------------------------------------------------------------------------------------------------
 
+#[derive(Clone)]
 pub struct Bind<P, A, F, R, B>(P, F, PhantomData<A>, PhantomData<B>)
 where
     P: Combine<A>,
@@ -101,8 +103,8 @@ where
 impl<P, A, F, R, B> BindOperation<P, A, F, R, B> for P
 where
     P: Combine<A>,
-    F: Fn(A) -> R,
     R: Combine<B>,
+    F: Fn(A) -> R,
 {
     fn bind(self, f: F) -> Bind<P, A, F, R, B> {
         Bind(self, f, PhantomData, PhantomData)

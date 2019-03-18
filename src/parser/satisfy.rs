@@ -7,6 +7,7 @@ use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
 
+#[derive(Clone)]
 pub struct Satisfy<E, I>(E, PhantomData<I>)
 where
     E: Fn(&I) -> bool;

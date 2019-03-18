@@ -7,6 +7,7 @@ use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::parser::satisfy::Satisfy;
 use crate::stream::stream::Stream;
+use std::rc::Rc;
 
 // -------------------------------------------------------------------------------------------------
 
@@ -64,6 +65,7 @@ pub fn fail<A>(consumed: bool) -> Fail<A> {
 
 // -------------------------------------------------------------------------------------------------
 
+#[derive(Clone)]
 pub struct Eos;
 
 impl Combine<()> for Eos {}
@@ -86,8 +88,8 @@ pub fn eos() -> Eos {
 
 // -------------------------------------------------------------------------------------------------
 
-// #[derive(Clone)]
-pub struct Parser<A, S>(Box<dyn Parse<A, S>>)
+#[derive(Clone)]
+pub struct Parser<A, S>(Rc<dyn Parse<A, S>>)
 where
     S: Stream;
 
@@ -109,5 +111,5 @@ where
     P: Parse<A, S>,
     S: Stream,
 {
-    Parser(Box::new(p))
+    Parser(Rc::new(p))
 }
