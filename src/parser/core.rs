@@ -1,4 +1,5 @@
 use std::marker::PhantomData;
+use std::rc::Rc;
 
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
@@ -7,7 +8,6 @@ use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::parser::satisfy::Satisfy;
 use crate::stream::stream::Stream;
-use std::rc::Rc;
 
 // -------------------------------------------------------------------------------------------------
 
@@ -89,13 +89,13 @@ pub fn eos() -> Eos {
 // -------------------------------------------------------------------------------------------------
 
 #[derive(Clone)]
-pub struct Parser<A, S>(Rc<dyn Parse<A, S>>)
+pub struct Parser<'a, A, S>(Rc<dyn Parse<A, S> + 'a>)
 where
     S: Stream;
 
-impl<A, S> Combine<A> for Parser<A, S> where S: Stream {}
+impl<'a, A, S> Combine<A> for Parser<'a, A, S> where S: Stream {}
 
-impl<A, S> Parse<A, S> for Parser<A, S>
+impl<'a, A, S> Parse<A, S> for Parser<'a, A, S>
 where
     S: Stream,
 {
@@ -106,9 +106,9 @@ where
     }
 }
 
-pub fn parser<P: 'static, A, S>(p: P) -> Parser<A, S>
+pub fn parser<'a, P: 'a, A, S>(p: P) -> Parser<'a, A, S>
 where
-    P: Parse<A, S>,
+    P: Parse<A, S> + 'a,
     S: Stream,
 {
     Parser(Rc::new(p))
