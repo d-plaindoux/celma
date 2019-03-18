@@ -1,6 +1,6 @@
 use celma::parser::and::{AndOperation, AndProjection};
 use celma::parser::char::{alpha, char, char_in_set, digit, not_char};
-use celma::parser::core::parser;
+use celma::parser::core::{eos, parser};
 use celma::parser::lazy::lazy;
 use celma::parser::monadic::FMapOperation;
 use celma::parser::or::OrOperation;
@@ -40,7 +40,7 @@ where
 }
 
 #[inline]
-fn ident<S: 'static>() -> impl Parse<Token, S> + Combine<Token> + Clone
+fn ident<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + Clone
 where
     S: Stream<Item = char>,
 {
@@ -109,29 +109,33 @@ where
 }
 
 fn main() {
-    match number().parse(CharStream::new("123")) {
+    match number().and(eos()).left().parse(CharStream::new("123")) {
         Success(Token::Number(ref s), _, _) if *s == 123 => println!("Ident = {}", s),
         _ => println!("KO"),
     }
 
-    match ident().parse(CharStream::new("Toto")) {
+    match ident().and(eos()).left().parse(CharStream::new("Toto")) {
         Success(Token::Ident(ref s), _, _) if *s == String::from("Toto") => {
             println!("Ident = {}", s)
         }
         _ => println!("KO"),
     }
 
-    match string().parse(CharStream::new(r#""Toto""#)) {
+    match string()
+        .and(eos())
+        .left()
+        .parse(CharStream::new(r#""Toto""#))
+    {
         Success(Token::String(ref s), _, _) if *s == String::from("Toto") => {
             println!("Ident = {}", s)
         }
         _ => println!("KO"),
     }
 
-    match record().parse(CharStream::new(
-        r#"[ "Hello" , 123 , World, [ "Hello" , 123 , World ] ]"#,
+    match record().and(eos()).left().parse(CharStream::new(
+        r#"[ "Hello" , 123 , World , [ "Hello" , 123 , World ] ]"#,
     )) {
-        Success(Token::Record(ref s), _, _) if s.len() == 3 => println!("Record = {:?}", s),
+        Success(Token::Record(ref s), _, _) => println!("Record = {:?}", s),
         _ => println!("KO"),
     }
 }
