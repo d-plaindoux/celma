@@ -2,7 +2,7 @@
 mod tests_parser_stream {
     use celma::parser::char::char_in_range;
     use celma::parser::core::any;
-    use celma::parser::monadic::FMapOperation;
+    use celma::parser::fmap::FMapOperation;
     use celma::parser::parser::Parse;
     use celma::parser::repeat::RepeatOperation;
     use celma::stream::char_stream::CharStream;

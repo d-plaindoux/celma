@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
-use crate::parser::monadic::FMap;
-use crate::parser::monadic::FMapOperation;
+use crate::parser::fmap::FMap;
+use crate::parser::fmap::FMapOperation;
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response;
