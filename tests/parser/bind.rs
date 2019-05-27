@@ -3,11 +3,11 @@
 #[cfg(test)]
 mod tests_monadic {
     use celma::parser::and::AndOperation;
+    use celma::parser::bind::BindOperation;
     use celma::parser::char::char;
     use celma::parser::core::eos;
-    use celma::parser::literal::string;
     use celma::parser::fmap::FMapOperation;
-    use celma::parser::bind::BindOperation;
+    use celma::parser::literal::string;
     use celma::parser::parser::Parse;
     use celma::parser::repeat::RepeatOperation;
     use celma::stream::char_stream::CharStream;

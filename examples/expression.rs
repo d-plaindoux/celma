@@ -1,8 +1,8 @@
 use celma::parser::and::{AndOperation, AndProjection};
 use celma::parser::char::{alpha, char, char_in_set, digit, not_char};
 use celma::parser::core::{eos, parser};
-use celma::parser::lazy::lazy;
 use celma::parser::fmap::FMapOperation;
+use celma::parser::lazy::lazy;
 use celma::parser::or::OrOperation;
 use celma::parser::parser::{Combine, Parse};
 use celma::parser::repeat::RepeatOperation;
