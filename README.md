@@ -4,17 +4,11 @@
 
 [Celma ("k")noun "channel" (KEL) in Quenya](https://www.elfdict.com/w/kelma)
 
-Celma is a generalised parser combinator implementation. Generalised means not an implementation 
-restricted to a stream of characters.
+Celma is a generalised parser combinator implementation. Generalised means not an implementation restricted to a stream of characters.
 
 ## Overview
 
-Celma provides usual parser combinator like `returns`, `fails`, `eos`, `satisfy`, `fmap`,
-`bind`, `and` and `or`. The main difference is the nature of the data analysed. In the 
-seminal paper the source is a string. In this approach It's a parametric stream. Therefore
-it's possible to parse stream of `char`, `u8` or `user defined tokens`. One direct application
-is the capability to design parser based on pipelined parsers and separate parsers regarding
-their semantic level.
+is the capability to design parser based on pipelined parsers and separate parsers regarding their semantic level.
 
 # [WIP] Parsec meta language
 
@@ -24,7 +18,7 @@ In order to have a seamless parser definition a dedicated `proc_macro` is design
 ```
 parser     ::= atom occurrence? additional? transform?
 occurrence ::= ("*" | "+"  | "?")
-additional ::= (("~" | "<~" | "~>" | "|") parser)?
+additional ::= ("~" | "<~" | "~>" | "|") parser
 transform  ::= ("fmap" | "bind") { --rust code-- }
 atom       ::= '(' parser ')' | CHAR | NUMBER | STRING | ^CHAR
 ```
