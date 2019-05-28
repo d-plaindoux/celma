@@ -16,6 +16,31 @@ it's possible to parse stream of `char`, `u8` or `user defined tokens`. One dire
 is the capability to design parser based on pipelined parsers and separate parsers regarding
 their semantic level.
 
+# [WIP] Meta layer
+
+## Grammar
+In order to have a seamless parser definition a dedicated `proc_macro` is designed.
+
+```
+s0         ::= parser
+
+parser     ::= atom ("*" | "+"  | "?")? additional? transform?
+additional ::= (("~" | "<~" | "~>" | "|") parser)?
+transform  ::= ("fmap" | "bind") { --rust code-- }
+
+atom       ::= '(' parser ')' | CHAR | NUMBER | STRING | ^CHAR
+```
+
+##  Usage
+
+Therefore a parser should define using this meta-language.
+
+```
+let parser = parsec!{ " ~> ^"* <~ " };
+// char('"').then(not(char('"')).optrep()).then('"').left().right()
+```
+
+
 # License
 
 Copyright 2019 D. Plaindoux.
