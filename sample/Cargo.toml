@@ -1,0 +1,9 @@
+[package]
+name = "celma-sample"
+version = "0.1.0"
+authors = ["d-plaindoux <d.plaindoux@free.fr>"]
+edition = "2018"
+
+[dependencies]
+celma = { version = "0.1.0", path = "../core" }
+celma_plugin = { version = "0.1.0", path = "../plugin" }

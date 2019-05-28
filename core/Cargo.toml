@@ -1,0 +1,20 @@
+[package]
+name = "celma"
+version = "0.1.0"
+authors = ["dplaindoux <d.plaindoux@fungus.fr>"]
+edition = "2018"
+
+[dependencies]
+bencher = "0.1.5"
+
+[[bench]]
+name = "str_bench"
+harness = false
+
+[[bench]]
+name = "u8_bench"
+harness = false
+
+[[bench]]
+name = "vec_bench"
+harness = false

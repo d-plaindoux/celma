@@ -1,0 +1,13 @@
+[package]
+name = "celma_plugin"
+version = "0.1.0"
+authors = ["d-plaindoux <d.plaindoux@free.fr>"]
+edition = "2018"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+celma = { version = "0.1.0", path = "../core" }
+quote = "0.6.12"
+
