@@ -3,5 +3,5 @@ rust:
   - nightly
 script:
   - cargo build
-  - cargo test
+  - cargo +nightly test
   - cargo +nightly bench

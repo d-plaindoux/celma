@@ -4,7 +4,7 @@ use crate::parser::parser::{Combine, Parse};
 use crate::parser::response::Response;
 use crate::stream::stream::Stream;
 
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct Lazy<F, P, A>(F, PhantomData<P>, PhantomData<A>)
 where
     P: Combine<A>,

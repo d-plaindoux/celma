@@ -19,7 +19,7 @@ enum Token {
 }
 
 #[inline]
-fn skip<S: 'static>() -> impl Parse<(), S> + Combine<()> + Clone
+fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + Clone
 where
     S: Stream<Item = char>,
 {
@@ -29,7 +29,7 @@ where
 }
 
 #[inline]
-fn number<S: 'static>() -> impl Parse<Token, S> + Combine<Token> + Clone
+fn number<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + Clone
 where
     S: Stream<Item = char>,
 {
@@ -50,7 +50,7 @@ where
 }
 
 #[inline]
-fn string<S: 'static>() -> impl Parse<Token, S> + Combine<Token> + Clone
+fn string<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + Clone
 where
     S: Stream<Item = char>,
 {
@@ -73,7 +73,7 @@ where
         .or(lazy(|| parser(record())))
 }
 
-fn sequence<A: 'static, P, S: 'static>(
+fn sequence<'a, A: 'static, P, S: 'a>(
     p: P,
     s: char,
 ) -> impl Combine<Vec<A>> + Parse<Vec<A>, S> + Clone

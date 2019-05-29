@@ -7,7 +7,7 @@ use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
 
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct Repeat<L, A>(bool, L, PhantomData<A>)
 where
     L: Combine<A>;

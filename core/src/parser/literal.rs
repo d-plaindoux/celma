@@ -5,7 +5,7 @@ use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
 
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct Chars<'b>(&'b str);
 
 impl<'a> Combine<&'a str> for Chars<'a> {}

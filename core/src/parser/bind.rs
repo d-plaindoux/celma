@@ -7,7 +7,7 @@ use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
 
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct Bind<P, A, F, R, B>(P, F, PhantomData<A>, PhantomData<B>)
 where
     P: Combine<A>,

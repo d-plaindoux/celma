@@ -16,11 +16,12 @@ is the capability to design parser based on pipelined parsers and separate parse
 In order to have a seamless parser definition a dedicated `proc_macro` is designed.
 
 ```
-parser     ::= atom occurrence? additional? transform?
-occurrence ::= ("*" | "+"  | "?")
-additional ::= ("~" | "<~" | "~>" | "|") parser
-transform  ::= ("fmap" | "bind") { --rust code-- }
-atom       ::= '(' parser ')' | CHAR | NUMBER | STRING | ^CHAR
+parser     ::= binding? atom occurrence? additional? transform?
+binding    ::= IDENT '='
+occurrence ::= ("*" | "+" | "?")
+additional ::= ("~" | "|") parser
+transform  ::= "=>" { rust code }
+atom       ::= '(' parser ')' | CHAR | NUMBER | STRING | ^CHAR | { rust code }
 ```
 
 ##  Usage
@@ -28,8 +29,8 @@ atom       ::= '(' parser ')' | CHAR | NUMBER | STRING | ^CHAR
 Therefore a parser should define using this meta-language.
 
 ```
-let parser = parsec!{ " ~> ^"* <~ " };
-// char('"').then(not(char('"')).optrep()).then('"').left().right()
+let DQUOTE = '"';
+let parser = parsec!( {DQUOTE} ~ s=^{DQUOTE}* ~ {DQUOTE} => { TkString(s) } );
 ```
 
 # License

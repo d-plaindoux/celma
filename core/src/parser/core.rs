@@ -17,7 +17,7 @@ pub fn any<I>() -> Satisfy<impl Fn(&I) -> bool, I> {
 
 // -------------------------------------------------------------------------------------------------
 
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct Returns<A>(A)
 where
     A: Clone;
@@ -45,7 +45,7 @@ where
 
 // -------------------------------------------------------------------------------------------------
 
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct Fail<A>(bool, PhantomData<A>);
 
 impl<A> Combine<A> for Fail<A> {}
@@ -65,7 +65,7 @@ pub fn fail<A>(consumed: bool) -> Fail<A> {
 
 // -------------------------------------------------------------------------------------------------
 
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct Eos;
 
 impl Combine<()> for Eos {}
@@ -106,7 +106,7 @@ where
     }
 }
 
-pub fn parser<'a, P: 'a, A, S>(p: P) -> Parser<'a, A, S>
+pub fn parser<'a, P, A, S>(p: P) -> Parser<'a, A, S>
 where
     P: Parse<A, S> + 'a,
     S: Stream,
