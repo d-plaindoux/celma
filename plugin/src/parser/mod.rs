@@ -1,10 +1,10 @@
-use celma::parser::and::AndOperation;
-use celma::parser::char::{char, char_in_set, number, not_char};
+#![allow(dead_code)]
+
+use celma::parser::and::{AndOperation, AndProjection};
+use celma::parser::char::{char, char_in_set, digit, not_char};
 use celma::parser::fmap::FMapOperation;
 use celma::parser::parser::{Combine, Parse};
 use celma::parser::repeat::RepeatOperation;
-use celma::parser::response::Response::{Reject, Success};
-use celma::stream::char_stream::CharStream;
 use celma::stream::stream::Stream;
 
 // -------------------------------------------------------------------------------------------------
@@ -33,27 +33,35 @@ fn skip<S: 'static>() -> impl Parse<(), S> + Combine<()> + Clone
 }
 
 #[inline]
-fn number<S: 'static>() -> impl Parse<(), S> + Combine<()> + Clone
+fn delimiter_string<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone
     where
         S: Stream<Item=char>,
 {
-    digit().rep().fmap(|_| ())
+    char('"')
+        .and(not_char('"').opt_rep())
+        .right()
+        .and(char('"'))
+        .left()
+        .fmap(|v| v.into_iter().collect::<String>())
 }
 
 #[inline]
-fn delimited_char<S: 'static>() -> impl Parse<(), S> + Combine<()> + Clone
+fn number<'a, S: 'a>() -> impl Parse<i32, S> + Combine<i32> + Clone
     where
         S: Stream<Item=char>,
 {
-    char('\'').and(not_char('\'')).and(char('\'')).fmap(|_| ())
+    digit()
+        .rep()
+        .fmap(|v| v.into_iter().collect::<String>())
+        .fmap(|s| s.parse::<i32>().unwrap())
 }
 
 #[inline]
-fn delimited_string<S: 'static>() -> impl Parse<(), S> + Combine<()> + Clone
+fn delimited_char<S: 'static>() -> impl Parse<char, S> + Combine<char> + Clone
     where
         S: Stream<Item=char>,
 {
-    char('\"').and(not_char('\"')).opt_rep().and(char('\"')).fmap(|_| ())
+    char('\'').and(not_char('\'')).right().and(char('\'')).left().fmap(|c| c)
 }
 
 // -------------------------------------------------------------------------------------------------

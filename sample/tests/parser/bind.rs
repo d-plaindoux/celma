@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 #[cfg(test)]
 mod tests_monadic {
     use celma::parser::and::AndOperation;
