@@ -16,7 +16,7 @@ is the capability to design parser based on pipelined parsers and separate parse
 In order to have a seamless parser definition a dedicated `proc_macro` is designed.
 
 ```
-parser     ::= binding? atom occurrence? additional? transform?
+parser     ::= (binding? atom)+ occurrence? additional? transform?
 binding    ::= IDENT '='
 occurrence ::= ("*" | "+" | "?")
 additional ::= ("~" | "|") parser
@@ -30,7 +30,7 @@ Therefore a parser should define using this meta-language.
 
 ```
 let DQUOTE = '"';
-let parser = parsec!( {DQUOTE} ~ s=^{DQUOTE}* ~ {DQUOTE} => { TkString(s) } );
+let parser = parsec!( {DQUOTE} s=^{DQUOTE}* {DQUOTE} => { TkString(s) } );
 ```
 
 # License
