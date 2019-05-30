@@ -5,11 +5,10 @@ mod tests_and {
     use celma::parser::char::char;
     use celma::parser::parser::Parse;
     use celma::stream::char_stream::CharStream;
-    use celma_plugin::parsec;
 
     #[test]
     fn it_parse_two_character() {
-        let response = char('a').and(char('b')).parse(CharStream::new("ab"));
+        let response  = char('a').and(char('b')).parse(CharStream::new("ab"));
 
         assert_eq!(response.fold(|v, _, _| v == ('a', 'b'), |_| false), true);
     }
