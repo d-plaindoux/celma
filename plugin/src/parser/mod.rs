@@ -23,7 +23,7 @@ use celma::stream::stream::Stream;
 // -------------------------------------------------------------------------------------------------
 
 #[inline]
-fn skip<S: 'static>() -> impl Parse<(), S> + Combine<()> + Clone
+fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + Clone
     where
         S: Stream<Item=char>,
 {
@@ -57,7 +57,7 @@ fn number<'a, S: 'a>() -> impl Parse<i32, S> + Combine<i32> + Clone
 }
 
 #[inline]
-fn delimited_char<S: 'static>() -> impl Parse<char, S> + Combine<char> + Clone
+fn delimited_char<'a, S: 'a>() -> impl Parse<char, S> + Combine<char> + Clone
     where
         S: Stream<Item=char>,
 {
