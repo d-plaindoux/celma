@@ -44,10 +44,12 @@ let string    = parsec!( n=STRING                 => { TKString(n) } );
 let integer   = parsec!( n=NUMBER                 => { TKNumber(n) } );
 let null      = parsec!( {NULL}                   => { TKNull } );
 let boolean   = parsec!( b =({TRUE}|{FALSE})      => { TKBool(b) } );
-let array     = parsec!( '[' s=^{json}* ']'       => { TkArray(s) } );
+let array     = parsec!( '[' s=^{json()}* ']'     => { TkArray(s) } );
 let object    = parsec!( '{' s=^{attributes}* '}' => { TkObject(s) } );
-let attribute = parsec!( n=STRING ":" v=json      => { (n,v) } );
-let json      = parsec!( (integer|string|null|boolean|array|object|attribute) );
+let attribute = parsec!( n=STRING ":" v={json()}  => { (n,v) } );
+fn json() -> /*TODO*/ {  
+   parsec!( integer|string|null|boolean|array|object|attribute )
+}
 ```
 
 # License
