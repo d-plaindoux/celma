@@ -33,6 +33,23 @@ let DQUOTE = '"';
 let parser = parsec!( {DQUOTE} s=^{DQUOTE}* {DQUOTE} => { TkString(s) } );
 ```
 
+## Ful Example: JSON
+
+```
+let NULL      = "null";
+let TRUE      = "true";
+let FALSE     = "false";
+
+let string    = parsec!( n=STRING                 => { TKString(n) } );
+let integer   = parsec!( n=NUMBER                 => { TKNumber(n) } );
+let null      = parsec!( {NULL}                   => { TKNull } );
+let boolean   = parsec!( b =({TRUE}|{FALSE})      => { TKBool(b) } );
+let array     = parsec!( '[' s=^{json}* ']'       => { TkArray(s) } );
+let object    = parsec!( '{' s=^{attributes}* '}' => { TkObject(s) } );
+let attribute = parsec!( n=STRING ":" v=json      => { (n,v) } );
+let json      = parsec!( (integer|string|null|boolean|array|object|attribute) );
+```
+
 # License
 
 Copyright 2019 D. Plaindoux.
