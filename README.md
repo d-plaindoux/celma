@@ -19,7 +19,7 @@ In order to have a seamless parser definition a dedicated `proc_macro` is design
 parser     ::= (binding? atom)+ occurrence? additional? transform?
 binding    ::= IDENT '='
 occurrence ::= ("*" | "+" | "?")
-additional ::= ("~" | "|") parser
+additional ::= "|"? parser
 transform  ::= "=>" { rust code }
 atom       ::= '(' parser ')' | CHAR | NUMBER | STRING | ^CHAR | { rust code }
 ```
