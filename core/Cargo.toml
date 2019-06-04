@@ -18,3 +18,7 @@ harness = false
 [[bench]]
 name = "vec_bench"
 harness = false
+
+[[bench]]
+name = "iter_bench"
+harness = false
