@@ -24,8 +24,8 @@ use celma::stream::stream::Stream;
 
 #[inline]
 fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + Clone
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     char_in_set(vec!['\n', '\r', '\t', ' '])
         .opt_rep()
@@ -34,8 +34,8 @@ fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + Clone
 
 #[inline]
 fn delimiter_string<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     char('"')
         .and(not_char('"').opt_rep())
@@ -47,8 +47,8 @@ fn delimiter_string<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Cl
 
 #[inline]
 fn number<'a, S: 'a>() -> impl Parse<i32, S> + Combine<i32> + Clone
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     digit()
         .rep()
@@ -58,10 +58,15 @@ fn number<'a, S: 'a>() -> impl Parse<i32, S> + Combine<i32> + Clone
 
 #[inline]
 fn delimited_char<'a, S: 'a>() -> impl Parse<char, S> + Combine<char> + Clone
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
-    char('\'').and(not_char('\'')).right().and(char('\'')).left().fmap(|c| c)
+    char('\'')
+        .and(not_char('\''))
+        .right()
+        .and(char('\''))
+        .left()
+        .fmap(|c| c)
 }
 
 // -------------------------------------------------------------------------------------------------

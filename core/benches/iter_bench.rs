@@ -14,9 +14,9 @@ use celma::parser::parser::Parse;
 use celma::parser::repeat::RepeatOperation;
 use celma::parser::response::Response::Reject;
 use celma::parser::response::Response::Success;
+use celma::stream::iterator_stream::IteratorStream;
 use celma::stream::stream::Len;
 use celma::stream::stream::Stream;
-use celma::stream::iterator_stream::IteratorStream;
 
 // -------------------------------------------------------------------------------------------------
 // Basic benchmarks

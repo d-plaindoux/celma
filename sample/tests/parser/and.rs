@@ -8,7 +8,7 @@ mod tests_and {
 
     #[test]
     fn it_parse_two_character() {
-        let response  = char('a').and(char('b')).parse(CharStream::new("ab"));
+        let response = char('a').and(char('b')).parse(CharStream::new("ab"));
 
         assert_eq!(response.fold(|v, _, _| v == ('a', 'b'), |_| false), true);
     }
@@ -22,7 +22,10 @@ mod tests_and {
 
     #[test]
     fn it_parse_two_character_and_drop_left() {
-        let response = char('a').and(char('b')).right().parse(CharStream::new("ab"));
+        let response = char('a')
+            .and(char('b'))
+            .right()
+            .parse(CharStream::new("ab"));
 
         assert_eq!(response.fold(|v, _, _| v == 'b', |_| false), true);
     }
