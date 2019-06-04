@@ -60,8 +60,8 @@ where
     }
 }
 
-type LeftProjection<'a, L, R, A, B> = FMap<And<L, R, A, B>, (A, B), &'a Fn((A, B)) -> A, A>;
-type RightProjection<'a, L, R, A, B> = FMap<And<L, R, A, B>, (A, B), &'a Fn((A, B)) -> B, B>;
+type LeftProjection<'a, L, R, A, B> = FMap<And<L, R, A, B>, (A, B), &'a dyn Fn((A, B)) -> A, A>;
+type RightProjection<'a, L, R, A, B> = FMap<And<L, R, A, B>, (A, B), &'a dyn Fn((A, B)) -> B, B>;
 
 pub trait AndProjection<L, R, A, B>
 where

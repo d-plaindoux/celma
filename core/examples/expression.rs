@@ -99,6 +99,7 @@ fn record<S: 'static>() -> impl Parse<Token, S> + Combine<Token> + Clone
 where
     S: Stream<Item = char>,
 {
+    // '['  v={item().rep(',')} ']' => { Token::Record(v) }
     char('[')
         .and(skip())
         .and(sequence(item(), ','))

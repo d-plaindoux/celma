@@ -13,9 +13,9 @@ mod tests_parser_stream {
 
     #[test]
     fn it_parse_two_character() {
-        let parser = char_in_range('a'..'z').fmap(|v| Item(v)).rep();
+        let parser = char_in_range('a'..'z').fmap(|v| Item(v));
         let stream = ParserStream::new(&parser, CharStream::new("ab"));
-        let response = any().parse(stream);
+        let response = any().rep().parse(stream);
 
         assert_eq!(
             response.fold(|v, _, _| v == vec!(Item('a'), Item('b')), |_| false),

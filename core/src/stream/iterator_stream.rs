@@ -1,35 +1,46 @@
 #![allow(dead_code)]
 
 use std::iter::Iterator;
+use std::marker::PhantomData;
 
 use crate::stream::stream::Len;
 use crate::stream::stream::Stream;
 
 #[derive(Clone)]
-pub struct IteratorStream<E>(Iterator<Item=E>, usize);
+pub struct IteratorStream<E, I>(I, usize, PhantomData<E>)
+    where I: Iterator<Item=E>;
 
-impl<'a> IteratorStream<E> {
-    pub fn new(s: Iterator<Item=E>) -> IteratorStream<E> {
-        IteratorStream(s, 0)
+impl<'a, E, I> IteratorStream<E, I>
+    where I: Iterator<Item=E>
+{
+    pub fn new(s: I) -> IteratorStream<E, I> {
+        IteratorStream(s, 0, PhantomData)
     }
 }
 
-impl<E> Stream for IteratorStream<E> {
-    type Item = char;
+impl<E, I> Stream for IteratorStream<E, I>
+    where I: Iterator<Item=E> + Clone,
+          E: Clone
+{
+    type Item = E;
 
     fn position(&self) -> usize {
         self.1
     }
 
     fn next(&self) -> (Option<Self::Item>, Self) {
-        let option = self.0.next();
+        let mut this = self.clone(); // Ugly code preventing mutability / Check efficiency
+        let option = this.0.next();
+        let is_some = option.is_some();
 
-        (option, IteratorStream(self.0, self.1 + (if option.is_some() { 1 } else { 0 }))
+        (option, IteratorStream(this.0, this.1 + (if is_some { 1 } else { 0 }), PhantomData))
     }
 }
 
-impl<'a> Len for CharStream<'a> {
+impl<E, I> Len for IteratorStream<E, I>
+    where I: Iterator<Item=E> + Clone
+{
     fn len(&self) -> usize {
-        self.0.len()
+        self.0.clone().count()
     }
 }
