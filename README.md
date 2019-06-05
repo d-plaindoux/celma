@@ -20,8 +20,8 @@ parser     ::= (binding? atom)+ occurrence? additional? transform?
 binding    ::= IDENT '='
 occurrence ::= ("*" | "+" | "?")
 additional ::= "|"? parser
-transform  ::= "=>" { rust code }
-atom       ::= '(' parser ')' | CHAR | NUMBER | STRING | ^CHAR | { rust code }
+transform  ::= "=>" '{' rust code '}'
+atom       ::= '(' parser ')' | '{' rust code '}'
 ```
 
 ##  Usage

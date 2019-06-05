@@ -22,8 +22,8 @@ use crate::parser::ASTParsec::{PBind, PChoice, PCode, PMap, POptional, PRepeat, 
 // binding    ::= IDENT '='
 // occurrence ::= ("*" | "+"  | "?")
 // additional ::= "|"? parsec
-// transform  ::= "=>" { -- rust code -- }
-// atom       ::= '(' parsec ')' | { -- rust code -- }
+// transform  ::= "=>" '{' -- rust code -- '}'
+// atom       ::= '(' parsec ')' | '{' -- rust code -- '}'
 //
 // -------------------------------------------------------------------------------------------------
 // Note: Syn should be better but this done for dog-fooding purpose)
