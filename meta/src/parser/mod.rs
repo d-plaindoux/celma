@@ -1,16 +1,16 @@
 #![allow(dead_code)]
 
-use celma::parser::and::{AndOperation, AndProjection};
-use celma::parser::char::{char, char_in_range, char_in_set, not_char};
-use celma::parser::core::{eos, parser};
-use celma::parser::fmap::FMapOperation;
-use celma::parser::lazy::lazy;
-use celma::parser::literal::string;
-use celma::parser::option::OptionalOperation;
-use celma::parser::or::OrOperation;
-use celma::parser::parser::{Combine, Parse};
-use celma::parser::repeat::RepeatOperation;
-use celma::stream::stream::Stream;
+use celma_core::parser::and::{AndOperation, AndProjection};
+use celma_core::parser::char::{char, char_in_range, char_in_set, not_char};
+use celma_core::parser::core::{eos, parser};
+use celma_core::parser::fmap::FMapOperation;
+use celma_core::parser::lazy::lazy;
+use celma_core::parser::literal::string;
+use celma_core::parser::option::OptionalOperation;
+use celma_core::parser::or::OrOperation;
+use celma_core::parser::parser::{Combine, Parse};
+use celma_core::parser::repeat::RepeatOperation;
+use celma_core::stream::stream::Stream;
 
 use crate::parser::ASTParsec::{PBind, PChoice, PCode, PMap, POptional, PRepeat, PSequence};
 
@@ -72,33 +72,33 @@ fn parsec<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone 
         .left()
         .and(transform().opt())
         .fmap(|((((bind, atom), occ), add), trans)| {
-            let bind = if bind.is_some() {
-                PBind(bind.unwrap(), Box::new(atom))
+            let occ = if occ.is_some() {
+                match occ.unwrap() {
+                    '?' => POptional(Box::new(atom)),
+                    '*' => PRepeat(true, Box::new(atom)),
+                    '+' => PRepeat(false, Box::new(atom)),
+                    _ => atom,
+                }
             } else {
                 atom
             };
 
-            let occ = if occ.is_some() {
-                match occ.unwrap() {
-                    '?' => POptional(Box::new(bind)),
-                    '*' => PRepeat(true, Box::new(bind)),
-                    '+' => PRepeat(false, Box::new(bind)),
-                    _ => bind,
-                }
+            let bind = if bind.is_some() {
+                PBind(bind.unwrap(), Box::new(occ))
             } else {
-                bind
+                occ
             };
 
             let add = if add.is_some() {
                 let value = add.unwrap();
 
                 if value.0 {
-                    PChoice(Box::new(occ), Box::new(value.1))
+                    PChoice(Box::new(bind), Box::new(value.1))
                 } else {
-                    PSequence(Box::new(occ), Box::new(value.1))
+                    PSequence(Box::new(bind), Box::new(value.1))
                 }
             } else {
-                occ
+                bind
             };
 
             let trans = if trans.is_some() {

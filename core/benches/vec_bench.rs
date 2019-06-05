@@ -5,19 +5,19 @@ extern crate bencher;
 
 use bencher::{black_box, Bencher};
 
-use celma::parser::and::AndOperation;
-use celma::parser::core::any;
-use celma::parser::core::eos;
-use celma::parser::or::OrOperation;
-use celma::parser::parser::Combine;
-use celma::parser::parser::Parse;
-use celma::parser::repeat::RepeatOperation;
-use celma::parser::response::Response::Reject;
-use celma::parser::response::Response::Success;
-use celma::parser::satisfy::Satisfy;
-use celma::stream::stream::Len;
-use celma::stream::stream::Stream;
-use celma::stream::vec_stream::VecStream;
+use celma_core::parser::and::AndOperation;
+use celma_core::parser::core::any;
+use celma_core::parser::core::eos;
+use celma_core::parser::or::OrOperation;
+use celma_core::parser::parser::Combine;
+use celma_core::parser::parser::Parse;
+use celma_core::parser::repeat::RepeatOperation;
+use celma_core::parser::response::Response::Reject;
+use celma_core::parser::response::Response::Success;
+use celma_core::parser::satisfy::Satisfy;
+use celma_core::stream::stream::Len;
+use celma_core::stream::stream::Stream;
+use celma_core::stream::vec_stream::VecStream;
 
 // -------------------------------------------------------------------------------------------------
 // Basic benchmarks

@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod tests_parser_stream {
-    use celma::parser::core::any;
-    use celma::parser::parser::Parse;
-    use celma::parser::repeat::RepeatOperation;
-    use celma::stream::iterator_stream::IteratorStream;
+    use celma_core::parser::core::any;
+    use celma_core::parser::parser::Parse;
+    use celma_core::parser::repeat::RepeatOperation;
+    use celma_core::stream::iterator_stream::IteratorStream;
 
     #[derive(Clone, Eq, PartialEq)]
     struct Item(char);

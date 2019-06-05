@@ -1,5 +1,5 @@
 [package]
-name = "celma"
+name = "celma_core"
 version = "0.1.0"
 authors = ["dplaindoux <d.plaindoux@fungus.fr>"]
 edition = "2018"

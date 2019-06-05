@@ -1,14 +1,14 @@
-use celma::parser::and::{AndOperation, AndProjection};
-use celma::parser::char::{alpha, char, char_in_set, digit, not_char};
-use celma::parser::core::{eos, parser};
-use celma::parser::fmap::FMapOperation;
-use celma::parser::lazy::lazy;
-use celma::parser::or::OrOperation;
-use celma::parser::parser::{Combine, Parse};
-use celma::parser::repeat::RepeatOperation;
-use celma::parser::response::Response::Success;
-use celma::stream::char_stream::CharStream;
-use celma::stream::stream::Stream;
+use celma_core::parser::and::{AndOperation, AndProjection};
+use celma_core::parser::char::{alpha, char, char_in_set, digit, not_char};
+use celma_core::parser::core::{eos, parser};
+use celma_core::parser::fmap::FMapOperation;
+use celma_core::parser::lazy::lazy;
+use celma_core::parser::or::OrOperation;
+use celma_core::parser::parser::{Combine, Parse};
+use celma_core::parser::repeat::RepeatOperation;
+use celma_core::parser::response::Response::Success;
+use celma_core::stream::char_stream::CharStream;
+use celma_core::stream::stream::Stream;
 
 #[derive(Debug, Clone)]
 enum Token {

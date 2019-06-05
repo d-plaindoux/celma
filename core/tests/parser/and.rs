@@ -1,10 +1,10 @@
 #[cfg(test)]
 mod tests_and {
-    use celma::parser::and::AndOperation;
-    use celma::parser::and::AndProjection;
-    use celma::parser::char::char;
-    use celma::parser::parser::Parse;
-    use celma::stream::char_stream::CharStream;
+    use celma_core::parser::and::AndOperation;
+    use celma_core::parser::and::AndProjection;
+    use celma_core::parser::char::char;
+    use celma_core::parser::parser::Parse;
+    use celma_core::stream::char_stream::CharStream;
 
     #[test]
     fn it_parse_two_character() {

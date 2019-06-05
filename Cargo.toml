@@ -1,8 +1,8 @@
 [workspace]
 members = [
     "core",
-    "plugin",
-    "sample"
+    "meta",
+    "plugin"
 ]
 
 [profile.release]

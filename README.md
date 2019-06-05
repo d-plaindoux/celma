@@ -29,8 +29,9 @@ atom       ::= '(' parser ')' | CHAR | NUMBER | STRING | ^CHAR | { rust code }
 Therefore a parser should define using this meta-language.
 
 ```
-let DQUOTE = '"';
-let parser = parsec!( {DQUOTE} s=^{DQUOTE}* {DQUOTE} => { TkString(s) } );
+let DQUOTE = char('"');
+let NOT_DQUOTE = not_char('"');
+let parser = parsec!( {DQUOTE} s={NOT_DQUOTE}* {DQUOTE} => { TkString(s) } );
 ```
 
 ## Ful Example: JSON

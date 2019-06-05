@@ -4,16 +4,20 @@ use proc_macro::TokenStream;
 
 use quote::quote;
 
-use celma::parser::parser::Parse;
-use celma::stream::char_stream::CharStream;
-
-mod parser;
+use celma_core::parser::parser::Parse;
+use celma_core::parser::response::Response::{Reject, Success};
+use celma_core::stream::char_stream::CharStream;
+use celma_lang::parser::celma_language;
 
 #[proc_macro]
 pub fn parsec(input: TokenStream) -> TokenStream {
     let source = input.to_string();
-    let result = crate::parser::parsec().parse(CharStream::new(source.as_str()));
-    println!("Parse [{}]", result.fold(|_, _, _| true, |_| false));
+    let result = celma_language().parse(CharStream::new(source.as_str()));
 
-    quote!(celma::parser::core::eos()).into()
+    match result {
+        Success(_, _, _) => (),
+        Reject(_) => ()
+    }
+
+    quote!(celma_core::parser::core::eos()).into()
 }

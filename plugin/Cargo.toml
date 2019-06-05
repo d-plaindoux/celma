@@ -8,6 +8,7 @@ edition = "2018"
 proc-macro = true
 
 [dependencies]
-celma = { version = "0.1.0", path = "../core" }
+celma_core = { version = "0.1.0", path = "../core" }
+celma_lang = { version = "0.1.0", path = "../meta" }
 quote = "0.6.12"
 

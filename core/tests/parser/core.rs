@@ -2,12 +2,12 @@
 
 #[cfg(test)]
 mod tests_core {
-    use celma::parser::core::any;
-    use celma::parser::core::eos;
-    use celma::parser::core::fail;
-    use celma::parser::core::returns;
-    use celma::parser::parser::Parse;
-    use celma::stream::char_stream::CharStream;
+    use celma_core::parser::core::any;
+    use celma_core::parser::core::eos;
+    use celma_core::parser::core::fail;
+    use celma_core::parser::core::returns;
+    use celma_core::parser::parser::Parse;
+    use celma_core::stream::char_stream::CharStream;
 
     #[test]
     fn it_parse_and_returns_unit() {

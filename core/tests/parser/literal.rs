@@ -2,10 +2,10 @@
 
 #[cfg(test)]
 mod tests_literal {
-    use celma::parser::literal::string;
-    use celma::parser::or::OrOperation;
-    use celma::parser::parser::Parse;
-    use celma::stream::char_stream::CharStream;
+    use celma_core::parser::literal::string;
+    use celma_core::parser::or::OrOperation;
+    use celma_core::parser::parser::Parse;
+    use celma_core::stream::char_stream::CharStream;
 
     #[test]
     fn it_parse_a_str() {

@@ -2,14 +2,14 @@
 
 #[cfg(test)]
 mod tests_char {
-    use celma::parser::char::alpha;
-    use celma::parser::char::alpha_lower;
-    use celma::parser::char::alpha_upper;
-    use celma::parser::char::char;
-    use celma::parser::char::digit;
-    use celma::parser::char::not_char;
-    use celma::parser::parser::Parse;
-    use celma::stream::char_stream::CharStream;
+    use celma_core::parser::char::alpha;
+    use celma_core::parser::char::alpha_lower;
+    use celma_core::parser::char::alpha_upper;
+    use celma_core::parser::char::char;
+    use celma_core::parser::char::digit;
+    use celma_core::parser::char::not_char;
+    use celma_core::parser::parser::Parse;
+    use celma_core::stream::char_stream::CharStream;
 
     #[test]
     fn it_parse_a_specific_character() {

@@ -3,20 +3,20 @@ extern crate bencher;
 
 use bencher::{black_box, Bencher};
 
-use celma::parser::and::AndOperation;
-use celma::parser::char::char;
-use celma::parser::char::not_char;
-use celma::parser::core::any;
-use celma::parser::core::eos;
-use celma::parser::or::OrOperation;
-use celma::parser::parser::Combine;
-use celma::parser::parser::Parse;
-use celma::parser::repeat::RepeatOperation;
-use celma::parser::response::Response::Reject;
-use celma::parser::response::Response::Success;
-use celma::stream::char_stream::CharStream;
-use celma::stream::stream::Len;
-use celma::stream::stream::Stream;
+use celma_core::parser::and::AndOperation;
+use celma_core::parser::char::char;
+use celma_core::parser::char::not_char;
+use celma_core::parser::core::any;
+use celma_core::parser::core::eos;
+use celma_core::parser::or::OrOperation;
+use celma_core::parser::parser::Combine;
+use celma_core::parser::parser::Parse;
+use celma_core::parser::repeat::RepeatOperation;
+use celma_core::parser::response::Response::Reject;
+use celma_core::parser::response::Response::Success;
+use celma_core::stream::char_stream::CharStream;
+use celma_core::stream::stream::Len;
+use celma_core::stream::stream::Stream;
 
 // -------------------------------------------------------------------------------------------------
 // Basic benchmarks
