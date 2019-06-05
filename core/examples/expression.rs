@@ -19,7 +19,7 @@ enum Token {
 }
 
 #[inline]
-fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + Clone
+fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + Clone + 'a
 where
     S: Stream<Item = char>,
 {
@@ -29,7 +29,7 @@ where
 }
 
 #[inline]
-fn number<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + Clone
+fn number<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + Clone + 'a
 where
     S: Stream<Item = char>,
 {
@@ -40,7 +40,7 @@ where
 }
 
 #[inline]
-fn ident<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + Clone
+fn ident<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + Clone + 'a
 where
     S: Stream<Item = char>,
 {
@@ -50,7 +50,7 @@ where
 }
 
 #[inline]
-fn string<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + Clone
+fn string<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + Clone + 'a
 where
     S: Stream<Item = char>,
 {
@@ -63,20 +63,17 @@ where
 }
 
 #[inline]
-fn item<S: 'static>() -> impl Parse<Token, S> + Combine<Token> + Clone
+fn item<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + Clone + 'a
 where
     S: Stream<Item = char>,
 {
-    number()
-        .or(ident())
-        .or(string())
-        .or(lazy(|| parser(record())))
+    parser(number().or(ident()).or(string()).or(lazy(|| record())))
 }
 
-fn sequence<'a, A: 'static, P, S: 'a>(
+fn sequence<'a, A: 'a, P: 'a, S: 'a>(
     p: P,
     s: char,
-) -> impl Combine<Vec<A>> + Parse<Vec<A>, S> + Clone
+) -> impl Combine<Vec<A>> + Parse<Vec<A>, S> + Clone + 'a
 where
     A: Clone,
     P: Combine<A> + Parse<A, S> + Clone,
@@ -95,7 +92,7 @@ where
 }
 
 #[inline]
-fn record<S: 'static>() -> impl Parse<Token, S> + Combine<Token> + Clone
+fn record<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + Clone + 'a
 where
     S: Stream<Item = char>,
 {
