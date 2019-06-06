@@ -32,8 +32,8 @@ use crate::meta::syntax::ASTParsec::{PBind, PChoice, PCode, PMap, POptional, PRe
 
 #[inline]
 fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     char_in_set(vec!['\n', '\r', '\t', ' '])
         .opt_rep()
@@ -44,8 +44,8 @@ fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + Clone + 'a
 
 #[inline]
 fn parsec<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     binding()
         .opt()
@@ -103,8 +103,8 @@ fn parsec<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone 
 
 #[inline]
 fn binding<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     let letter = char_in_range('A'..'Z').or(char_in_range('a'..'z'));
 
@@ -119,15 +119,16 @@ fn binding<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
 
 #[inline]
 fn occurrence<'a, S: 'a>() -> impl Parse<char, S> + Combine<char> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     char_in_set(vec!['+', '?', '*'])
 }
 
-fn additional<'a, S: 'a>() -> impl Parse<(bool, ASTParsec), S> + Combine<(bool, ASTParsec)> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+fn additional<'a, S: 'a>(
+) -> impl Parse<(bool, ASTParsec), S> + Combine<(bool, ASTParsec)> + Clone + 'a
+where
+    S: Stream<Item = char>,
 {
     char('|')
         .opt()
@@ -139,8 +140,8 @@ fn additional<'a, S: 'a>() -> impl Parse<(bool, ASTParsec), S> + Combine<(bool, 
 
 #[inline]
 fn atom<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     char('(')
         .and(skip())
@@ -156,15 +157,15 @@ fn atom<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 
 
 #[inline]
 fn transform<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     string("=>").and(skip()).left().and(lazy(code)).right()
 }
 
 fn code<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     char('{')
         .and(not_char('}').opt_rep())
@@ -177,8 +178,14 @@ fn code<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
 // -------------------------------------------------------------------------------------------------
 
 pub fn celma_language<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
-    skip().and(parsec()).right().and(skip()).left().and(eos()).left()
+    skip()
+        .and(parsec())
+        .right()
+        .and(skip())
+        .left()
+        .and(eos())
+        .left()
 }

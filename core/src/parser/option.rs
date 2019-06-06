@@ -24,9 +24,9 @@ where
 
         match p.parse(s.clone()) {
             Success(v, s, c) => Success(Some(v), s, c),
-            Reject(c) => {
+            Reject(ns, c) => {
                 if c {
-                    Reject(c)
+                    Reject(ns, c)
                 } else {
                     Success(None, s, false)
                 }

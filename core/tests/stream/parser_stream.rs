@@ -18,7 +18,7 @@ mod tests_parser_stream {
         let response = any().rep().parse(stream);
 
         assert_eq!(
-            response.fold(|v, _, _| v == vec!(Item('a'), Item('b')), |_| false),
+            response.fold(|v, _, _| v == vec!(Item('a'), Item('b')), |_, _| false),
             true
         );
     }

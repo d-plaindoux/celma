@@ -30,10 +30,10 @@ where
         let Self(l, r, _) = self;
 
         match l.parse(s.clone()) {
-            Success(a, na, ba) => Success(a, na, ba),
-            Reject(ba) => {
+            Success(a, s, ba) => Success(a, s, ba),
+            Reject(ns, ba) => {
                 if ba {
-                    Reject(ba)
+                    Reject(ns, ba)
                 } else {
                     r.parse(s)
                 }

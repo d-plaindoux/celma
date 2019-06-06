@@ -13,7 +13,7 @@ mod tests_or {
     fn it_parse_one_character() {
         let response = char('a').or(char('b')).parse(CharStream::new("a"));
 
-        assert_eq!(response.fold(|v, _, _| v == 'a', |_| false), true);
+        assert_eq!(response.fold(|v, _, _| v == 'a', |_, _| false), true);
     }
 
     #[test]
@@ -22,6 +22,6 @@ mod tests_or {
             .or(char('a'))
             .parse(CharStream::new("ab"));
 
-        assert_eq!(response.fold(|_, _, _| false, |c| c), true);
+        assert_eq!(response.fold(|_, _, _| false, |_, c| c), true);
     }
 }

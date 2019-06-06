@@ -6,7 +6,7 @@ where
     S: Stream,
 {
     Success(A, S, bool),
-    Reject(bool),
+    Reject(S, bool),
 }
 
 impl<A, S> Response<A, S>
@@ -16,11 +16,11 @@ where
     pub fn fold<FS, FR, B>(self, success: FS, reject: FR) -> B
     where
         FS: Fn(A, S, bool) -> B,
-        FR: Fn(bool) -> B,
+        FR: Fn(S, bool) -> B,
     {
         match self {
             Response::Success(a, s, b) => success(a, s, b),
-            Response::Reject(b) => reject(b),
+            Response::Reject(s, b) => reject(s, b),
         }
     }
 }

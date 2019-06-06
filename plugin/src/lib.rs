@@ -16,7 +16,7 @@ pub fn parsec(input: TokenStream) -> TokenStream {
 
     match result {
         Success(_, _, _) => (),
-        Reject(_) => ()
+        Reject(_, _) => (),
     }
 
     quote!(celma_core::parser::core::eos()).into()

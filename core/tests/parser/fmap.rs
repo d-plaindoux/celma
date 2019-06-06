@@ -18,7 +18,7 @@ mod tests_monadic {
             .fmap(|a| a.len())
             .parse(CharStream::new("hello world!"));
 
-        assert_eq!(response.fold(|v, _, _| v == 5, |_| false), true);
+        assert_eq!(response.fold(|v, _, _| v == 5, |_, _| false), true);
     }
 
     #[test]
@@ -27,6 +27,6 @@ mod tests_monadic {
             .bind(|a| char(a.chars().next().unwrap()).rep().and(eos()))
             .parse(CharStream::new("hehhhhhhh"));
 
-        assert_eq!(response.fold(|v, _, _| v.0.len() == 7, |_| false), true);
+        assert_eq!(response.fold(|v, _, _| v.0.len() == 7, |_, _| false), true);
     }
 }

@@ -11,7 +11,7 @@ mod tests_lazy {
     fn it_parse_a_specific_character() {
         let response = lazy(|| char('a')).parse(CharStream::new("a"));
 
-        assert_eq!(response.fold(|v, _, _| v == 'a', |_| false), true);
+        assert_eq!(response.fold(|v, _, _| v == 'a', |_, _| false), true);
     }
 }
 

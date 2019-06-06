@@ -31,7 +31,7 @@ where
 
         match p.parse(s) {
             Success(a, s, c) => Success(f(a), s, c),
-            Reject(c) => Reject(c),
+            Reject(s, c) => Reject(s, c),
         }
     }
 }

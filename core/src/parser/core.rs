@@ -54,8 +54,8 @@ impl<A, S> Parse<A, S> for Fail<A>
 where
     S: Stream,
 {
-    fn parse(&self, _s: S) -> Response<A, S> {
-        Reject(self.0)
+    fn parse(&self, s: S) -> Response<A, S> {
+        Reject(s, self.0)
     }
 }
 
@@ -76,7 +76,7 @@ where
 {
     fn parse(&self, s: S) -> Response<(), S> {
         match s.next().0 {
-            Some(_) => Reject(false),
+            Some(_) => Reject(s, false),
             None => Success((), s, false),
         }
     }

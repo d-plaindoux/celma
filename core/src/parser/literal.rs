@@ -30,7 +30,7 @@ where
                     ns = next.clone();
                 }
                 _ => {
-                    return Reject(false);
+                    return Reject(ns, false);
                 }
             }
         }

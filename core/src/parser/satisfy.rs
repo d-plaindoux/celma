@@ -40,10 +40,10 @@ where
                 if predicate(&c) {
                     Success(c, p, true)
                 } else {
-                    Reject(false)
+                    Reject(p, false)
                 }
             }
-            _ => Reject(false),
+            (None, p) => Reject(p, false),
         }
     }
 }

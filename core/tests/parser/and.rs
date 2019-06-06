@@ -10,14 +10,14 @@ mod tests_and {
     fn it_parse_two_character() {
         let response = char('a').and(char('b')).parse(CharStream::new("ab"));
 
-        assert_eq!(response.fold(|v, _, _| v == ('a', 'b'), |_| false), true);
+        assert_eq!(response.fold(|v, _, _| v == ('a', 'b'), |_, _| false), true);
     }
 
     #[test]
     fn it_parse_two_character_and_drop_right() {
         let response = char('a').and(char('b')).left().parse(CharStream::new("ab"));
 
-        assert_eq!(response.fold(|v, _, _| v == 'a', |_| false), true);
+        assert_eq!(response.fold(|v, _, _| v == 'a', |_, _| false), true);
     }
 
     #[test]
@@ -27,6 +27,6 @@ mod tests_and {
             .right()
             .parse(CharStream::new("ab"));
 
-        assert_eq!(response.fold(|v, _, _| v == 'b', |_| false), true);
+        assert_eq!(response.fold(|v, _, _| v == 'b', |_, _| false), true);
     }
 }

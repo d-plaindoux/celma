@@ -84,7 +84,7 @@ where
 
     bencher.iter(|| match parser.parse(black_box(stream.clone())) {
         Success(_, _, _) => (),
-        Reject(_) => panic!("Cannot parse stream"),
+        Reject(_, _) => panic!("Cannot parse stream"),
     });
 }
 

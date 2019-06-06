@@ -35,9 +35,9 @@ where
         match p.parse(s) {
             Success(a, sa, ca) => match f(a).parse(sa) {
                 Success(b, sb, cb) => Success(b, sb, ca || cb),
-                Reject(c) => Reject(c),
+                Reject(sb, c) => Reject(sb, c),
             },
-            Reject(c) => Reject(c),
+            Reject(sa, c) => Reject(sa, c),
         }
     }
 }

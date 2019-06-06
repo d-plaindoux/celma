@@ -32,11 +32,11 @@ where
         let Self(l, r, _, _) = self;
 
         match l.parse(s) {
-            Success(a, na, ba) => match r.parse(na) {
-                Success(b, nb, bb) => Success((a, b), nb, ba || bb),
-                Reject(bb) => Reject(ba || bb),
+            Success(a, s, ba) => match r.parse(s) {
+                Success(b, s, bb) => Success((a, b), s, ba || bb),
+                Reject(s, bb) => Reject(s, ba || bb),
             },
-            Reject(ba) => Reject(ba),
+            Reject(s, ba) => Reject(s, ba),
         }
     }
 }

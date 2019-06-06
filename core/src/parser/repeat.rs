@@ -33,13 +33,13 @@ where
                     consumed = c || consumed;
                     source = s;
                 }
-                Reject(c) => {
+                Reject(s, c) => {
                     if c {
-                        return Reject(c);
+                        return Reject(s, c);
                     }
 
                     if !*can_be_empty && values.is_empty() {
-                        return Reject(consumed);
+                        return Reject(s, consumed);
                     }
 
                     return Success(values, source, consumed);
