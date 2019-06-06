@@ -3,8 +3,8 @@ mod tests_and {
     use celma_core::parser::parser::Parse;
     use celma_core::parser::response::Response::{Reject, Success};
     use celma_core::stream::char_stream::CharStream;
-    use celma_lang::parser::ASTParsec::{PBind, PChoice, PCode, POptional, PRepeat, PSequence, PMap};
-    use celma_lang::parser::celma_language;
+    use celma_lang::meta::syntax::ASTParsec::{PBind, PChoice, PCode, POptional, PRepeat, PSequence, PMap};
+    use celma_lang::meta::parser::celma_language;
 
     #[test]
     fn it_parse_one_character() {

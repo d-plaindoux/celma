@@ -37,20 +37,28 @@ let parser = parsec!( {DQUOTE} s={NOT_DQUOTE}* {DQUOTE} => { TkString(s) } );
 ## Ful Example: JSON
 
 ```
-let NULL      = "null";
-let TRUE      = "true";
-let FALSE     = "false";
-
-let string    = parsec!( n=STRING                 => { TKString(n) } );
-let integer   = parsec!( n=NUMBER                 => { TKNumber(n) } );
-let null      = parsec!( {NULL}                   => { TKNull } );
-let boolean   = parsec!( b =({TRUE}|{FALSE})      => { TKBool(b) } );
-let array     = parsec!( '[' s=^{json()}* ']'     => { TkArray(s) } );
-let object    = parsec!( '{' s=^{attributes}* '}' => { TkObject(s) } );
-let attribute = parsec!( n=STRING ":" v={json()}  => { (n,v) } );
-fn json() -> /*TODO*/ {  
+//--------------------------------------------------------------------
+// Atoms
+//--------------------------------------------------------------------
+let NULL      = string("null");
+let TRUE      = string("true");
+let FALSE     = string("false");
+let STRING    = delimited_string();
+let NUMBER    = number();
+//--------------------------------------------------------------------
+// Parsing rules
+//--------------------------------------------------------------------
+let string    = parsec!( n={STRING}              => { TKString(n) } );
+let integer   = parsec!( n={NUMBER}              => { TKNumber(n) } );
+let null      = parsec!( {NULL}                  => { TKNull } );
+let boolean   = parsec!( b =({TRUE}|{FALSE})     => { TKBool(b) } );
+let array     = parsec!( '[' s={json()}* ']'     => { TkArray(s) } );
+let attribute = parsec!( n=STRING ":" v={json()} => { (n,v) } );
+let object    = parsec!( '{' s={attributes}* '}' => { TkObject(s) } );
+fn json<'a, S:'a>() -> impl Parse<'a, JSon, S> + Combine<JSon> + 'a {  
    parsec!( integer|string|null|boolean|array|object|attribute )
 }
+//--------------------------------------------------------------------
 ```
 
 # License

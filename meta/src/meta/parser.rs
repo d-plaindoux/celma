@@ -12,7 +12,8 @@ use celma_core::parser::parser::{Combine, Parse};
 use celma_core::parser::repeat::RepeatOperation;
 use celma_core::stream::stream::Stream;
 
-use crate::parser::ASTParsec::{PBind, PChoice, PCode, PMap, POptional, PRepeat, PSequence};
+use crate::meta::syntax::ASTParsec;
+use crate::meta::syntax::ASTParsec::{PBind, PChoice, PCode, PMap, POptional, PRepeat, PSequence};
 
 // -------------------------------------------------------------------------------------------------
 // Grammar - Parser using Celma ^_^
@@ -29,19 +30,8 @@ use crate::parser::ASTParsec::{PBind, PChoice, PCode, PMap, POptional, PRepeat, 
 // Note: Syn should be better but this done for dog-fooding purpose)
 // -------------------------------------------------------------------------------------------------
 
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub enum ASTParsec {
-    PSequence(Box<ASTParsec>, Box<ASTParsec>),
-    PChoice(Box<ASTParsec>, Box<ASTParsec>),
-    POptional(Box<ASTParsec>),
-    PRepeat(bool, Box<ASTParsec>),
-    PBind(String, Box<ASTParsec>),
-    PCode(String),
-    PMap(Box<ASTParsec>, String),
-}
-
 #[inline]
-fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + Clone
+fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + Clone + 'a
     where
         S: Stream<Item=char>,
 {

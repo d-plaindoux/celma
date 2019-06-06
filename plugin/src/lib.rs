@@ -7,7 +7,7 @@ use quote::quote;
 use celma_core::parser::parser::Parse;
 use celma_core::parser::response::Response::{Reject, Success};
 use celma_core::stream::char_stream::CharStream;
-use celma_lang::parser::celma_language;
+use celma_lang::meta::parser::celma_language;
 
 #[proc_macro]
 pub fn parsec(input: TokenStream) -> TokenStream {
