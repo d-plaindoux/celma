@@ -24,9 +24,9 @@ transform  ::= "=>" '{' rust code '}'
 atom       ::= '(' parser ')' | '{' rust code '}'
 ```
 
-##  Usage
+##  Using the meta language
 
-Therefore a parser should define using this meta-language.
+Therefore a parser can be defined using this meta-language.
 
 ```
 let DQUOTE = char('"');
@@ -34,7 +34,7 @@ let NOT_DQUOTE = not_char('"');
 let parser = parsec!( {DQUOTE} s={NOT_DQUOTE}* {DQUOTE} => { TkString(s) } );
 ```
 
-## Ful Example: JSON
+## A Full Example: JSON
 
 ```
 //--------------------------------------------------------------------
