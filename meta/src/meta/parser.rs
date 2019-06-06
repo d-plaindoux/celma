@@ -49,17 +49,13 @@ where
 {
     binding()
         .opt()
-        .and(skip())
-        .left()
+        .and_left(skip())
         .and(atom())
-        .and(skip())
-        .left()
+        .and_left(skip())
         .and(occurrence().opt())
-        .and(skip())
-        .left()
+        .and_left(skip())
         .and(additional().opt())
-        .and(skip())
-        .left()
+        .and_left(skip())
         .and(transform().opt())
         .fmap(|((((bind, atom), occ), add), trans)| {
             let occ = if occ.is_some() {
@@ -110,10 +106,8 @@ where
 
     letter
         .rep()
-        .and(skip())
-        .left()
-        .and(char('='))
-        .left()
+        .and_left(skip())
+        .and_left(char('='))
         .fmap(|v| v.into_iter().collect())
 }
 
@@ -133,8 +127,7 @@ where
     char('|')
         .opt()
         .fmap(|o| o.is_some())
-        .and(skip())
-        .left()
+        .and_left(skip())
         .and(lazy(|| parser(parsec())))
 }
 
@@ -144,14 +137,10 @@ where
     S: Stream<Item = char>,
 {
     char('(')
-        .and(skip())
-        .left()
-        .and(lazy(|| parser::<'a, _, ASTParsec, S>(parsec())))
-        .right()
-        .and(skip())
-        .left()
-        .and(char(')'))
-        .left()
+        .and_left(skip())
+        .and_right(lazy(|| parser::<'a, _, ASTParsec, S>(parsec())))
+        .and_left(skip())
+        .and_left(char(')'))
         .or(code().fmap(PCode))
 }
 
@@ -168,10 +157,8 @@ where
     S: Stream<Item = char>,
 {
     char('{')
-        .and(not_char('}').opt_rep())
-        .right()
-        .and(char('}'))
-        .left()
+        .and_right(not_char('}').opt_rep())
+        .and_left(char('}'))
         .fmap(|v| v.into_iter().collect())
 }
 
@@ -181,11 +168,5 @@ pub fn celma_language<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTPars
 where
     S: Stream<Item = char>,
 {
-    skip()
-        .and(parsec())
-        .right()
-        .and(skip())
-        .left()
-        .and(eos())
-        .left()
+    skip().and_right(parsec()).and_left(skip()).and_left(eos())
 }

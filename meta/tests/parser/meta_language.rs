@@ -27,7 +27,7 @@ mod tests_and {
                 ast,
                 PSequence(
                     Box::new(PCode(String::from("char(\'a\')"))),
-                    Box::new(PCode(String::from("char(\'b\')")))
+                    Box::new(PCode(String::from("char(\'b\')"))),
                 )
             ),
             _ => assert_eq!(true, false),
@@ -43,7 +43,7 @@ mod tests_and {
                 ast,
                 PChoice(
                     Box::new(PCode(String::from("char(\'a\')"))),
-                    Box::new(PCode(String::from("char(\'b\')")))
+                    Box::new(PCode(String::from("char(\'b\')"))),
                 )
             ),
             _ => assert_eq!(true, false),
@@ -59,7 +59,7 @@ mod tests_and {
                 ast,
                 PBind(
                     String::from("c"),
-                    Box::new(PCode(String::from("char(\'a\')")))
+                    Box::new(PCode(String::from("char(\'a\')"))),
                 )
             ),
             _ => assert_eq!(true, false),
@@ -75,7 +75,7 @@ mod tests_and {
                 ast,
                 PBind(
                     String::from("c"),
-                    Box::new(POptional(Box::new(PCode(String::from("char(\'a\')")))))
+                    Box::new(POptional(Box::new(PCode(String::from("char(\'a\')"))))),
                 )
             ),
             _ => assert_eq!(true, false),
@@ -91,7 +91,7 @@ mod tests_and {
                 ast,
                 PBind(
                     String::from("c"),
-                    Box::new(PRepeat(true, Box::new(PCode(String::from("char(\'a\')")))))
+                    Box::new(PRepeat(true, Box::new(PCode(String::from("char(\'a\')"))))),
                 )
             ),
             _ => assert_eq!(true, false),
@@ -107,7 +107,7 @@ mod tests_and {
                 ast,
                 PBind(
                     String::from("c"),
-                    Box::new(PRepeat(false, Box::new(PCode(String::from("char(\'a\')")))))
+                    Box::new(PRepeat(false, Box::new(PCode(String::from("char(\'a\')"))))),
                 )
             ),
             _ => assert_eq!(true, false),
@@ -124,12 +124,12 @@ mod tests_and {
                 PSequence(
                     Box::new(PBind(
                         String::from("a"),
-                        Box::new(PRepeat(false, Box::new(PCode(String::from("char(\'a\')")))))
+                        Box::new(PRepeat(false, Box::new(PCode(String::from("char(\'a\')"))))),
                     )),
                     Box::new(PBind(
                         String::from("b"),
-                        Box::new(PRepeat(false, Box::new(PCode(String::from("char(\'b\')")))))
-                    ))
+                        Box::new(PRepeat(false, Box::new(PCode(String::from("char(\'b\')"))))),
+                    )),
                 )
             ),
             _ => assert_eq!(true, false),
@@ -146,12 +146,12 @@ mod tests_and {
                 PChoice(
                     Box::new(PBind(
                         String::from("a"),
-                        Box::new(PRepeat(false, Box::new(PCode(String::from("char(\'a\')")))))
+                        Box::new(PRepeat(false, Box::new(PCode(String::from("char(\'a\')"))))),
                     )),
                     Box::new(PBind(
                         String::from("b"),
-                        Box::new(PRepeat(false, Box::new(PCode(String::from("char(\'b\')")))))
-                    ))
+                        Box::new(PRepeat(false, Box::new(PCode(String::from("char(\'b\')"))))),
+                    )),
                 )
             ),
             _ => assert_eq!(true, false),
@@ -168,9 +168,33 @@ mod tests_and {
                 PMap(
                     Box::new(PBind(
                         String::from("a"),
-                        Box::new(PCode(String::from("char(\'a\')")))
+                        Box::new(PCode(String::from("char(\'a\')"))),
                     )),
-                    String::from(" Result(a) ")
+                    String::from(" Result(a) "),
+                )
+            ),
+            _ => assert_eq!(true, false),
+        };
+    }
+
+    #[test]
+    fn it_parse_a_mapped_character_with_map() {
+        let response = celma_language().parse(CharStream::new(
+            "a=({char('a')} => { 'a' }) => { Result(a) }",
+        ));
+
+        match response {
+            Success(ast, _, _) => assert_eq!(
+                ast,
+                PMap(
+                    Box::new(PBind(
+                        String::from("a"),
+                        Box::new(PMap(
+                            Box::new(PCode(String::from("char(\'a\')"))),
+                            String::from(" 'a' ")
+                        )),
+                    )),
+                    String::from(" Result(a) "),
                 )
             ),
             _ => assert_eq!(true, false),

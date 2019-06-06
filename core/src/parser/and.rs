@@ -47,6 +47,8 @@ where
     R: Combine<B>,
 {
     fn and(self, a: R) -> And<L, R, A, B>;
+    fn and_left<'a>(self, a: R) -> LeftProjection<'a, L, R, A, B>;
+    fn and_right<'a>(self, a: R) -> RightProjection<'a, L, R, A, B>;
 }
 
 impl<L, R, A, B> AndOperation<L, R, A, B> for L
@@ -57,6 +59,14 @@ where
     #[inline]
     fn and(self, a: R) -> And<L, R, A, B> {
         And(self, a, PhantomData, PhantomData)
+    }
+
+    fn and_left<'a>(self, a: R) -> LeftProjection<'a, L, R, A, B> {
+        self.and(a).fmap(&|(l, _)| l)
+    }
+
+    fn and_right<'a>(self, a: R) -> RightProjection<'a, L, R, A, B> {
+        self.and(a).fmap(&|(_, r)| r)
     }
 }
 
