@@ -14,4 +14,4 @@
    limitations under the License.
 */
 
-pub mod meta_language;
+pub mod celma_parsec_tests;
