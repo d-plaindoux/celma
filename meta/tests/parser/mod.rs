@@ -15,3 +15,4 @@
 */
 
 pub mod celma_parsec_tests;
+pub mod celma_parsec_rules_tests;

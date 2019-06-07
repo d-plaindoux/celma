@@ -23,4 +23,12 @@ pub enum ASTParsec {
     PBind(String, Box<ASTParsec>),
     PCode(String),
     PMap(Box<ASTParsec>, String),
+    PIdent(String)
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct ASTParsecRule {
+    pub name: String,
+    pub codomain: String,
+    pub body: Box<ASTParsec>,
 }
