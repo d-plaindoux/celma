@@ -22,7 +22,7 @@ binding      ::= IDENT '='
 occurrence   ::= ("*" | "+" | "?")
 additional   ::= "|"? parser
 transform    ::= "=>" '{' rust_code '}'
-atom         ::= '(' parser ')' | CHAR | STRING | | NUMBER |  '{' rust_code '}'
+atom         ::= '(' parser ')' | CHAR | STRING | NUMBER |  '{' rust_code '}'
 ```
 
 ##  Using the meta language
