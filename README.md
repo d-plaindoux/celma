@@ -47,10 +47,10 @@ let NUMBER    = number();
 //--------------------------------------------------------------------
 let string    = parsec!( n={STRING}              => { TKString(n) } );
 let integer   = parsec!( n={NUMBER}              => { TKNumber(n) } );
-let null      = parsec!( "null"                  => { TKNull } );
-let boolean   = parsec!( b =("true"|"false")     => { TKBool(b) } );
-let array     = parsec!( '[' s={json()}* ']'     => { TkArray(s) } );
-let attribute = parsec!( n=STRING ":" v={json()} => { (n,v) } );
+let null      = parsec!( "null"                  => { TKNull      } );
+let boolean   = parsec!( b =("true"|"false")     => { TKBool(b)   } );
+let array     = parsec!( '[' s={json()}* ']'     => { TkArray(s)  } );
+let attribute = parsec!( n=STRING ":" v={json()} => { (n,v)       } );
 let object    = parsec!( '{' s={attributes}* '}' => { TkObject(s) } );
 fn json<'a, S:'a>() -> impl Parse<'a, JSon, S> + Combine<JSon> + 'a {  
    parsec!( integer|string|null|boolean|array|object|attribute )
