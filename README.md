@@ -13,7 +13,7 @@ Genealization is the capability to design parser based on pipelined parsers and 
 # [WIP] Parsec meta language
 
 ## Grammar
-In order to have a seamless parser definition a dedicated `proc_macro` is designed.
+In order to have a seamless parser definition two dedicated `proc_macro` are designed.
 
 ```
 parsec_rules ::= (let IDENT ':' '{' rust_code '}' "::=" parsec)+
