@@ -40,9 +40,6 @@ let parser = parsec!( {DQUOTE} s={NOT_DQUOTE}* {DQUOTE} => { TkString(s) } );
 //--------------------------------------------------------------------
 // Atoms
 //--------------------------------------------------------------------
-let NULL      = string("null");
-let TRUE      = string("true");
-let FALSE     = string("false");
 let STRING    = delimited_string();
 let NUMBER    = number();
 //--------------------------------------------------------------------
@@ -50,8 +47,8 @@ let NUMBER    = number();
 //--------------------------------------------------------------------
 let string    = parsec!( n={STRING}              => { TKString(n) } );
 let integer   = parsec!( n={NUMBER}              => { TKNumber(n) } );
-let null      = parsec!( {NULL}                  => { TKNull } );
-let boolean   = parsec!( b =({TRUE}|{FALSE})     => { TKBool(b) } );
+let null      = parsec!( "null"                  => { TKNull } );
+let boolean   = parsec!( b =("true"|"false")     => { TKBool(b) } );
 let array     = parsec!( '[' s={json()}* ']'     => { TkArray(s) } );
 let attribute = parsec!( n=STRING ":" v={json()} => { (n,v) } );
 let object    = parsec!( '{' s={attributes}* '}' => { TkObject(s) } );
