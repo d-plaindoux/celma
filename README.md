@@ -50,7 +50,7 @@ let NUMBER    = number();
 
 parsec_rules!(
  let json:{JSon}    ::= number|string|null|boolean|array|object|attribute
- let string:{JSon}  ::= {STRING}                     => { TKString(n) }
+ let string:{JSon}  ::= s={STRING}                   => { TKString(s) }
  let number:{JSon}  ::= n={NUMBER}                   => { TKNumber(n) }
  let null:{JSon}    ::= "null"                       => { TKNull      }
  let boolean:{JSon} ::= b =("true"|"false")          => { TKBool(b)   }
