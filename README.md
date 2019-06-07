@@ -8,7 +8,7 @@ Celma is a generalised parser combinator implementation. Generalised means not a
 
 ## Overview
 
-is the capability to design parser based on pipelined parsers and separate parsers regarding their semantic level.
+Genealization is the capability to design parser based on pipelined parsers and separate parsers regarding their semantic level.
 
 # [WIP] Parsec meta language
 
