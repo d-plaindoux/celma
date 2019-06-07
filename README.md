@@ -16,12 +16,13 @@ is the capability to design parser based on pipelined parsers and separate parse
 In order to have a seamless parser definition a dedicated `proc_macro` is designed.
 
 ```
-parser     ::= (binding? atom)+ occurrence? additional? transform?
-binding    ::= IDENT '='
-occurrence ::= ("*" | "+" | "?")
-additional ::= "|"? parser
-transform  ::= "=>" '{' rust code '}'
-atom       ::= '(' parser ')' | CHAR | STRING | | NUMBER |  '{' rust code '}'
+parsec_rule ::= (let IDENT ':' '{' rust code '}' "::=" parsec)+
+parsec      ::= (binding? atom)+ occurrence? additional? transform?
+binding     ::= IDENT '='
+occurrence  ::= ("*" | "+" | "?")
+additional  ::= "|"? parser
+transform   ::= "=>" '{' rust code '}'
+atom        ::= '(' parser ')' | CHAR | STRING | | NUMBER |  '{' rust code '}'
 ```
 
 ##  Using the meta language
