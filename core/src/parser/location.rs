@@ -25,33 +25,33 @@ use crate::stream::stream::{Position, Stream};
 
 #[derive(Copy, Clone)]
 pub struct Location<A> {
-    position: Position,
+    start: Position,
+    end: Position,
     value: A,
 }
 
 #[derive(Copy, Clone)]
-pub struct Locate<P, A>(P, PhantomData<A>)
-where
-    P: Combine<A>;
+pub struct Located<P, A>(P, PhantomData<A>)
+    where
+        P: Combine<A>;
 
-impl<P, A> Combine<Location<A>> for Locate<P, A> where P: Combine<A> {}
+impl<P, A> Combine<Location<A>> for Located<P, A> where P: Combine<A> {}
 
-impl<P, A, S> Parse<Location<A>, S> for Locate<P, A>
-where
-    P: Parse<A, S> + Combine<A>,
-    S: Stream,
+impl<P, A, S> Parse<Location<A>, S> for Located<P, A>
+    where
+        P: Parse<A, S> + Combine<A>,
+        S: Stream,
 {
     fn parse(&self, s: S) -> Response<Location<A>, S> {
         let Self(p, _) = self;
+        let start = s.position();
 
         match p.parse(s) {
-            Success(a, s, c) => {
-                let l = Location {
-                    position: s.position(),
-                    value: a,
-                };
+            Success(value, ns, c) => {
+                let end = ns.position();
+                let l = Location { start, end, value };
 
-                Success(l, s, c)
+                Success(l, ns, c)
             }
             Reject(s, c) => Reject(s, c),
         }

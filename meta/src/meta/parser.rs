@@ -178,9 +178,16 @@ where
 
 // -------------------------------------------------------------------------------------------------
 
-pub fn celma_language<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 'a
+pub fn celma_parsec<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 'a
 where
     S: Stream<Item = char>,
+{
+    skip().and_right(parsec()).and_left(skip()).and_left(eos())
+}
+
+pub fn celma_parsec_rules<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 'a
+    where
+        S: Stream<Item = char>,
 {
     skip().and_right(parsec()).and_left(skip()).and_left(eos())
 }

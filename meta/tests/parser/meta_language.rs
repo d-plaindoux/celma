@@ -19,14 +19,14 @@ mod tests_and {
     use celma_core::parser::parser::Parse;
     use celma_core::parser::response::Response::Success;
     use celma_core::stream::char_stream::CharStream;
-    use celma_lang::meta::parser::celma_language;
+    use celma_lang::meta::parser::{celma_parsec};
     use celma_lang::meta::syntax::ASTParsec::{
         PBind, PChoice, PCode, PMap, POptional, PRepeat, PSequence,
     };
 
     #[test]
     fn it_parse_one_character() {
-        let response = celma_language().parse(CharStream::new("{char('a')}"));
+        let response = celma_parsec().parse(CharStream::new("{char('a')}"));
 
         match response {
             Success(ast, _, _) => assert_eq!(ast, PCode(String::from("char(\'a\')"))),
@@ -36,7 +36,7 @@ mod tests_and {
 
     #[test]
     fn it_parse_two_characters() {
-        let response = celma_language().parse(CharStream::new("{char('a')} {char('b')}"));
+        let response = celma_parsec().parse(CharStream::new("{char('a')} {char('b')}"));
 
         match response {
             Success(ast, _, _) => assert_eq!(
@@ -52,7 +52,7 @@ mod tests_and {
 
     #[test]
     fn it_parse_one_character_with_choice() {
-        let response = celma_language().parse(CharStream::new("{char('a')} | {char('b')}"));
+        let response = celma_parsec().parse(CharStream::new("{char('a')} | {char('b')}"));
 
         match response {
             Success(ast, _, _) => assert_eq!(
@@ -68,7 +68,7 @@ mod tests_and {
 
     #[test]
     fn it_parse_one_character_with_binding() {
-        let response = celma_language().parse(CharStream::new("c={char('a')}"));
+        let response = celma_parsec().parse(CharStream::new("c={char('a')}"));
 
         match response {
             Success(ast, _, _) => assert_eq!(
@@ -84,7 +84,7 @@ mod tests_and {
 
     #[test]
     fn it_parse_one_optional_character_with_binding() {
-        let response = celma_language().parse(CharStream::new("c={char('a')}?"));
+        let response = celma_parsec().parse(CharStream::new("c={char('a')}?"));
 
         match response {
             Success(ast, _, _) => assert_eq!(
@@ -100,7 +100,7 @@ mod tests_and {
 
     #[test]
     fn it_parse_one_optional_repeatable_character_with_binding() {
-        let response = celma_language().parse(CharStream::new("c={char('a')}*"));
+        let response = celma_parsec().parse(CharStream::new("c={char('a')}*"));
 
         match response {
             Success(ast, _, _) => assert_eq!(
@@ -116,7 +116,7 @@ mod tests_and {
 
     #[test]
     fn it_parse_one_repeatable_character_with_binding() {
-        let response = celma_language().parse(CharStream::new("c={char('a')}+"));
+        let response = celma_parsec().parse(CharStream::new("c={char('a')}+"));
 
         match response {
             Success(ast, _, _) => assert_eq!(
@@ -132,7 +132,7 @@ mod tests_and {
 
     #[test]
     fn it_parse_two_repeatable_character_with_binding() {
-        let response = celma_language().parse(CharStream::new("a={char('a')}+ b={char('b')}+"));
+        let response = celma_parsec().parse(CharStream::new("a={char('a')}+ b={char('b')}+"));
 
         match response {
             Success(ast, _, _) => assert_eq!(
@@ -154,7 +154,7 @@ mod tests_and {
 
     #[test]
     fn it_parse_a_repeatable_character_with_binding_with_choice() {
-        let response = celma_language().parse(CharStream::new("a={char('a')}+ | b={char('b')}+"));
+        let response = celma_parsec().parse(CharStream::new("a={char('a')}+ | b={char('b')}+"));
 
         match response {
             Success(ast, _, _) => assert_eq!(
@@ -176,7 +176,7 @@ mod tests_and {
 
     #[test]
     fn it_parse_a_character_with_map() {
-        let response = celma_language().parse(CharStream::new("a={char('a')} => { Result(a) }"));
+        let response = celma_parsec().parse(CharStream::new("a={char('a')} => { Result(a) }"));
 
         match response {
             Success(ast, _, _) => assert_eq!(
@@ -195,7 +195,7 @@ mod tests_and {
 
     #[test]
     fn it_parse_a_mapped_character_with_map() {
-        let response = celma_language().parse(CharStream::new(
+        let response = celma_parsec().parse(CharStream::new(
             "a=({char('a')} => { 'a' }) => { Result(a) }",
         ));
 
