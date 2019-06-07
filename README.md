@@ -54,7 +54,7 @@ parsec_rules!(
  let string:{JSon}  ::= s={STRING}                   => { TKString(s) }
  let number:{JSon}  ::= n={NUMBER}                   => { TKNumber(n) }
  let null:{JSon}    ::= "null"                       => { TKNull      }
- let boolean:{JSon} ::= b=("true"|"false")          => { TKBool(b)   }
+ let boolean:{JSon} ::= b=("true"|"false")           => { TKBool(b)   }
  let array:{JSon}   ::= '[' s=json* ']'              => { TkArray(s)  }
  let object:{JSon}  ::= '{' s=(STRING ":" json)* '}' => { TkObject(s) }
 )
