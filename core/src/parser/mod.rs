@@ -21,6 +21,7 @@ pub mod core;
 pub mod fmap;
 pub mod lazy;
 pub mod literal;
+pub mod location;
 pub mod option;
 pub mod or;
 pub mod parser;

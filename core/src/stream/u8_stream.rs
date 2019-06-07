@@ -14,10 +14,8 @@
    limitations under the License.
 */
 
-#![allow(dead_code)]
-
-use crate::stream::stream::Len;
 use crate::stream::stream::Stream;
+use crate::stream::stream::{Len, Position};
 
 #[derive(Clone)]
 pub struct U8Stream<'a>(&'a [u8], usize);
@@ -31,8 +29,11 @@ impl<'a> U8Stream<'a> {
 impl<'a> Stream for U8Stream<'a> {
     type Item = u8;
 
-    fn position(&self) -> usize {
-        self.1
+    fn position(&self) -> Position {
+        Position {
+            line: 0,
+            char: self.1,
+        }
     }
 
     fn next(&self) -> (Option<Self::Item>, Self) {

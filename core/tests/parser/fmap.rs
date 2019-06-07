@@ -14,8 +14,6 @@
    limitations under the License.
 */
 
-#![allow(dead_code)]
-
 #[cfg(test)]
 mod tests_monadic {
     use celma_core::parser::and::AndOperation;

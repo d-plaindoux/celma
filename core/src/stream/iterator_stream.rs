@@ -14,13 +14,11 @@
    limitations under the License.
 */
 
-#![allow(dead_code)]
-
 use std::iter::Iterator;
 use std::marker::PhantomData;
 
-use crate::stream::stream::Len;
 use crate::stream::stream::Stream;
+use crate::stream::stream::{Len, Position};
 
 #[derive(Clone)]
 pub struct IteratorStream<E, I>(I, usize, PhantomData<E>)
@@ -43,8 +41,11 @@ where
 {
     type Item = E;
 
-    fn position(&self) -> usize {
-        self.1
+    fn position(&self) -> Position {
+        Position {
+            line: 0,
+            char: self.1,
+        }
     }
 
     fn next(&self) -> (Option<Self::Item>, Self) {

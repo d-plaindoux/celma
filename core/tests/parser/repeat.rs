@@ -14,8 +14,6 @@
    limitations under the License.
 */
 
-#![allow(dead_code)]
-
 #[cfg(test)]
 mod tests_repeat {
     use celma_core::parser::char::char;

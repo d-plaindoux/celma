@@ -14,14 +14,16 @@
    limitations under the License.
 */
 
-#![allow(dead_code)]
-
-// How this copy can be removed?
+#[derive(Copy, Clone)]
+pub struct Position {
+    pub line: usize,
+    pub char: usize,
+}
 
 pub trait Stream: Clone {
     type Item;
 
-    fn position(&self) -> usize;
+    fn position(&self) -> Position;
 
     fn next(&self) -> (Option<Self::Item>, Self);
 }

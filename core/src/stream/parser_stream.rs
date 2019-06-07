@@ -14,15 +14,13 @@
    limitations under the License.
 */
 
-#![allow(dead_code)]
-
 use std::marker::PhantomData;
 
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
-use crate::stream::stream::Stream;
+use crate::stream::stream::{Position, Stream};
 
 pub struct ParserStream<'a, P, A, S>(&'a P, S, PhantomData<A>)
 where
@@ -57,7 +55,7 @@ where
 {
     type Item = A;
 
-    fn position(&self) -> usize {
+    fn position(&self) -> Position {
         self.1.position()
     }
 

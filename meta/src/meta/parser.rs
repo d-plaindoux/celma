@@ -14,8 +14,6 @@
    limitations under the License.
 */
 
-#![allow(dead_code)]
-
 use celma_core::parser::and::{AndOperation, AndProjection};
 use celma_core::parser::char::{char, char_in_range, char_in_set, not_char};
 use celma_core::parser::core::{eos, parser};
