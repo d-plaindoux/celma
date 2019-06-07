@@ -22,7 +22,7 @@ binding      ::= IDENT '='
 occurrence   ::= ("*" | "+" | "?")
 additional   ::= "|"? parser
 transform    ::= "=>" '{' rust_code '}'
-atom         ::= '(' parser ')' | CHAR | STRING | NUMBER |  '{' rust_code '}'
+atom         ::= '(' parser ')' | CHAR | STRING | NUMBER | IDENT | '{' rust_code '}'
 ```
 
 ##  Using the meta language
@@ -38,25 +38,25 @@ let parser = parsec!( {DQUOTE} s={NOT_DQUOTE}* {DQUOTE} => { TkString(s) } );
 ## A Full Example: JSON
 
 ```
-//--------------------------------------------------------------------
+//
 // Atoms
-//--------------------------------------------------------------------
+//
 let STRING    = delimited_string();
 let NUMBER    = number();
-//--------------------------------------------------------------------
+
+//
 // Parsing rules
-//--------------------------------------------------------------------
-let string    = parsec!( n={STRING}              => { TKString(n) } );
-let integer   = parsec!( n={NUMBER}              => { TKNumber(n) } );
-let null      = parsec!( "null"                  => { TKNull      } );
-let boolean   = parsec!( b =("true"|"false")     => { TKBool(b)   } );
-let array     = parsec!( '[' s={json()}* ']'     => { TkArray(s)  } );
-let attribute = parsec!( n=STRING ":" v={json()} => { (n,v)       } );
-let object    = parsec!( '{' s={attributes}* '}' => { TkObject(s) } );
-fn json<'a, S:'a>() -> impl Parse<'a, JSon, S> + Combine<JSon> + 'a {  
-   parsec!( integer|string|null|boolean|array|object|attribute )
-}
-//--------------------------------------------------------------------
+//
+
+parsec_rules!(
+ let json:{JSon}    ::= number|string|null|boolean|array|object|attribute
+ let string:{JSon}  ::= {STRING}                     => { TKString(n) }
+ let number:{JSon}  ::= n={NUMBER}                   => { TKNumber(n) }
+ let null:{JSon}    ::= "null"                       => { TKNull      }
+ let boolean:{JSon} ::= b =("true"|"false")          => { TKBool(b)   }
+ let array:{JSon}   ::= '[' s=json* ']'              => { TkArray(s)  }
+ let object:{JSon}  ::= '{' s=(STRING ":" json)* '}' => { TkObject(s) }
+)
 ```
 
 # License
