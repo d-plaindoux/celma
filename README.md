@@ -39,8 +39,9 @@ let parser = parsec!( {DQUOTE} s={NOT_DQUOTE}* {DQUOTE} => { TkString(s) } );
 
 ```
 //
-// Atoms
+// Predefined Parsers
 //
+
 let STRING    = delimited_string();
 let NUMBER    = number();
 
