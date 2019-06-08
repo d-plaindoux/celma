@@ -23,6 +23,7 @@ use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::{Position, Stream};
 
+
 #[derive(Copy, Clone)]
 pub struct Location<A> {
     start: Position,
@@ -56,4 +57,11 @@ impl<P, A, S> Parse<Location<A>, S> for Located<P, A>
             Reject(s, c) => Reject(s, c),
         }
     }
+}
+
+pub fn locate<P, A>(p: P) -> Located<P, A>
+    where
+        P: Combine<A>,
+{
+    Located(p, PhantomData)
 }
