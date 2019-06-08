@@ -16,7 +16,7 @@
 
 use celma_core::parser::and::{AndOperation, AndProjection};
 use celma_core::parser::char::{char, char_in_range, char_in_set, not_char};
-use celma_core::parser::core::{eos, parser};
+use celma_core::parser::core::{eos, parser, returns, fail};
 use celma_core::parser::fmap::FMapOperation;
 use celma_core::parser::lazy::lazy;
 use celma_core::parser::literal::string;
@@ -28,6 +28,7 @@ use celma_core::stream::stream::Stream;
 
 use crate::meta::syntax::{ASTParsec, ASTParsecRule};
 use crate::meta::syntax::ASTParsec::{PBind, PChoice, PCode, PMap, POptional, PRepeat, PSequence};
+use celma_core::parser::bind::BindOperation;
 
 // -------------------------------------------------------------------------------------------------
 // Grammar - Parser using Celma ^_^
@@ -54,6 +55,22 @@ fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + Clone + 'a
         .fmap({ |_| () })
 }
 
+#[inline]
+fn ident<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
+    where
+        S: Stream<Item=char>,
+{
+    (char_in_range('A'..'Z').or(char_in_range('a'..'z'))).rep()
+        .fmap(|v| v.into_iter().collect())
+        .bind(|s|
+            if s != String::from("let") {
+                parser(returns(s))
+            } else {
+                parser(fail(false))
+            }
+        )
+}
+
 // -------------------------------------------------------------------------------------------------
 
 #[inline]
@@ -63,10 +80,7 @@ fn parsec_rules<'a, S: 'a>() -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<
 {
     string("let")
         .and_left(skip())
-        .and_right(
-            char_in_range('a'..'z').or(char_in_range('A'..'Z')).rep()
-                .fmap(|v| v.into_iter().collect())
-        )
+        .and_right(ident())
         .and_left(skip())
         .and_left(char(':'))
         .and_left(skip())
@@ -75,6 +89,7 @@ fn parsec_rules<'a, S: 'a>() -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<
         .and_left(string("::="))
         .and_left(skip())
         .and(parsec())
+        .and_left(skip())
         .fmap(|((n, c), b): ((String, String), ASTParsec)|
             ASTParsecRule { name: n, codomain: c, body: Box::new(b) }
         )
@@ -143,14 +158,12 @@ fn binding<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
     where
         S: Stream<Item=char>,
 {
-    let letter = char_in_range('A'..'Z').or(char_in_range('a'..'z'));
-
-    letter
-        .rep()
+    ident()
         .and_left(skip())
         .and_left(char('='))
-        .fmap(|v| v.into_iter().collect())
+
 }
+
 
 #[inline]
 fn occurrence<'a, S: 'a>() -> impl Parse<char, S> + Combine<char> + Clone + 'a

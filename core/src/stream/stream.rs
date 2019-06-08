@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Position {
     pub line: usize,
     pub char: usize,

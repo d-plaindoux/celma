@@ -17,8 +17,9 @@
 #[cfg(test)]
 mod tests_and {
     use celma_core::parser::parser::Parse;
-    use celma_core::parser::response::Response::Success;
+    use celma_core::parser::response::Response::{Reject, Success};
     use celma_core::stream::char_stream::CharStream;
+    use celma_core::stream::stream::Stream;
     use celma_lang::meta::parser::celma_parsec_rules;
     use celma_lang::meta::syntax::ASTParsec::PCode;
     use celma_lang::meta::syntax::ASTParsecRule;
@@ -30,13 +31,43 @@ mod tests_and {
         match response {
             Success(ast, _, _) => assert_eq!(
                 ast,
-                vec!(ASTParsecRule {
-                    name: String::from("a"),
-                    codomain: String::from("char"),
-                    body: Box::new(PCode(String::from("char(\'a\')")))
-                })
+                vec!(
+                    ASTParsecRule {
+                        name: String::from("a"),
+                        codomain: String::from("char"),
+                        body: Box::new(PCode(String::from("char(\'a\')"))),
+                    }
+                )
             ),
             _ => assert_eq!(true, false),
+        };
+    }
+
+    #[test]
+    fn it_parse_two_rules() {
+        let response = celma_parsec_rules().parse(CharStream::new(
+            "let a:{char} ::= {char('a')} let b:{char} ::= {char('b')}"
+        ));
+
+        match response {
+            Success(ast, _, _) => assert_eq!(
+                ast,
+                vec!(
+                    ASTParsecRule {
+                        name: String::from("a"),
+                        codomain: String::from("char"),
+                        body: Box::new(PCode(String::from("char(\'a\')"))),
+                    },
+                    ASTParsecRule {
+                        name: String::from("b"),
+                        codomain: String::from("char"),
+                        body: Box::new(PCode(String::from("char(\'b\')"))),
+                    }
+                )
+            ),
+            Reject(p, _) => {
+                assert_eq!(true, false)
+            }
         };
     }
 }
