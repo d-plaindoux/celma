@@ -16,7 +16,7 @@ Genealization is the capability to design parser based on pipelined parsers and 
 In order to have a seamless parser definition two dedicated `proc_macro` are designed.
 
 ```
-parsec_rules ::= (let ident ':' '{' rust_code '}' "::=" parsec)+
+parsec_rules ::= ("let" ident ':' '{' rust_code '}' "::=" parsec)+
 parsec       ::= (binding? atom)+ occurrence? additional? transform?
 binding      ::= ident '='
 occurrence   ::= ("*" | "+" | "?")
