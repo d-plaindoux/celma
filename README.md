@@ -23,6 +23,7 @@ occurrence   ::= ("*" | "+" | "?")
 additional   ::= "|"? parser
 transform    ::= "=>" '{' rust_code '}'
 atom         ::= '(' parser ')' | CHAR | STRING | NUMBER | IDENT | '{' rust_code '}'
+ident        ::= [a..zA..Z]+ - {"let"}
 ```
 
 ##  Using the meta language
