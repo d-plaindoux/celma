@@ -61,6 +61,16 @@ parsec_rules!(
 )
 ```
 
+## Bootstrap sketch
+
+### Stage 1
+
+The Celma parser v0 is written with parser combinators.
+
+### Stage 2
+
+The Celma parser V1 is written using the Celma parser V0
+
 # License
 
 Copyright 2019 Didier Plaindoux.
