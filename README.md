@@ -43,8 +43,8 @@ let parser = parsec!( {DQUOTE} s={NOT_DQUOTE}* {DQUOTE} => { TkString(s) } );
 // Predefined Parsers
 //
 
-let STRING    = delimited_string();
-let NUMBER    = number();
+let STRING = delimited_string();
+let NUMBER = number();
 
 //
 // Parsing rules
