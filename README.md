@@ -22,7 +22,7 @@ binding      = ident '='
 occurrence   = ("*" | "+" | "?")
 additional   = "|"? parser
 transform    = "=>" '{' rust_code '}'
-atom         = '(' parser ')' | CHAR | STRING | ident | '{' rust_code '}'
+atom         = '(' parser ')' | CHAR | STRING | ident | '{' rust_code '}' | '^' atom
 ident        = [a..zA..Z]+ - {"let"}
 ```
 
@@ -31,9 +31,7 @@ ident        = [a..zA..Z]+ - {"let"}
 Therefore a parser can be defined using this meta-language.
 
 ```rust
-let DQUOTE = char('"');
-let NOT_DQUOTE = not_char('"');
-let parser = parsec!( {DQUOTE} s={NOT_DQUOTE}* {DQUOTE} => { TkString(s) } );
+let parser = parsec!( '"' s=^'"'* '"' => { TkString(s) } );
 ```
 
 ## A Full Example: JSON
