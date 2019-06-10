@@ -14,6 +14,7 @@
    limitations under the License.
 */
 
+pub mod a_try;
 pub mod and;
 pub mod bind;
 pub mod char;

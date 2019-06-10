@@ -66,18 +66,18 @@ where
 
 #[inline]
 pub fn not<S, E>(c: E) -> impl Parse<E, S> + Combine<E> + Clone
-    where
-        E: Eq + Copy,
-        S: Stream<Item = E>,
+where
+    E: Eq + Copy,
+    S: Stream<Item = E>,
 {
     Satisfy::new(move |&v| v != c)
 }
 
 #[inline]
 pub fn eq<S, E>(c: E) -> impl Parse<E, S> + Combine<E> + Clone
-    where
-        E: Eq + Copy,
-        S: Stream<Item = E>,
+where
+    E: Eq + Copy,
+    S: Stream<Item = E>,
 {
     Satisfy::new(move |&v| v == c)
 }

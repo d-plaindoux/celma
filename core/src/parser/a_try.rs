@@ -21,46 +21,34 @@ use crate::parser::parser::Parse;
 use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
-use crate::stream::stream::{Position, Stream};
+use crate::stream::stream::Stream;
 
 #[derive(Copy, Clone)]
-pub struct Location<A> {
-    start: Position,
-    end: Position,
-    value: A,
-}
-
-#[derive(Copy, Clone)]
-pub struct Located<P, A>(P, PhantomData<A>)
+pub struct ATry<L, A>(L, PhantomData<A>)
 where
-    P: Combine<A>;
+    L: Combine<A>;
 
-impl<P, A> Combine<Location<A>> for Located<P, A> where P: Combine<A> {}
+impl<L, A> Combine<A> for ATry<L, A> where L: Combine<A> {}
 
-impl<P, A, S> Parse<Location<A>, S> for Located<P, A>
+impl<L, A, S> Parse<A, S> for ATry<L, A>
 where
-    P: Parse<A, S> + Combine<A>,
+    L: Parse<A, S> + Combine<A>,
     S: Stream,
 {
-    fn parse(&self, s: S) -> Response<Location<A>, S> {
+    fn parse(&self, s: S) -> Response<A, S> {
         let Self(p, _) = self;
-        let start = s.position();
-
         match p.parse(s) {
-            Success(value, ns, c) => {
-                let end = ns.position();
-                let l = Location { start, end, value };
-
-                Success(l, ns, c)
-            }
-            Reject(s, c) => Reject(s, c),
+            Success(v, s, c) => Success(v, s, c),
+            Reject(s, _) => Reject(s, false),
         }
     }
 }
 
-pub fn locate<P, A>(p: P) -> Located<P, A>
+pub fn a_try<P, A, S>(p: P) -> impl Parse<A, S> + Combine<A> + Clone
 where
-    P: Combine<A>,
+    A: Clone,
+    S: Stream,
+    P: Parse<A, S> + Combine<A> + Clone,
 {
-    Located(p, PhantomData)
+    ATry(p, PhantomData)
 }

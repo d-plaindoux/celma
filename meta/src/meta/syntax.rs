@@ -16,19 +16,21 @@
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ASTParsec {
+    PIdent(String),
+    PChar(char),
+    PString(String),
+    PBind(String, Box<ASTParsec>),
+    PCode(String),
+    PMap(Box<ASTParsec>, String),
     PSequence(Box<ASTParsec>, Box<ASTParsec>),
     PChoice(Box<ASTParsec>, Box<ASTParsec>),
     POptional(Box<ASTParsec>),
     PRepeat(bool, Box<ASTParsec>),
-    PBind(String, Box<ASTParsec>),
-    PCode(String),
-    PMap(Box<ASTParsec>, String),
-    PIdent(String)
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ASTParsecRule {
     pub name: String,
-    pub codomain: String,
+    pub returns: String,
     pub body: Box<ASTParsec>,
 }

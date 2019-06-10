@@ -19,7 +19,7 @@ mod tests_and {
     use celma_core::parser::parser::Parse;
     use celma_core::parser::response::Response::Success;
     use celma_core::stream::char_stream::CharStream;
-    use celma_lang::meta::parser::{celma_parsec};
+    use celma_lang::meta::parser::celma_parsec;
     use celma_lang::meta::syntax::ASTParsec::{
         PBind, PChoice, PCode, PMap, POptional, PRepeat, PSequence,
     };

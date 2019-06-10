@@ -15,8 +15,9 @@
 */
 
 use celma_core::parser::and::{AndOperation, AndProjection};
+use celma_core::parser::bind::BindOperation;
 use celma_core::parser::char::{char, char_in_range, char_in_set, not_char};
-use celma_core::parser::core::{eos, parser, returns, fail};
+use celma_core::parser::core::{eos, fail, parser, returns};
 use celma_core::parser::fmap::FMapOperation;
 use celma_core::parser::lazy::lazy;
 use celma_core::parser::literal::string;
@@ -26,9 +27,11 @@ use celma_core::parser::parser::{Combine, Parse};
 use celma_core::parser::repeat::RepeatOperation;
 use celma_core::stream::stream::Stream;
 
+use crate::meta::syntax::ASTParsec::{
+    PBind, PChar, PChoice, PCode, PIdent, PMap, POptional, PRepeat, PSequence, PString,
+};
 use crate::meta::syntax::{ASTParsec, ASTParsecRule};
-use crate::meta::syntax::ASTParsec::{PBind, PChoice, PCode, PMap, POptional, PRepeat, PSequence};
-use celma_core::parser::bind::BindOperation;
+use celma_core::parser::a_try::a_try;
 
 // -------------------------------------------------------------------------------------------------
 // Grammar - Parser using Celma ^_^
@@ -40,15 +43,15 @@ use celma_core::parser::bind::BindOperation;
 // occurrence   ::= ("*" | "+" | "?")
 // additional   ::= "|"? parser
 // transform    ::= "=>" '{' rust_code '}'
-// atom         ::= '(' parser ')' | CHAR | STRING | NUMBER | IDENT | '{' rust_code '}'//
+// atom         ::= '(' parser ')' | CHAR | STRING | IDENT | '{' rust_code '}'//
 // -------------------------------------------------------------------------------------------------
 // Note: Syn should be better but this done for dog-fooding purpose)
 // -------------------------------------------------------------------------------------------------
 
 #[inline]
 fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     char_in_set(vec!['\n', '\r', '\t', ' '])
         .opt_rep()
@@ -57,26 +60,49 @@ fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + Clone + 'a
 
 #[inline]
 fn ident<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
-    (char_in_range('A'..'Z').or(char_in_range('a'..'z'))).rep()
+    (char_in_range('A'..'Z')
+        .or(char_in_range('a'..'z'))
+        .or(char('_')))
+    .rep()
+    .fmap(|v| v.into_iter().collect())
+    .bind(|s| {
+        if s != String::from("let") {
+            parser(returns(s))
+        } else {
+            parser(fail(false))
+        }
+    })
+}
+
+#[inline]
+fn delimited_char<'a, S: 'a>() -> impl Parse<char, S> + Combine<char> + Clone + 'a
+where
+    S: Stream<Item = char>,
+{
+    char('\'').and_right(not_char('\'')).and_left(char('\''))
+}
+
+#[inline]
+fn delimited_string<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
+where
+    S: Stream<Item = char>,
+{
+    char('"')
+        .and_right(not_char('"').opt_rep())
+        .and_left(char('"'))
         .fmap(|v| v.into_iter().collect())
-        .bind(|s|
-            if s != String::from("let") {
-                parser(returns(s))
-            } else {
-                parser(fail(false))
-            }
-        )
 }
 
 // -------------------------------------------------------------------------------------------------
 
 #[inline]
-fn parsec_rules<'a, S: 'a>() -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<ASTParsecRule>> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+fn parsec_rules<'a, S: 'a>(
+) -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<ASTParsecRule>> + Clone + 'a
+where
+    S: Stream<Item = char>,
 {
     string("let")
         .and_left(skip())
@@ -90,9 +116,11 @@ fn parsec_rules<'a, S: 'a>() -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<
         .and_left(skip())
         .and(parsec())
         .and_left(skip())
-        .fmap(|((n, c), b): ((String, String), ASTParsec)|
-            ASTParsecRule { name: n, codomain: c, body: Box::new(b) }
-        )
+        .fmap(|((n, c), b): ((String, String), ASTParsec)| ASTParsecRule {
+            name: n,
+            returns: c,
+            body: Box::new(b),
+        })
         .rep()
 }
 
@@ -100,10 +128,10 @@ fn parsec_rules<'a, S: 'a>() -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<
 
 #[inline]
 fn parsec<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
-    binding()
+    a_try(binding())
         .opt()
         .and_left(skip())
         .and(atom())
@@ -155,27 +183,24 @@ fn parsec<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone 
 
 #[inline]
 fn binding<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
-    ident()
-        .and_left(skip())
-        .and_left(char('='))
-
+    ident().and_left(skip()).and_left(char('='))
 }
-
 
 #[inline]
 fn occurrence<'a, S: 'a>() -> impl Parse<char, S> + Combine<char> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     char_in_set(vec!['+', '?', '*'])
 }
 
-fn additional<'a, S: 'a>() -> impl Parse<(bool, ASTParsec), S> + Combine<(bool, ASTParsec)> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+fn additional<'a, S: 'a>(
+) -> impl Parse<(bool, ASTParsec), S> + Combine<(bool, ASTParsec)> + Clone + 'a
+where
+    S: Stream<Item = char>,
 {
     char('|')
         .opt()
@@ -186,8 +211,8 @@ fn additional<'a, S: 'a>() -> impl Parse<(bool, ASTParsec), S> + Combine<(bool, 
 
 #[inline]
 fn atom<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     char('(')
         .and_left(skip())
@@ -195,19 +220,22 @@ fn atom<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 
         .and_left(skip())
         .and_left(char(')'))
         .or(code().fmap(PCode))
+        .or(delimited_char().fmap(PChar))
+        .or(delimited_string().fmap(PString))
+        .or(ident().fmap(PIdent))
 }
 
 #[inline]
 fn transform<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     string("=>").and(skip()).left().and(lazy(code)).right()
 }
 
 fn code<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     char('{')
         .and_right(not_char('}').opt_rep())
@@ -218,15 +246,19 @@ fn code<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
 // -------------------------------------------------------------------------------------------------
 
 pub fn celma_parsec<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     skip().and_right(parsec()).and_left(skip()).and_left(eos())
 }
 
-pub fn celma_parsec_rules<'a, S: 'a>() -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<ASTParsecRule>> + Clone + 'a
-    where
-        S: Stream<Item=char>,
+pub fn celma_parsec_rules<'a, S: 'a>(
+) -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<ASTParsecRule>> + Clone + 'a
+where
+    S: Stream<Item = char>,
 {
-    skip().and_right(parsec_rules()).and_left(skip()).and_left(eos())
+    skip()
+        .and_right(parsec_rules())
+        .and_left(skip())
+        .and_left(eos())
 }

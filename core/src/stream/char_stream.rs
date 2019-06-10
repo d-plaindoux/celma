@@ -41,7 +41,7 @@ impl<'a> Stream for CharStream<'a> {
 
         if option.is_some() {
             let (line, char) = if option.unwrap() == '\n' {
-                (self.1 + 1, self.2)
+                (self.1 + 1, 0)
             } else {
                 (self.1, self.2 + 1)
             };
