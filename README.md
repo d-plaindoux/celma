@@ -15,7 +15,7 @@ Genealization is the capability to design parser based on pipelined parsers and 
 ## Grammar
 In order to have a seamless parser definition two dedicated `proc_macro` are designed.
 
-```
+```rust
 parsec_rules = ("let" ident ':' '{' rust_code '}' "=" parsec)+
 parsec       = binding? atom occurrence? additional? transform?
 binding      = ident '='
@@ -30,7 +30,7 @@ ident        = [a..zA..Z]+ - {"let"}
 
 Therefore a parser can be defined using this meta-language.
 
-```
+```rust
 let DQUOTE = char('"');
 let NOT_DQUOTE = not_char('"');
 let parser = parsec!( {DQUOTE} s={NOT_DQUOTE}* {DQUOTE} => { TkString(s) } );
@@ -38,7 +38,7 @@ let parser = parsec!( {DQUOTE} s={NOT_DQUOTE}* {DQUOTE} => { TkString(s) } );
 
 ## A Full Example: JSON
 
-```
+```rust
 //
 // Predefined Parsers
 //
