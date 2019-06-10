@@ -16,14 +16,14 @@ Genealization is the capability to design parser based on pipelined parsers and 
 In order to have a seamless parser definition two dedicated `proc_macro` are designed.
 
 ```
-parsec_rules ::= ("let" ident ':' '{' rust_code '}' "::=" parsec)+
-parsec       ::= binding? atom occurrence? additional? transform?
-binding      ::= ident '='
-occurrence   ::= ("*" | "+" | "?")
-additional   ::= "|"? parser
-transform    ::= "=>" '{' rust_code '}'
-atom         ::= '(' parser ')' | CHAR | STRING | NUMBER | ident | '{' rust_code '}'
-ident        ::= [a..zA..Z]+ - {"let"}
+parsec_rules = ("let" ident ':' '{' rust_code '}' "=" parsec)+
+parsec       = binding? atom occurrence? additional? transform?
+binding      = ident '='
+occurrence   = ("*" | "+" | "?")
+additional   = "|"? parser
+transform    = "=>" '{' rust_code '}'
+atom         = '(' parser ')' | CHAR | STRING | NUMBER | ident | '{' rust_code '}'
+ident        = [a..zA..Z]+ - {"let"}
 ```
 
 ##  Using the meta language
@@ -51,13 +51,13 @@ let NUMBER = number();
 //
 
 parsec_rules!(
- let json:{JSon}    ::= number|string|null|boolean|array|object|attribute
- let string:{JSon}  ::= s={STRING}                       => { TKString(s) }
- let number:{JSon}  ::= n={NUMBER}                       => { TKNumber(n) }
- let null:{JSon}    ::= "null"                           => { TKNull      }
- let boolean:{JSon} ::= b=("true"|"false")               => { TKBool(b)   }
- let array:{JSon}   ::= '[' s=json* ']'                  => { TkArray(s)  }
- let object:{JSon}  ::= '{' s=(_=STRING ":" _=json)* '}' => { TkObject(s) }
+ let json:{JSon}    = number|string|null|boolean|array|object|attribute
+ let string:{JSon}  = s={STRING}                       => { TKString(s) }
+ let number:{JSon}  = n={NUMBER}                       => { TKNumber(n) }
+ let null:{JSon}    = "null"                           => { TKNull      }
+ let boolean:{JSon} = b=("true"|"false")               => { TKBool(b)   }
+ let array:{JSon}   = '[' s=json* ']'                  => { TkArray(s)  }
+ let object:{JSon}  = '{' s=(_=STRING ":" _=json)* '}' => { TkObject(s) }
 )
 ```
 

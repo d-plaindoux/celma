@@ -20,15 +20,13 @@ use celma_plugin::parsec_rules;
 
 fn main() {
     parsec_rules!(
-        let skip                              ::= (' '|'\r'|'\n'|'\t')*
-        let parsec_rules:{Vec<ASTParserRule>} ::= _=parsec_rule+
-        let parsec_rule:{ASTParserRule}       ::= "let" n=ident ':' '{' t=rust_code '}' "::=" p=parsec => { ASTParserRule(n,c,p) }
-        let parsec:{ASTParser}                ::= binding? atom occurrence? additional? transform?
-        let binding:{String}                  ::= _=ident '='
-        let occurrence:{char}                 ::= ('*' | '+' | '?')
-        let additional:{(bool,ASTParser)}     ::= _=(c=("|"?) => { c.is_empty() }) _=parser
-        let transform:{String}                ::= "=>" '{' _=rust_code '}'
-        let atom:{ASTParser}                  ::= ('(' _=parser ')') | _=CHAR | _=STRING | _=NUMBER | _=ident | ('{' _=rust_code '}')
-        let ident:{String}                    ::= _=[a..z_A..Z]+ - {"let"}
+        let parsec_rules:{Vec<ASTParserRule>} = _=parsec_rule+
+        let parsec_rule:{ASTParserRule}       = "let" n=ident ':' '{' t=rust_code '}' "::=" p=parsec => { ASTParserRule(n,c,p) }
+        let parsec:{ASTParser}                = binding? atom occurrence? additional? transform?
+        let binding:{String}                  = _=ident '='
+        let occurrence:{char}                 = ('*' | '+' | '?')
+        let additional:{(bool,ASTParser)}     = (c=("|"?) => { c.is_empty() }) _=parser
+        let transform:{String}                = "=>" '{' _=rust_code '}'
+        let atom:{ASTParser}                  = ('(' _=parser ')') | _=CHAR | _=STRING | _=ident | ('{' _=rust_code '}')
     );
 }

@@ -112,7 +112,7 @@ where
         .and_left(skip())
         .and(code())
         .and_left(skip())
-        .and_left(string("::="))
+        .and_left(string("="))
         .and_left(skip())
         .and(parsec())
         .and_left(skip())

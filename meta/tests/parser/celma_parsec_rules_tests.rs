@@ -25,7 +25,7 @@ mod tests_and {
 
     #[test]
     fn it_parse_one_char_rule() {
-        let response = celma_parsec_rules().parse(CharStream::new("let a:{char} ::= {char('a')}"));
+        let response = celma_parsec_rules().parse(CharStream::new("let a:{char} = {char('a')}"));
 
         match response {
             Success(ast, _, _) => assert_eq!(
@@ -43,7 +43,7 @@ mod tests_and {
     #[test]
     fn it_parse_two_char_rules() {
         let response = celma_parsec_rules().parse(CharStream::new(
-            "let a:{char} ::= {char('a')} let b:{char} ::= {char('b')}",
+            "let a:{char} = {char('a')} let b:{char} = {char('b')}",
         ));
 
         match response {
@@ -69,7 +69,7 @@ mod tests_and {
     #[test]
     fn it_parse_two_complexe_rules() {
         let response = celma_parsec_rules().parse(CharStream::new(
-            "let a:{char} ::= 'a'|{char('b')} let b:{char} ::= {char('c')}",
+            "let a:{char} = 'a'|{char('b')} let b:{char} = {char('c')}",
         ));
 
         match response {
@@ -95,18 +95,40 @@ mod tests_and {
         };
     }
 
+
+
     #[test]
     fn it_parse_celma_rules() {
         let response = celma_parsec_rules().parse(CharStream::new(
             r#"
-        let parsec_rules:{Vec<ASTParserRule>} ::= _=parsec_rule+
-        let parsec_rule:{ASTParserRule}       ::= "let" n=ident ':' '{' t=rust_code '}' "::=" p=parsec => { ASTParserRule(n,c,p) }
-        let parsec:{ASTParser}                ::= binding? atom occurrence? additional? transform?
-        let binding:{String}                  ::= _=ident '='
-        let occurrence:{char}                 ::= ('*' | '+' | '?')
-        let additional:{(bool,ASTParser)}     ::= (c=("|"?) => { c.is_empty() }) _=parser
-        let transform:{String}                ::= "=>" '{' _=rust_code '}'
-        let atom:{ASTParser}                  ::= ('(' _=parser ')') | _=CHAR | _=STRING | _=ident | ('{' _=rust_code '}')
+        let parsec_rules:{Vec<ASTParserRule>} = _=parsec_rule+
+        let parsec_rule:{ASTParserRule}       = "let" n=ident ':' '{' t=rust_code '}' "=" p=parsec => { ASTParserRule(n,c,p) }
+        let parsec:{ASTParser}                = binding? atom occurrence? additional? transform?
+        let binding:{String}                  = _=ident '='
+        let occurrence:{char}                 = ('*' | '+' | '?')
+        let additional:{(bool,ASTParser)}     = (c=("|"?) => { c.is_empty() }) _=parser
+        let transform:{String}                = "=>" '{' _=rust_code '}'
+        let atom:{ASTParser}                  = ('(' _=parser ')') | _=CHAR | _=STRING | _=ident | ('{' _=rust_code '}')
+            "#
+        ));
+
+        match response {
+            Success(_, _, _) => assert_eq!(true, true),
+            Reject(_, _) => assert_eq!(true, false),
+        };
+    }
+
+    #[test]
+    fn it_parse_json() {
+        let response = celma_parsec_rules().parse(CharStream::new(
+            r#"
+        let json:{JSon}    = number|string|null|boolean|array|object|attribute
+        let string:{JSon}  = s={STRING}                       => { TKString(s) }
+        let number:{JSon}  = n={NUMBER}                       => { TKNumber(n) }
+        let null:{JSon}    = "null"                           => { TKNull      }
+        let boolean:{JSon} = b=("true"|"false")               => { TKBool(b)   }
+        let array:{JSon}   = '[' s=json* ']'                  => { TkArray(s)  }
+        let object:{JSon}  = '{' s=(_=STRING ":" _=json)* '}' => { TkObject(s) }
             "#
         ));
 

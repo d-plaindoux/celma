@@ -6,3 +6,5 @@ edition = "2018"
 
 [dependencies]
 celma_core = { version = "0.1.0", path = "../core" }
+quote = "0.6.12"
+
