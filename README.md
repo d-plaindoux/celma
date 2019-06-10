@@ -52,12 +52,12 @@ let NUMBER    = number();
 
 parsec_rules!(
  let json:{JSon}    ::= number|string|null|boolean|array|object|attribute
- let string:{JSon}  ::= s={STRING}                   => { TKString(s) }
- let number:{JSon}  ::= n={NUMBER}                   => { TKNumber(n) }
- let null:{JSon}    ::= "null"                       => { TKNull      }
- let boolean:{JSon} ::= b=("true"|"false")           => { TKBool(b)   }
- let array:{JSon}   ::= '[' s=json* ']'              => { TkArray(s)  }
- let object:{JSon}  ::= '{' s=(STRING ":" json)* '}' => { TkObject(s) }
+ let string:{JSon}  ::= s={STRING}                       => { TKString(s) }
+ let number:{JSon}  ::= n={NUMBER}                       => { TKNumber(n) }
+ let null:{JSon}    ::= "null"                           => { TKNull      }
+ let boolean:{JSon} ::= b=("true"|"false")               => { TKBool(b)   }
+ let array:{JSon}   ::= '[' s=json* ']'                  => { TkArray(s)  }
+ let object:{JSon}  ::= '{' s=(_=STRING ":" _=json)* '}' => { TkObject(s) }
 )
 ```
 
