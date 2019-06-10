@@ -61,7 +61,7 @@ parsec_rules!(
 )
 ```
 
-## Bootstrap sketch
+## Bootstrap scenario
 
 ### Stage 1
 
