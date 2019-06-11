@@ -16,9 +16,8 @@
 
 #![feature(proc_macro_hygiene)]
 
-use celma_plugin::parsec_rules;
-
 fn main() {
+    /*
     parsec_rules!(
         let parsec_rules:{Vec<ASTParserRule>} = _=parsec_rule+
         let parsec_rule:{ASTParserRule}       = "let" n=ident ':' '{' t=rust_code '}' "::=" p=parsec => { ASTParserRule(n,c,p) }
@@ -27,6 +26,7 @@ fn main() {
         let occurrence:{char}                 = ('*' | '+' | '?')
         let additional:{(bool,ASTParser)}     = (c=("|"?) => { c.is_empty() }) _=parser
         let transform:{String}                = "=>" '{' _=rust_code '}'
-        let atom:{ASTParser}                  = ('(' _=parser ')') | _=CHAR | _=STRING | _=ident | ('{' _=rust_code '}')
+        let atom:{ASTParser}                  = ('(' _=parsec ')') | _=CHAR | _=STRING | _=ident | ('{' _=rust_code '}')
     );
+    */
 }

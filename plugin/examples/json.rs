@@ -16,9 +16,8 @@
 
 #![feature(proc_macro_hygiene)]
 
-use celma_plugin::parsec_rules;
-
 fn main() {
+    /*
     parsec_rules!(
         let json:{JSon}    = number|string|null|boolean|array|object|attribute
         let string:{JSon}  = s={STRING}                       => { TKString(s) }
@@ -28,4 +27,5 @@ fn main() {
         let array:{JSon}   = '[' s=json* ']'                  => { TkArray(s)  }
         let object:{JSon}  = '{' s=(_=STRING ":" _=json)* '}' => { TkObject(s) }
     );
+    */
 }

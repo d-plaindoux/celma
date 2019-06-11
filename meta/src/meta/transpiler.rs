@@ -31,7 +31,17 @@ pub trait Transpile<E> {
 
 impl Transpile<TokenStream> for Vec<ASTParsecRule> {
     fn transpile(&self) -> TokenStream {
-        self.iter().map(|a| a.transpile()).collect()
+        let parsers: TokenStream = self.iter().map(|a| a.transpile()).collect();
+
+        quote!(
+            use celma_core::parser::and::AndOperation;
+            use celma_core::parser::fmap::FMapOperation;
+            use celma_core::parser::or::OrOperation;
+            use celma_core::parser::parser::Parse;
+            use celma_core::parser::repeat::RepeatOperation;
+
+            #parsers
+        )
     }
 }
 
@@ -48,8 +58,8 @@ impl Transpile<TokenStream> for ASTParsecRule {
         let (_, body) = body.transpile();
 
         quote!(
-            fn #name<'a,S:'a>() -> imp Parse<#returns,S> + Combine<#returns> + 'a
-                where S:Stream<Item=char>
+            fn #name<'a,S:'a>() -> impl celma_core::parser::parser::Parse<#returns,S> + celma_core::parser::parser::Combine<#returns> + Clone + 'a
+                where S:celma_core::stream::stream::Stream<Item=char>,
             {
                 #body
             }
@@ -63,17 +73,24 @@ impl Transpile<(Option<String>, TokenStream)> for ASTParsec {
             PBind(n, p) => (Some(n.clone()), p.transpile().1),
             PIdent(n) => {
                 let n = syn::Ident::new(n, Span::call_site());
-                (None, quote!(lazy(|| #n())))
+                (None, quote!(celma_core::parser::lazy::lazy(|| #n())))
             }
-            PChar(c) => (None, quote!(char(#c))),
-            PString(s) => (None, quote!(string(#s))),
+            PChar(c) => (None, quote!(celma_core::parser::char::char(#c))),
+            PString(s) => (None, quote!(celma_core::parser::literal::string(#s))),
             PCode(c) => {
                 let c = syn::parse_str::<TokenStream>(c.as_str()).unwrap();
                 (None, quote!(#c))
             }
             PMap(p, c) => {
                 let (pp, pt) = p.transpile();
-                (None, quote!(#pt.fmap({{ | #pp | #c }})))
+                let c = syn::parse_str::<TokenStream>(c.as_str()).unwrap();
+
+                if pp.is_none() {
+                    (None, quote!(#pt.fmap({{ |_| #c }})))
+                } else {
+                    let pp = syn::parse_str::<TokenStream>(pp.unwrap().as_str()).unwrap();
+                    (None, quote!(#pt.fmap({{ | #pp | #c }})))
+                }
             }
             PSequence(l, r) => {
                 let (lp, lt) = l.transpile();

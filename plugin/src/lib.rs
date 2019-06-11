@@ -45,12 +45,12 @@ pub fn parsec(input: TokenStream) -> TokenStream {
 #[proc_macro]
 pub fn parsec_rules(input: TokenStream) -> TokenStream {
     let source = input.to_string();
-    let result = celma_parsec_rules().parse(CharStream::new(source.as_str()));
+    let result = celma_parsec_rules()
+        .parse(CharStream::new(source.as_str()))
+        .fmap(|ast| ast.transpile());
 
     match result {
-        Success(_, _, _) => (),
+        Success(code, _, _) => code.into(),
         Reject(s, _) => panic!(format!("Error at {:?}", s.position())),
     }
-
-    quote!(celma_core::parser::core::eos()).into()
 }
