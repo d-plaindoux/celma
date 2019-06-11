@@ -38,28 +38,29 @@ mod tests_and {
                 quote!(
                     use celma_core::parser::and::AndOperation;
                     use celma_core::parser::fmap::FMapOperation;
+                    use celma_core::parser::option::OptionalOperation;
                     use celma_core::parser::or::OrOperation;
                     use celma_core::parser::parser::Parse;
                     use celma_core::parser::repeat::RepeatOperation;
 
-                    fn a<'a, S: 'a>() -> impl celma_core::parser::parser::Parse<Vec<char>, S>
+                    pub fn a<'a, S: 'a>() -> impl celma_core::parser::parser::Parse<Vec<char>,S>
                                              + celma_core::parser::parser::Combine<Vec<char> >
                                              + Clone
                                              + 'a
                     where
                         S: celma_core::stream::stream::Stream<Item = char>,
                     {
-                        celma_core::parser::lazy::lazy(|| b())
+                        celma_core::parser::core::parser(celma_core::parser::lazy::lazy(|| b()))
                     }
 
-                    fn b<'a, S: 'a>() -> impl celma_core::parser::parser::Parse<Vec<char>, S>
+                    pub fn b<'a, S: 'a>() -> impl celma_core::parser::parser::Parse<Vec<char>,S>
                                              + celma_core::parser::parser::Combine<Vec<char> >
                                              + Clone
                                              + 'a
                     where
                         S: celma_core::stream::stream::Stream<Item = char>,
                     {
-                        celma_core::parser::char::char('b').rep()
+                        celma_core::parser::core::parser(celma_core::parser::char::char('b').rep())
                     }
                 )
                 .to_string()

@@ -18,15 +18,15 @@ use crate::stream::stream::Stream;
 use crate::stream::stream::{Len, Position};
 
 #[derive(Clone)]
-pub struct CharStream<'a>(&'a str, usize, usize);
+pub struct SkipStream<'a>(&'a str, usize, usize);
 
-impl<'a> CharStream<'a> {
-    pub fn new(s: &'a str) -> CharStream<'a> {
-        CharStream(s, 1, 0)
+impl<'a> SkipStream<'a> {
+    pub fn new(s: &'a str) -> SkipStream<'a> {
+        SkipStream(s, 1, 0)
     }
 }
 
-impl<'a> Stream for CharStream<'a> {
+impl<'a> Stream for SkipStream<'a> {
     type Item = char;
 
     fn position(&self) -> Position {
@@ -46,17 +46,21 @@ impl<'a> Stream for CharStream<'a> {
                 (self.1, self.2 + 1)
             };
 
-            (
-                option,
-                CharStream(self.0.get(1..self.0.len()).unwrap_or(""), line, char),
-            )
+            if vec!(' ','\t','\r','\n').contains(&option.unwrap()) {
+                SkipStream(self.0.get(1..self.0.len()).unwrap_or(""), line, char).next()
+            } else {
+                (
+                    option,
+                    SkipStream(self.0.get(1..self.0.len()).unwrap_or(""), line, char),
+                )
+            }
         } else {
-            (None, CharStream(self.0, self.1, self.2))
+            (None, SkipStream(self.0, self.1, self.2))
         }
     }
 }
 
-impl<'a> Len for CharStream<'a> {
+impl<'a> Len for SkipStream<'a> {
     fn len(&self) -> usize {
         self.0.len()
     }

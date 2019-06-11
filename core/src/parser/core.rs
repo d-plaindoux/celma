@@ -27,7 +27,9 @@ use crate::stream::stream::Stream;
 
 // -------------------------------------------------------------------------------------------------
 
-pub fn any<I>() -> Satisfy<impl Fn(&I) -> bool, I> {
+pub fn any<I, S>() -> impl Parse<I, S> + Combine<I> + Clone
+    where S: Stream<Item=I>, I: Clone
+{
     Satisfy::new(|_| true)
 }
 
@@ -35,15 +37,15 @@ pub fn any<I>() -> Satisfy<impl Fn(&I) -> bool, I> {
 
 #[derive(Copy, Clone)]
 pub struct Returns<A>(A)
-where
-    A: Clone;
+    where
+        A: Clone;
 
 impl<A> Combine<A> for Returns<A> where A: Clone {}
 
 impl<A, S> Parse<A, S> for Returns<A>
-where
-    A: Clone,
-    S: Stream,
+    where
+        A: Clone,
+        S: Stream,
 {
     fn parse(&self, s: S) -> Response<A, S> {
         let Self(v) = self;
@@ -53,8 +55,8 @@ where
 }
 
 pub fn returns<A>(v: A) -> Returns<A>
-where
-    A: Clone,
+    where
+        A: Clone,
 {
     Returns(v)
 }
@@ -67,8 +69,8 @@ pub struct Fail<A>(bool, PhantomData<A>);
 impl<A> Combine<A> for Fail<A> {}
 
 impl<A, S> Parse<A, S> for Fail<A>
-where
-    S: Stream,
+    where
+        S: Stream,
 {
     fn parse(&self, s: S) -> Response<A, S> {
         Reject(s, self.0)
@@ -87,8 +89,8 @@ pub struct Eos;
 impl Combine<()> for Eos {}
 
 impl<S> Parse<(), S> for Eos
-where
-    S: Stream,
+    where
+        S: Stream,
 {
     fn parse(&self, s: S) -> Response<(), S> {
         match s.next().0 {
@@ -106,14 +108,14 @@ pub fn eos() -> Eos {
 
 #[derive(Clone)]
 pub struct Parser<'a, A, S>(Rc<dyn Parse<A, S> + 'a>)
-where
-    S: Stream;
+    where
+        S: Stream;
 
 impl<'a, A, S> Combine<A> for Parser<'a, A, S> where S: Stream {}
 
 impl<'a, A, S> Parse<A, S> for Parser<'a, A, S>
-where
-    S: Stream,
+    where
+        S: Stream,
 {
     fn parse(&self, s: S) -> Response<A, S> {
         let Self(p) = self;
@@ -123,9 +125,9 @@ where
 }
 
 pub fn parser<'a, P, A, S>(p: P) -> Parser<'a, A, S>
-where
-    P: Parse<A, S> + 'a,
-    S: Stream,
+    where
+        P: Parse<A, S> + 'a,
+        S: Stream,
 {
     Parser(Rc::new(p))
 }

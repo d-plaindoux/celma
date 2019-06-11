@@ -36,6 +36,7 @@ impl Transpile<TokenStream> for Vec<ASTParsecRule> {
         quote!(
             use celma_core::parser::and::AndOperation;
             use celma_core::parser::fmap::FMapOperation;
+            use celma_core::parser::option::OptionalOperation;
             use celma_core::parser::or::OrOperation;
             use celma_core::parser::parser::Parse;
             use celma_core::parser::repeat::RepeatOperation;
@@ -58,10 +59,10 @@ impl Transpile<TokenStream> for ASTParsecRule {
         let (_, body) = body.transpile();
 
         quote!(
-            fn #name<'a,S:'a>() -> impl celma_core::parser::parser::Parse<#returns,S> + celma_core::parser::parser::Combine<#returns> + Clone + 'a
+            pub fn #name<'a,S:'a>() -> impl celma_core::parser::parser::Parse<#returns,S> + celma_core::parser::parser::Combine<#returns> + Clone + 'a
                 where S:celma_core::stream::stream::Stream<Item=char>,
             {
-                #body
+                celma_core::parser::core::parser(#body)
             }
         )
     }
@@ -79,17 +80,17 @@ impl Transpile<(Option<String>, TokenStream)> for ASTParsec {
             PString(s) => (None, quote!(celma_core::parser::literal::string(#s))),
             PCode(c) => {
                 let c = syn::parse_str::<TokenStream>(c.as_str()).unwrap();
-                (None, quote!(#c))
+                (None, quote!(celma_core::parser::lazy::lazy(|| #c)))
             }
             PMap(p, c) => {
                 let (pp, pt) = p.transpile();
                 let c = syn::parse_str::<TokenStream>(c.as_str()).unwrap();
 
                 if pp.is_none() {
-                    (None, quote!(#pt.fmap({{ |_| #c }})))
+                    (None, quote!(#pt.fmap(|_|{ #c })))
                 } else {
                     let pp = syn::parse_str::<TokenStream>(pp.unwrap().as_str()).unwrap();
-                    (None, quote!(#pt.fmap({{ | #pp | #c }})))
+                    (None, quote!(#pt.fmap(|#pp|{ #c })))
                 }
             }
             PSequence(l, r) => {

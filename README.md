@@ -37,26 +37,21 @@ let parser = parsec!( '"' s=^'"'* '"' => { TkString(s) } );
 ## A Full Example: JSON
 
 ```rust
-//
-// Predefined Parsers
-//
-
-let STRING = delimited_string();
-let NUMBER = number();
-
-//
-// Parsing rules
-//
-
 parsec_rules!(
- let json:{JSon}    = number|string|null|boolean|array|object|attribute
- let string:{JSon}  = s={STRING}                         => { TKString(s) }
- let number:{JSon}  = n={NUMBER}                         => { TKNumber(n) }
- let null:{JSon}    = "null"                             => { TKNull      }
- let boolean:{JSon} = b=("true"|"false")                 => { TKBool(b)   }
- let array:{JSon}   = '[' s=json* ']'                    => { TkArray(s)  }
- let object:{JSon}  = '{' s=(_={STRING} ":" _=json)* '}' => { TkObject(s) }
-)
+    let json:{()}    = number | string | null | boolean
+    let number:{()}  = _=NUMBER                          => { () }
+    let string:{()}  = _=STRING                          => { () }
+    let null:{()}    = "null"                            => { () }
+    let boolean:{()} = ("true"|"false")                  => { () }
+    let array:{()}   = ('[' (json (',' json)*)? ']')     => { () }
+    let object:{()}  = ('{' (attr (',' attr)*)? '}')     => { () }
+    let attr:{()}    = (STRING ":" json)                 => { () }
+
+    let STRING:{()}  = '"' ({not_char('"')}*) '"'        => { () }
+    let NUMBER:{()}  = (INT ('.' NAT)? (('E'|'e') INT)?) => { () }
+    let INT:{()}     = ('-'|'+')? _=NAT                  => { () }
+    let NAT:{()}     = (digit)+                          => { () }
+);
 ```
 
 ## Bootstrap scenario

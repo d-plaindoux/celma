@@ -20,6 +20,10 @@ mod tests_transpiler {
     use celma_core::parser::response::Response::Success;
     use celma_core::stream::char_stream::CharStream;
     use celma_plugin::parsec_rules;
+    use celma_core::parser::char::char;
+    use celma_core::parser::satisfy::Satisfy;
+    use celma_core::parser::parser::{Parse, Combine};
+    use celma_core::stream::stream::Stream;
 
 
     #[test]
@@ -81,6 +85,37 @@ mod tests_transpiler {
 
         match response {
             Success(v, _, _) => assert_eq!(v, false),
+            _ => assert_eq!(true, false),
+        }
+    }
+
+    #[test]
+    fn it_parse_1_true_and_reverse() {
+        // TODO(didier) Review the syntax in order to remove the uppermost parenthesis
+        parsec_rules!(
+            let ib:{(bool,u32)} = (a=('1' => { 1 }) ',' b=("true" => { true })) => { (b, a) }
+        );
+
+        let response = ib().and_left(eos())
+            .parse(CharStream::new("1,true"));
+
+        match response {
+            Success(v, _, _) => assert_eq!(v, (true,1)),
+            _ => assert_eq!(true, false),
+        }
+    }
+
+    #[test]
+    fn it_parse_with_recursive_parser() {
+        parsec_rules!(
+            let parens:{()} = ('(' parens ')')? => { () }
+        );
+
+        let response = parens().and_left(eos())
+            .parse(CharStream::new("((((((((()))))))))"));
+
+        match response {
+            Success(_, _, _) => assert_eq!(true, true),
             _ => assert_eq!(true, false),
         }
     }
