@@ -14,5 +14,5 @@
    limitations under the License.
 */
 
-pub mod parser;
-pub mod transpiler;
+pub mod celma_transpiler_rules_tests;
+pub mod celma_transpiler_tests;
