@@ -18,27 +18,29 @@
 extern crate bencher;
 
 use bencher::{Bencher, black_box};
-use celma_core::parser::char::{digit, not_char};
-use celma_core::parser::core::{eos};
+
+use celma_core::parser::char::{digit, not_char, char_in_set};
+use celma_core::parser::core::eos;
 use celma_core::parser::response::Response::{Reject, Success};
-use celma_core::stream::skip_stream::SkipStream;
+use celma_core::stream::char_stream::CharStream;
 use celma_core::stream::stream::Stream;
 use celma_plugin::parsec_rules;
 
 parsec_rules!(
-    let json:{()}    = string | null | boolean | array | object | number
-    let number:{()}  = _=NUMBER                          => { () }
-    let string:{()}  = _=STRING                          => { () }
-    let null:{()}    = "null"                            => { () }
-    let boolean:{()} = ("true"|"false")                  => { () }
-    let array:{()}   = '[' (json (',' json)*)? ']'       => { () }
-    let object:{()}  = '{' (attr (',' attr)*)? '}'       => { () }
-    let attr:{()}    = (STRING ":" json)                 => { () }
+    let json:{()}    = S (string | null | boolean | array | object | number) S
+    let number:{()}  = _=NUMBER                                 => { () }
+    let string:{()}  = _=STRING                                 => { () }
+    let null:{()}    = "null"                                   => { () }
+    let boolean:{()} = ("true"|"false")                         => { () }
+    let array:{()}   = '[' S (json (S ',' S json)*)? S ']'      => { () }
+    let object:{()}  = '{' S (attr (S ',' S attr)*)? S '}'      => { () }
+    let attr:{()}    = (STRING S ":" S json)                    => { () }
 
-    let STRING:{()}  = '"' {not_char('"')}* '"'          => { () }
-    let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?   => { () }
-    let INT:{()}     = ('-'|'+')? _=NAT                  => { () }
-    let NAT:{()}     = (digit)+                          => { () }
+    let STRING:{()}  = '"' {not_char('"')}* '"'                 => { () }
+    let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?          => { () }
+    let INT:{()}     = ('-'|'+')? _=NAT                         => { () }
+    let NAT:{()}     = (digit)+                                 => { () }
+    let S:{()}       = {char_in_set(vec!(' ','\t','\r','\n'))}* => {()}
 );
 
 // -------------------------------------------------------------------------------------------------
@@ -83,7 +85,7 @@ fn parse(b: &mut Bencher, buffer: &str)
         let buffer = black_box(buffer);
 
         let response = json().and_left(eos())
-            .parse(SkipStream::new(buffer));
+            .parse(CharStream::new(buffer));
 
         match response {
             Success(_, _, _) => (),
