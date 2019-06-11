@@ -80,7 +80,7 @@ impl Transpile<(Option<String>, TokenStream)> for ASTParsec {
             PString(s) => (None, quote!(celma_core::parser::literal::string(#s))),
             PCode(c) => {
                 let c = syn::parse_str::<TokenStream>(c.as_str()).unwrap();
-                (None, quote!(celma_core::parser::lazy::lazy(|| #c)))
+                (None, quote!(#c))
             }
             PMap(p, c) => {
                 let (pp, pt) = p.transpile();
