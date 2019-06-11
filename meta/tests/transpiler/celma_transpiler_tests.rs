@@ -20,6 +20,8 @@ mod tests_and {
     use celma_core::parser::response::Response::Success;
     use celma_core::stream::char_stream::CharStream;
     use celma_lang::meta::parser::celma_parsec;
+    use celma_lang::meta::transpiler::Transpile;
+    use quote::quote;
 
     #[test]
     fn it_transpile_one_character() {
@@ -28,7 +30,7 @@ mod tests_and {
             .fmap(|ast| ast.transpile());
 
         match response {
-            Success((_, ast), _, _) => assert_eq!(ast, String::from("char('a')")),
+            Success((_, ast), _, _) => assert_eq!(ast.to_string(), quote!(char('a')).to_string()),
             _ => assert_eq!(true, false),
         };
     }
@@ -40,9 +42,10 @@ mod tests_and {
             .fmap(|ast| ast.transpile());
 
         match response {
-            Success((_, ast), _, _) => {
-                assert_eq!(ast, String::from("char('a').and_right(char('b'))"))
-            }
+            Success((_, ast), _, _) => assert_eq!(
+                ast.to_string(),
+                quote!(char('a').and_right(char('b'))).to_string()
+            ),
             _ => assert_eq!(true, false),
         };
     }
@@ -55,8 +58,11 @@ mod tests_and {
 
         match response {
             Success((params, ast), _, _) => {
-                assert_eq!(ast, String::from("char('a').and_left(char('b'))"));
-                assert_eq!(params, String::from("a"));
+                assert_eq!(
+                    ast.to_string(),
+                    quote!(char('a').and_left(char('b'))).to_string()
+                );
+                assert_eq!(params, Some(String::from("a")));
             }
             _ => assert_eq!(true, false),
         };
@@ -69,7 +75,7 @@ mod tests_and {
             .fmap(|ast| ast.transpile());
 
         match response {
-            Success((params, _), _, _) => assert_eq!(params, String::from("(a,b)")),
+            Success((params, _), _, _) => assert_eq!(params, Some(String::from("(a,b)"))),
             _ => assert_eq!(true, false),
         };
     }
@@ -83,10 +89,10 @@ mod tests_and {
         match response {
             Success((params, ast), _, _) => {
                 assert_eq!(
-                    ast,
-                    String::from("char('a').and(char('b').and_right(char('c')))")
+                    ast.to_string(),
+                    quote!(char('a').and(char('b').and_right(char('c')))).to_string()
                 );
-                assert_eq!(params, String::from("(a,c)"))
+                assert_eq!(params, Some(String::from("(a,c)")))
             }
             _ => assert_eq!(true, false),
         };
@@ -100,8 +106,11 @@ mod tests_and {
 
         match response {
             Success((params, ast), _, _) => {
-                assert_eq!(ast, String::from("char('a').and(char('b').and(char('c')))"));
-                assert_eq!(params, String::from("(a,(b,c))"))
+                assert_eq!(
+                    ast.to_string(),
+                    quote!(char('a').and(char('b').and(char('c')))).to_string()
+                );
+                assert_eq!(params, Some(String::from("(a,(b,c))")))
             }
             _ => assert_eq!(true, false),
         };
@@ -114,7 +123,9 @@ mod tests_and {
             .fmap(|ast| ast.transpile());
 
         match response {
-            Success((_, ast), _, _) => assert_eq!(ast, String::from("char('a').or(char('b'))")),
+            Success((_, ast), _, _) => {
+                assert_eq!(ast.to_string(), quote!(char('a').or(char('b'))).to_string())
+            }
             _ => assert_eq!(true, false),
         };
     }

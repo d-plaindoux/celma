@@ -14,5 +14,7 @@
    limitations under the License.
 */
 
+#![recursion_limit = "128"]
+
 pub mod parser;
 pub mod transpiler;

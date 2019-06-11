@@ -16,6 +16,8 @@
 
 #[cfg(test)]
 mod tests_and {
+    use quote::quote;
+
     use celma_core::parser::parser::Parse;
     use celma_core::parser::response::Response::Success;
     use celma_core::stream::char_stream::CharStream;
@@ -23,14 +25,33 @@ mod tests_and {
     use celma_lang::meta::transpiler::Transpile;
 
     #[test]
-    fn it_parse_one_char_rule() {
+    fn it_parse_two_char_rules() {
         let response = celma_parsec_rules()
-            .parse(CharStream::new("let a:{char} = {char('a')}"))
+            .parse(CharStream::new(
+                "let a:{Vec<char>} = b let b:{Vec<char>} = 'b'+",
+            ))
             .fmap(|ast| ast.transpile());
 
         match response {
-            Success(_, _, _) => assert_eq!(true, true), // TODO
+            Success(ast, _, _) => assert_eq!(
+                ast.to_string(),
+                quote!(
+                    fn a<'a,S:'a>() -> imp Parse<Vec<char>, S> + Combine< Vec<char> > + 'a
+                    where S : Stream<Item=char>
+                    {
+                        lazy(|| b())
+                    }
+
+                    fn b<'a,S:'a>() -> imp Parse<Vec<char>, S> + Combine< Vec<char> > + 'a
+                    where S : Stream<Item=char>
+                    {
+                        char('b').rep()
+                    }
+                )
+                .to_string()
+            ),
             _ => assert_eq!(true, false),
         };
     }
+
 }

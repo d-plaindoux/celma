@@ -25,6 +25,7 @@ use celma_core::parser::response::Response::{Reject, Success};
 use celma_core::stream::char_stream::CharStream;
 use celma_core::stream::stream::Stream;
 use celma_lang::meta::parser::{celma_parsec, celma_parsec_rules};
+use celma_lang::meta::transpiler::Transpile;
 
 #[proc_macro]
 pub fn parsec(input: TokenStream) -> TokenStream {

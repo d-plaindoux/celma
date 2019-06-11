@@ -16,6 +16,7 @@
 
 extern crate proc_macro;
 
+use proc_macro2::{Span, TokenStream};
 use quote::quote;
 
 use crate::meta::syntax::ASTParsec;
@@ -24,79 +25,87 @@ use crate::meta::syntax::ASTParsec::{
 };
 use crate::meta::syntax::ASTParsecRule;
 
-pub trait Transpile {
-    fn transpile(&self) -> String;
+pub trait Transpile<E> {
+    fn transpile(&self) -> E;
 }
 
-impl Transpile for Vec<ASTParsecRule> {
-    fn transpile(&self) -> String {
+impl Transpile<TokenStream> for Vec<ASTParsecRule> {
+    fn transpile(&self) -> TokenStream {
         self.iter().map(|a| a.transpile()).collect()
     }
 }
 
-impl ASTParsecRule {
-    pub fn transpile(&self) -> String {
+impl Transpile<TokenStream> for ASTParsecRule {
+    fn transpile(&self) -> TokenStream {
         let Self {
             name,
             returns,
             body,
         } = self;
-        let (_, body_t) = body.transpile();
+
+        let name = syn::Ident::new(name.as_str(), Span::call_site());
+        let returns = syn::parse_str::<TokenStream>(returns.as_str()).unwrap();
+        let (_, body) = body.transpile();
 
         quote!(
             fn #name<'a,S:'a>() -> imp Parse<#returns,S> + Combine<#returns> + 'a
                 where S:Stream<Item=char>
             {
-                #body_t
+                #body
             }
         )
-        .to_string()
     }
 }
 
-impl ASTParsec {
-    pub fn transpile(&self) -> (String, String) {
+impl Transpile<(Option<String>, TokenStream)> for ASTParsec {
+    fn transpile(&self) -> (Option<String>, TokenStream) {
         match self {
-            PBind(n, p) => (n.clone(), p.transpile().1),
-            PIdent(n) => (String::from(""), quote!(lazy(||#n())).to_string()),
-            PChar(c) => (String::from(""), format!("char('{}')", c)),
-            PString(_s) => (String::from(""), quote!(string("#_s")).to_string()),
-            PCode(c) => (String::from(""), c.clone()),
+            PBind(n, p) => (Some(n.clone()), p.transpile().1),
+            PIdent(n) => {
+                let n = syn::Ident::new(n, Span::call_site());
+                (None, quote!(lazy(|| #n())))
+            }
+            PChar(c) => (None, quote!(char(#c))),
+            PString(s) => (None, quote!(string(#s))),
+            PCode(c) => {
+                let c = syn::parse_str::<TokenStream>(c.as_str()).unwrap();
+                (None, quote!(#c))
+            }
             PMap(p, c) => {
                 let (pp, pt) = p.transpile();
-                (
-                    String::from(""),
-                    quote!(#pt.fmap({{ |#pp| #c }})).to_string(),
-                )
+                (None, quote!(#pt.fmap({{ | #pp | #c }})))
             }
             PSequence(l, r) => {
                 let (lp, lt) = l.transpile();
                 let (rp, rt) = r.transpile();
 
-                if lp.clone().is_empty() {
-                    (rp, format!("{}.and_right({})", lt, rt))
-                } else if rp.clone().is_empty() {
-                    (lp, format!("{}.and_left({})", lt, rt))
+                if lp.clone().is_none() {
+                    (rp, quote!(#lt.and_right(#rt)))
+                } else if rp.clone().is_none() {
+                    (lp, quote!(#lt.and_left(#rt)))
                 } else {
-                    (format!("({},{})", lp, rp), format!("{}.and({})", lt, rt))
+                    (
+                        Some(format!("({},{})", lp.unwrap(), rp.unwrap())),
+                        quote!(#lt.and(#rt)),
+                    )
                 }
             }
             PChoice(l, r) => {
                 let (_, lt) = l.transpile();
                 let (_, rt) = r.transpile();
 
-                (String::from(""), format!("{}.or({})", lt, rt))
+                (None, quote!(#lt.or(#rt)))
             }
             POptional(p) => {
                 let (_, pt) = p.transpile();
-                (String::from(""), format!("{}.opt()", pt))
+                (None, quote!(#pt.opt()))
             }
             PRepeat(b, p) => {
                 let (_, pt) = p.transpile();
                 if *b {
-                    (String::from(""), format!("{}.opt_rep()", pt))
+                    (None, quote!(#pt.opt_rep()))
                 } else {
-                    (String::from(""), format!("{}.rep()", pt))
+                    (None, quote!(#pt.rep()))
                 }
             }
         }
