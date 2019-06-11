@@ -95,8 +95,6 @@ mod tests_and {
         };
     }
 
-
-
     #[test]
     fn it_parse_celma_rules() {
         let response = celma_parsec_rules().parse(CharStream::new(
@@ -108,7 +106,7 @@ mod tests_and {
         let occurrence:{char}                 = ('*' | '+' | '?')
         let additional:{(bool,ASTParser)}     = (c=("|"?) => { c.is_empty() }) _=parser
         let transform:{String}                = "=>" '{' _=rust_code '}'
-        let atom:{ASTParser}                  = ('(' _=parser ')') | _=CHAR | _=STRING | _=ident | ('{' _=rust_code '}')
+        let atom:{ASTParser}                  = ('(' _=parser ')') | CHAR | STRING | ident | ('{' _=rust_code '}')
             "#
         ));
 
@@ -127,9 +125,9 @@ mod tests_and {
         let number:{JSon}  = n={NUMBER}                       => { TKNumber(n) }
         let null:{JSon}    = "null"                           => { TKNull      }
         let boolean:{JSon} = b=("true"|"false")               => { TKBool(b)   }
-        let array:{JSon}   = '[' s=json* ']'                  => { TkArray(s)  }
+        let array:{JSon}   = '[' s=json* ']'                => { TkArray(s)  }
         let object:{JSon}  = '{' s=(_=STRING ":" _=json)* '}' => { TkObject(s) }
-            "#
+            "#,
         ));
 
         match response {

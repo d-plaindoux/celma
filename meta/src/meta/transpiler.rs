@@ -16,47 +16,89 @@
 
 extern crate proc_macro;
 
-use proc_macro::TokenStream;
+use quote::quote;
 
-use crate::meta::syntax::{
-    ASTParsec,
-    ASTParsec::{
-        PBind, PChar, PChoice, PCode, PIdent, PMap, POptional, PRepeat, PSequence, PString,
-    },
-    ASTParsecRule,
+use crate::meta::syntax::ASTParsec;
+use crate::meta::syntax::ASTParsec::{
+    PBind, PChar, PChoice, PCode, PIdent, PMap, POptional, PRepeat, PSequence, PString,
 };
+use crate::meta::syntax::ASTParsecRule;
 
-trait Transpile {
-    fn transpile(&self) -> TokenStream;
+pub trait Transpile {
+    fn transpile(&self) -> String;
 }
 
 impl Transpile for Vec<ASTParsecRule> {
-    fn transpile(&self) -> TokenStream {
-        unimplemented!()
+    fn transpile(&self) -> String {
+        self.iter().map(|a| a.transpile()).collect()
     }
 }
 
-impl Transpile for ASTParsecRule {
-    fn transpile(&self) -> TokenStream {
-        let Self { name, returns, body } = self;
+impl ASTParsecRule {
+    pub fn transpile(&self) -> String {
+        let Self {
+            name,
+            returns,
+            body,
+        } = self;
+        let (_, body_t) = body.transpile();
 
-        unimplemented!()
+        quote!(
+            fn #name<'a,S:'a>() -> imp Parse<#returns,S> + Combine<#returns> + 'a
+                where S:Stream<Item=char>
+            {
+                #body_t
+            }
+        )
+        .to_string()
     }
 }
 
-impl Transpile for ASTParsec {
-    fn transpile(&self) -> TokenStream {
+impl ASTParsec {
+    pub fn transpile(&self) -> (String, String) {
         match self {
-            PBind(_, _) => unimplemented!(),
-            PIdent(_) => unimplemented!(),
-            PChar(_) => unimplemented!(),
-            PString(_) => unimplemented!(),
-            PCode(_) => unimplemented!(),
-            PMap(_, _) => unimplemented!(),
-            PSequence(_, _) => unimplemented!(),
-            PChoice(_, _) => unimplemented!(),
-            POptional(_) => unimplemented!(),
-            PRepeat(_, _) => unimplemented!(),
+            PBind(n, p) => (n.clone(), p.transpile().1),
+            PIdent(n) => (String::from(""), quote!(lazy(||#n())).to_string()),
+            PChar(c) => (String::from(""), format!("char('{}')", c)),
+            PString(_s) => (String::from(""), quote!(string("#_s")).to_string()),
+            PCode(c) => (String::from(""), c.clone()),
+            PMap(p, c) => {
+                let (pp, pt) = p.transpile();
+                (
+                    String::from(""),
+                    quote!(#pt.fmap({{ |#pp| #c }})).to_string(),
+                )
+            }
+            PSequence(l, r) => {
+                let (lp, lt) = l.transpile();
+                let (rp, rt) = r.transpile();
+
+                if lp.clone().is_empty() {
+                    (rp, format!("{}.and_right({})", lt, rt))
+                } else if rp.clone().is_empty() {
+                    (lp, format!("{}.and_left({})", lt, rt))
+                } else {
+                    (format!("({},{})", lp, rp), format!("{}.and({})", lt, rt))
+                }
+            }
+            PChoice(l, r) => {
+                let (_, lt) = l.transpile();
+                let (_, rt) = r.transpile();
+
+                (String::from(""), format!("{}.or({})", lt, rt))
+            }
+            POptional(p) => {
+                let (_, pt) = p.transpile();
+                (String::from(""), format!("{}.opt()", pt))
+            }
+            PRepeat(b, p) => {
+                let (_, pt) = p.transpile();
+                if *b {
+                    (String::from(""), format!("{}.opt_rep()", pt))
+                } else {
+                    (String::from(""), format!("{}.rep()", pt))
+                }
+            }
         }
     }
 }

@@ -39,4 +39,13 @@ where
             Response::Reject(s, b) => reject(s, b),
         }
     }
+    pub fn fmap<F, B>(self, f: F) -> Response<B, S>
+    where
+        F: Fn(A) -> B,
+    {
+        self.fold(
+            |a, s, b| Response::Success(f(a), s, b),
+            |s, b| Response::Reject(s, b),
+        )
+    }
 }

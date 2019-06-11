@@ -16,20 +16,22 @@
 
 extern crate proc_macro;
 
-use proc_macro::{TokenStream};
+use proc_macro::TokenStream;
 
 use quote::quote;
 
 use celma_core::parser::parser::Parse;
 use celma_core::parser::response::Response::{Reject, Success};
 use celma_core::stream::char_stream::CharStream;
-use celma_lang::meta::parser::{celma_parsec, celma_parsec_rules};
 use celma_core::stream::stream::Stream;
+use celma_lang::meta::parser::{celma_parsec, celma_parsec_rules};
 
 #[proc_macro]
 pub fn parsec(input: TokenStream) -> TokenStream {
     let source = input.to_string();
-    let result = celma_parsec().parse(CharStream::new(source.as_str()));
+    let result = celma_parsec()
+        .parse(CharStream::new(source.as_str()))
+        .fmap(|ast| ast.transpile());
 
     match result {
         Success(_, _, _) => (),
@@ -46,9 +48,7 @@ pub fn parsec_rules(input: TokenStream) -> TokenStream {
 
     match result {
         Success(_, _, _) => (),
-        Reject(s, _) => {
-            panic!(format!("Error at {:?}", s.position()))
-        }
+        Reject(s, _) => panic!(format!("Error at {:?}", s.position())),
     }
 
     quote!(celma_core::parser::core::eos()).into()
