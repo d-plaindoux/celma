@@ -79,9 +79,9 @@ impl Transpile<(Option<String>, TokenStream)> for ASTParsec {
                 let (lp, lt) = l.transpile();
                 let (rp, rt) = r.transpile();
 
-                if lp.clone().is_none() {
+                if lp.is_none() {
                     (rp, quote!(#lt.and_right(#rt)))
-                } else if rp.clone().is_none() {
+                } else if rp.is_none() {
                     (lp, quote!(#lt.and_left(#rt)))
                 } else {
                     (
