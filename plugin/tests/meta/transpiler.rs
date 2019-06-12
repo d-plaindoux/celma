@@ -45,7 +45,7 @@ mod tests_transpiler {
     fn it_parse_baaa() {
         parsec_rules!(
             let a:{Vec<char>} = 'a'*
-            let b:{String}    = 'b' v=a => { v.into_iter().collect() }
+            let b:{String}    = 'b' v=a -> { v.into_iter().collect() }
         );
 
         let response = b().and_left(eos())
@@ -60,8 +60,8 @@ mod tests_transpiler {
     #[test]
     fn it_parse_true() {
         parsec_rules!(
-            let tf:{bool} = ("true"  => { true  })
-                          | ("false" => { false })
+            let tf:{bool} = ("true"  -> { true  })
+                          | ("false" -> { false })
         );
 
         let response = tf().and_left(eos())
@@ -76,8 +76,8 @@ mod tests_transpiler {
     #[test]
     fn it_parse_false() {
         parsec_rules!(
-            let tf:{bool} = ("true"  => { true  })
-                          | ("false" => { false })
+            let tf:{bool} = ("true"  -> { true  })
+                          | ("false" -> { false })
         );
 
         let response = tf().and_left(eos())
@@ -93,7 +93,7 @@ mod tests_transpiler {
     fn it_parse_1_true_and_reverse() {
         // TODO(didier) Review the syntax in order to remove the uppermost parenthesis
         parsec_rules!(
-            let ib:{(bool,u32)} = (a=('1' => { 1 }) ',' b=("true" => { true })) => { (b, a) }
+            let ib:{(bool,u32)} = (a=('1' -> { 1 }) ',' b=("true" -> { true })) -> { (b, a) }
         );
 
         let response = ib().and_left(eos())
@@ -108,7 +108,7 @@ mod tests_transpiler {
     #[test]
     fn it_parse_with_recursive_parser() {
         parsec_rules!(
-            let parens:{()} = ('(' parens ')')? => { () }
+            let parens:{()} = ('(' parens ')')? -> { () }
         );
 
         let response = parens().and_left(eos())

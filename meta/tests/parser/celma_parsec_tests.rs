@@ -176,7 +176,7 @@ mod tests_and {
 
     #[test]
     fn it_parse_a_character_with_map() {
-        let response = celma_parsec().parse(CharStream::new("a={char('a')} => { Result(a) }"));
+        let response = celma_parsec().parse(CharStream::new("a={char('a')} -> { Result(a) }"));
 
         match response {
             Success(ast, _, _) => assert_eq!(
@@ -196,7 +196,7 @@ mod tests_and {
     #[test]
     fn it_parse_a_mapped_character_with_map() {
         let response = celma_parsec().parse(CharStream::new(
-            "a=({char('a')} => { 'a' }) => { Result(a) }",
+            "a=({char('a')} -> { 'a' }) -> { Result(a) }",
         ));
 
         match response {

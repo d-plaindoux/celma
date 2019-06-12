@@ -100,12 +100,12 @@ mod tests_and {
         let response = celma_parsec_rules().parse(CharStream::new(
             r#"
         let parsec_rules:{Vec<ASTParserRule>} = _=parsec_rule+
-        let parsec_rule:{ASTParserRule}       = "let" n=ident ':' '{' t=rust_code '}' "=" p=parsec => { ASTParserRule(n,c,p) }
+        let parsec_rule:{ASTParserRule}       = "let" n=ident ':' '{' t=rust_code '}' "=" p=parsec -> { ASTParserRule(n,c,p) }
         let parsec:{ASTParser}                = binding? atom occurrence? additional? transform?
         let binding:{String}                  = _=ident '='
         let occurrence:{char}                 = ('*' | '+' | '?')
-        let additional:{(bool,ASTParser)}     = (c=("|"?) => { c.is_empty() }) _=parser
-        let transform:{String}                = "=>" '{' _=rust_code '}'
+        let additional:{(bool,ASTParser)}     = (c=("|"?) -> { c.is_empty() }) _=parser
+        let transform:{String}                = "->" '{' _=rust_code '}'
         let atom:{ASTParser}                  = ('(' _=parser ')') | CHAR | STRING | ident | ('{' _=rust_code '}')
             "#
         ));
@@ -121,12 +121,12 @@ mod tests_and {
         let response = celma_parsec_rules().parse(CharStream::new(
             r#"
         let json:{JSon}    = number|string|null|boolean|array|object|attribute
-        let string:{JSon}  = s={STRING}                       => { TKString(s) }
-        let number:{JSon}  = n={NUMBER}                       => { TKNumber(n) }
-        let null:{JSon}    = "null"                           => { TKNull      }
-        let boolean:{JSon} = b=("true"|"false")               => { TKBool(b)   }
-        let array:{JSon}   = '[' s=json* ']'                => { TkArray(s)  }
-        let object:{JSon}  = '{' s=(_=STRING ":" _=json)* '}' => { TkObject(s) }
+        let string:{JSon}  = s={STRING}                       -> { TKString(s) }
+        let number:{JSon}  = n={NUMBER}                       -> { TKNumber(n) }
+        let null:{JSon}    = "null"                           -> { TKNull      }
+        let boolean:{JSon} = b=("true"|"false")               -> { TKBool(b)   }
+        let array:{JSon}   = '[' s=json* ']'                  -> { TkArray(s)  }
+        let object:{JSon}  = '{' s=(_=STRING ":" _=json)* '}' -> { TkObject(s) }
             "#,
         ));
 

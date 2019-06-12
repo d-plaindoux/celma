@@ -21,7 +21,7 @@ parsec       = binding? atom occurrence? additional? transform?
 binding      = ident '='
 occurrence   = ("*" | "+" | "?")
 additional   = "|"? parser
-transform    = "=>" '{' rust_code '}'
+transform    = "->" '{' rust_code '}'
 atom         = '(' parser ')' | CHAR | STRING | ident | '{' rust_code '}' | '^' atom
 ident        = [a..zA..Z]+ - {"let"}
 ```
@@ -31,7 +31,7 @@ ident        = [a..zA..Z]+ - {"let"}
 Therefore a parser can be defined using this meta-language.
 
 ```rust
-let parser = parsec!( '"' s=^'"'* '"' => { TkString(s) } );
+let parser = parsec!( '"' s=^'"'* '"' -> { TkString(s) } );
 ```
 
 ## A Full Example: JSON
@@ -39,18 +39,18 @@ let parser = parsec!( '"' s=^'"'* '"' => { TkString(s) } );
 ```rust
 parsec_rules!(
     let json:{()}    = number | string | null | boolean
-    let number:{()}  = _=NUMBER                          => { () }
-    let string:{()}  = _=STRING                          => { () }
-    let null:{()}    = "null"                            => { () }
-    let boolean:{()} = ("true"|"false")                  => { () }
-    let array:{()}   = ('[' (json (',' json)*)? ']')     => { () }
-    let object:{()}  = ('{' (attr (',' attr)*)? '}')     => { () }
-    let attr:{()}    = (STRING ":" json)                 => { () }
+    let number:{()}  = _=NUMBER                          -> { () }
+    let string:{()}  = _=STRING                          -> { () }
+    let null:{()}    = "null"                            -> { () }
+    let boolean:{()} = ("true"|"false")                  -> { () }
+    let array:{()}   = ('[' (json (',' json)*)? ']')     -> { () }
+    let object:{()}  = ('{' (attr (',' attr)*)? '}')     -> { () }
+    let attr:{()}    = (STRING ":" json)                 -> { () }
 
-    let STRING:{()}  = '"' ({not_char('"')}*) '"'        => { () }
-    let NUMBER:{()}  = (INT ('.' NAT)? (('E'|'e') INT)?) => { () }
-    let INT:{()}     = ('-'|'+')? _=NAT                  => { () }
-    let NAT:{()}     = (digit)+                          => { () }
+    let STRING:{()}  = '"' ({not_char('"')}*) '"'        -> { () }
+    let NUMBER:{()}  = (INT ('.' NAT)? (('E'|'e') INT)?) -> { () }
+    let INT:{()}     = ('-'|'+')? _=NAT                  -> { () }
+    let NAT:{()}     = (digit)+                          -> { () }
 );
 ```
 

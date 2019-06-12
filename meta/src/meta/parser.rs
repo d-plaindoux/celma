@@ -230,7 +230,7 @@ fn transform<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + '
     where
         S: Stream<Item=char>,
 {
-    string("=>").and(skip()).left().and(lazy(code)).right()
+    string("->").and(skip()).left().and(lazy(code)).right()
 }
 
 fn code<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a

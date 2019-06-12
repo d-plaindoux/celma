@@ -28,19 +28,20 @@ use celma_plugin::parsec_rules;
 
 parsec_rules!(
     let json:{()}    = S (string | null | boolean | array | object | number) S
-    let number:{()}  = _=NUMBER                                 => { () }
-    let string:{()}  = _=STRING                                 => { () }
-    let null:{()}    = "null"                                   => { () }
-    let boolean:{()} = ("true"|"false")                         => { () }
-    let array:{()}   = '[' S (json (S ',' S json)*)? S ']'      => { () }
-    let object:{()}  = '{' S (attr (S ',' S attr)*)? S '}'      => { () }
-    let attr:{()}    = (STRING S ":" S json)                    => { () }
+    let json:{()}    = S (string | null | boolean | array | object | number) S
+    let number:{()}  = NUMBER                                   -> { () }
+    let string:{()}  = STRING                                   -> { () }
+    let null:{()}    = "null"                                   -> { () }
+    let boolean:{()} = ("true"|"false")                         -> { () }
+    let array:{()}   = '[' S (json S (',' S json S)*)? ']'      -> { () }
+    let object:{()}  = '{' S (attr S (',' S attr S)*)? '}'      -> { () }
+    let attr:{()}    = STRING S ":" S json                      -> { () }
 
-    let STRING:{()}  = '"' {not_char('"')}* '"'                 => { () }
-    let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?          => { () }
-    let INT:{()}     = ('-'|'+')? _=NAT                         => { () }
-    let NAT:{()}     = (digit)+                                 => { () }
-    let S:{()}       = {char_in_set(vec!(' ','\t','\r','\n'))}* => {()}
+    let STRING:{()}  = '"' {not_char('"')}* '"'                 -> { () }
+    let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?          -> { () }
+    let INT:{()}     = ('-'|'+')? _=NAT                         -> { () }
+    let NAT:{()}     = digit+                                   -> { () }
+    let S:{()}       = {char_in_set(vec!(' ','\t','\r','\n'))}* -> { () }
 );
 
 // -------------------------------------------------------------------------------------------------
