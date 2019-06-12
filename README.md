@@ -31,7 +31,7 @@ ident        = [a..zA..Z]+ - {"let"}
 Therefore a parser can be defined using this meta-language.
 
 ```rust
-let parser = parsec!( '"' s=^'"'* '"' -> { TkString(s) } );
+let parser = parsec!( '"' s=(^'"')* '"' -> { TkString(s) } );
 ```
 
 ## A Full Example: JSON
