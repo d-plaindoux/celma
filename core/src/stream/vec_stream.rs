@@ -34,6 +34,7 @@ where
 
     fn position(&self) -> Position {
         Position {
+            offset: self.1,
             line: 0,
             char: self.1,
         }

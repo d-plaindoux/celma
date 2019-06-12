@@ -55,6 +55,18 @@ where
             Reject(s, ba) => Reject(s, ba),
         }
     }
+
+    fn check(&self, s: S) -> Response<(), S> {
+        let Self(l, r, _, _) = self;
+
+        match l.parse(s) {
+            Success(_, s, ba) => match r.check(s) {
+                Success(_, s, bb) => Success((), s, ba || bb),
+                Reject(s, bb) => Reject(s, ba || bb),
+            },
+            Reject(s, ba) => Reject(s, ba),
+        }
+    }
 }
 
 pub trait AndOperation<L, R, A, B>

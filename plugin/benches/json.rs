@@ -19,7 +19,7 @@ extern crate bencher;
 
 use bencher::{Bencher, black_box};
 
-use celma_core::parser::char::{digit, not_char, char_in_set};
+use celma_core::parser::char::{digit, char_in_set};
 use celma_core::parser::core::eos;
 use celma_core::parser::response::Response::{Reject, Success};
 use celma_core::stream::char_stream::CharStream;
@@ -28,16 +28,15 @@ use celma_plugin::parsec_rules;
 
 parsec_rules!(
     let json:{()}    = S (string | null | boolean | array | object | number) S
-    let json:{()}    = S (string | null | boolean | array | object | number) S
     let number:{()}  = NUMBER                                   -> { () }
     let string:{()}  = STRING                                   -> { () }
     let null:{()}    = "null"                                   -> { () }
     let boolean:{()} = ("true"|"false")                         -> { () }
-    let array:{()}   = '[' S (json S (',' S json S)*)? ']'      -> { () }
-    let object:{()}  = '{' S (attr S (',' S attr S)*)? '}'      -> { () }
-    let attr:{()}    = STRING S ":" S json                      -> { () }
+    let array:{()}   = '[' (json (',' json)*)? ']'              -> { () }
+    let object:{()}  = '{' (attr (',' attr)*)? '}'              -> { () }
+    let attr:{()}    = S STRING S ":" json                      -> { () }
 
-    let STRING:{()}  = '"' {not_char('"')}* '"'                 -> { () }
+    let STRING:{()}  = '"' (^'"')* '"'                          -> { () }
     let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?          -> { () }
     let INT:{()}     = ('-'|'+')? _=NAT                         -> { () }
     let NAT:{()}     = digit+                                   -> { () }
@@ -85,8 +84,7 @@ fn parse(b: &mut Bencher, buffer: &str)
     b.iter(|| {
         let buffer = black_box(buffer);
 
-        let response = json().and_left(eos())
-            .parse(CharStream::new(buffer));
+        let response = json().and_left(eos()).check(CharStream::new(buffer));
 
         match response {
             Success(_, _, _) => (),
@@ -100,7 +98,7 @@ benchmark_group!(
     json_data,
     json_canada_pest,
     json_canada_nom,
-    // json_apache
+    //json_apache
 );
 
 benchmark_main!(benches);

@@ -20,9 +20,7 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 
 use crate::meta::syntax::ASTParsec;
-use crate::meta::syntax::ASTParsec::{
-    PBind, PChar, PChoice, PCode, PIdent, PMap, POptional, PRepeat, PSequence, PString,
-};
+use crate::meta::syntax::ASTParsec::{PBind, PChar, PChoice, PCode, PIdent, PMap, POptional, PRepeat, PSequence, PString, PNot};
 use crate::meta::syntax::ASTParsecRule;
 
 pub trait Transpile<E> {
@@ -36,6 +34,7 @@ impl Transpile<TokenStream> for Vec<ASTParsecRule> {
         quote!(
             use celma_core::parser::and::AndOperation;
             use celma_core::parser::fmap::FMapOperation;
+            use celma_core::parser::not::NotOperation;
             use celma_core::parser::option::OptionalOperation;
             use celma_core::parser::or::OrOperation;
             use celma_core::parser::parser::Parse;
@@ -113,6 +112,10 @@ impl Transpile<(Option<String>, TokenStream)> for ASTParsec {
                 let (_, rt) = r.transpile();
 
                 (None, quote!(#lt.or(#rt)))
+            }
+            PNot(p) => {
+                let (_, pt) = p.transpile();
+                (None, quote!(#pt.not()))
             }
             POptional(p) => {
                 let (_, pt) = p.transpile();

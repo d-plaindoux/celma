@@ -38,6 +38,7 @@ mod tests_and {
                 quote!(
                     use celma_core::parser::and::AndOperation;
                     use celma_core::parser::fmap::FMapOperation;
+                    use celma_core::parser::not::NotOperation;
                     use celma_core::parser::option::OptionalOperation;
                     use celma_core::parser::or::OrOperation;
                     use celma_core::parser::parser::Parse;

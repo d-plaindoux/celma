@@ -24,6 +24,7 @@ pub enum ASTParsec {
     PMap(Box<ASTParsec>, String),
     PSequence(Box<ASTParsec>, Box<ASTParsec>),
     PChoice(Box<ASTParsec>, Box<ASTParsec>),
+    PNot(Box<ASTParsec>),
     POptional(Box<ASTParsec>),
     PRepeat(bool, Box<ASTParsec>),
 }

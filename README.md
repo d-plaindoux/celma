@@ -43,11 +43,11 @@ parsec_rules!(
     let string:{()}  = STRING                                   -> { () }
     let null:{()}    = "null"                                   -> { () }
     let boolean:{()} = ("true"|"false")                         -> { () }
-    let array:{()}   = '[' S (json S (',' S json S)*)? ']'      -> { () }
-    let object:{()}  = '{' S (attr S (',' S attr S)*)? '}'      -> { () }
-    let attr:{()}    = STRING S ":" S json                      -> { () }
+    let array:{()}   = '[' (json (',' json)*)? ']'              -> { () }
+    let object:{()}  = '{' (attr (',' attr)*)? '}'              -> { () }
+    let attr:{()}    = S STRING S ":" json                      -> { () }
     
-    let STRING:{()}  = '"' {not_char('"')}* '"'                 -> { () }
+    let STRING:{()}  = '"' (^'"')* '"'                          -> { () }
     let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?          -> { () }
     let INT:{()}     = ('-'|'+')? _=NAT                         -> { () }
     let NAT:{()}     = digit+                                   -> { () }

@@ -63,6 +63,35 @@ where
             }
         }
     }
+
+    fn check(&self, s: S) -> Response<(), S> {
+        let Self(can_be_empty, p, _) = self;
+
+        let mut empty = true;
+        let mut consumed = false;
+        let mut source = s;
+
+        loop {
+            match p.check(source.clone()) {
+                Success(_, s, c) => {
+                    empty = false;
+                    consumed = c || consumed;
+                    source = s;
+                }
+                Reject(s, c) => {
+                    if c {
+                        return Reject(s, c);
+                    }
+
+                    if !*can_be_empty && empty {
+                        return Reject(s, consumed);
+                    }
+
+                    return Success((), source, consumed);
+                }
+            }
+        }
+    }
 }
 
 pub trait RepeatOperation<L, A>

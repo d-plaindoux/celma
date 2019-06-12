@@ -56,6 +56,18 @@ where
             Reject(sa, c) => Reject(sa, c),
         }
     }
+
+    fn check(&self, s: S) -> Response<(), S> {
+        let Self(p, f, _, _) = self;
+
+        match p.parse(s) {
+            Success(a, sa, ca) => match f(a).check(sa) {
+                Success(_, sb, cb) => Success((), sb, ca || cb),
+                Reject(sb, c) => Reject(sb, c),
+            },
+            Reject(sa, c) => Reject(sa, c),
+        }
+    }
 }
 
 pub trait BindOperation<P, A, F, R, B>

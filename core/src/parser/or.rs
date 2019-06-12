@@ -56,6 +56,21 @@ where
             }
         }
     }
+
+    fn check(&self, s: S) -> Response<(), S> {
+        let Self(l, r, _) = self;
+
+        match l.check(s.clone()) {
+            Success(_, s, ba) => Success((), s, ba),
+            Reject(ns, ba) => {
+                if ba {
+                    Reject(ns, ba)
+                } else {
+                    r.check(s)
+                }
+            }
+        }
+    }
 }
 
 pub trait OrOperation<L, R, A>

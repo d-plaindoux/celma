@@ -15,13 +15,21 @@
 */
 
 use crate::parser::response::Response;
+use crate::parser::response::Response::{Reject, Success};
 use crate::stream::stream::Stream;
 
 pub trait Combine<A> {}
 
 pub trait Parse<A, S>
-where
-    S: Stream,
+    where
+        S: Stream,
 {
     fn parse(&self, s: S) -> Response<A, S>;
+
+    fn check(&self, s: S) -> Response<(), S> {
+        match self.parse(s) {
+            Success(_, s, c) => Success((), s, c),
+            Reject(s, c) => Reject(s, c)
+        }
+    }
 }

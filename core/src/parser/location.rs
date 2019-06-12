@@ -56,6 +56,12 @@ where
             Reject(s, c) => Reject(s, c),
         }
     }
+
+    fn check(&self, s: S) -> Response<(), S> {
+        let Self(p, _) = self;
+
+        p.check(s)
+    }
 }
 
 pub fn locate<P, A>(p: P) -> Located<P, A>

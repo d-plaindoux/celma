@@ -16,6 +16,7 @@
 
 #[derive(Copy, Clone, Debug)]
 pub struct Position {
+    pub offset: usize,
     pub line: usize,
     pub char: usize,
 }

@@ -24,39 +24,54 @@ use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
 
 #[derive(Copy, Clone)]
-pub struct ATry<L, A>(L, PhantomData<A>)
-where
-    L: Combine<A>;
+pub struct Not<L, A>(L, PhantomData<A>)
+    where
+        L: Combine<A>;
 
-impl<L, A> Combine<A> for ATry<L, A> where L: Combine<A> {}
+impl<L, A> Combine<A> for Not<L, A> where L: Combine<A> {}
 
-impl<L, A, S> Parse<A, S> for ATry<L, A>
-where
-    L: Parse<A, S> + Combine<A>,
-    S: Stream,
+impl<L, A, S> Parse<A, S> for Not<L, A>
+    where
+        S: Stream<Item=A>,
+        L: Parse<A, S> + Combine<A>,
 {
     fn parse(&self, s: S) -> Response<A, S> {
         let Self(p, _) = self;
-        match p.parse(s) {
-            Success(v, s, c) => Success(v, s, c),
-            Reject(s, _) => Reject(s, false),
+
+        match p.parse(s.clone()) {
+            Success(_, s, _) => Reject(s, false),
+            _ => match s.next() {
+                (Some(v), s) => Success(v, s, true),
+                _ => Reject(s, false)
+            }
         }
     }
 
     fn check(&self, s: S) -> Response<(), S> {
         let Self(p, _) = self;
-        match p.check(s) {
-            Success(v, s, c) => Success(v, s, c),
-            Reject(s, _) => Reject(s, false),
+
+        match p.check(s.clone()) {
+            Success(_, s, _) => Reject(s, false),
+            _ => match s.next() {
+                (Some(_), s) => Success((), s, true),
+                _ => Reject(s, false)
+            }
         }
     }
 }
 
-pub fn a_try<P, A, S>(p: P) -> impl Parse<A, S> + Combine<A> + Clone
-where
-    A: Clone,
-    S: Stream,
-    P: Parse<A, S> + Combine<A> + Clone,
+pub trait NotOperation<L, A>
+    where
+        L: Combine<A>,
 {
-    ATry(p, PhantomData)
+    fn not(self) -> Not<L, A>;
+}
+
+impl<L, A> NotOperation<L, A> for L
+    where
+        L: Combine<A>,
+{
+    fn not(self) -> Not<L, A> {
+        Not(self, PhantomData)
+    }
 }

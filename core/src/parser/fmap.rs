@@ -50,6 +50,15 @@ where
             Reject(s, c) => Reject(s, c),
         }
     }
+
+    fn check(&self, s: S) -> Response<(), S> {
+        let Self(p, _, _, _) = self;
+
+        match p.parse(s) {
+            Success(_, s, c) => Success((), s, c),
+            Reject(s, c) => Reject(s, c),
+        }
+    }
 }
 
 pub trait FMapOperation<P, A, F, B>

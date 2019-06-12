@@ -29,9 +29,7 @@ use celma_core::parser::repeat::RepeatOperation;
 use celma_core::stream::stream::Stream;
 
 use crate::meta::syntax::{ASTParsec, ASTParsecRule};
-use crate::meta::syntax::ASTParsec::{
-    PBind, PChar, PChoice, PCode, PIdent, PMap, POptional, PRepeat, PSequence, PString,
-};
+use crate::meta::syntax::ASTParsec::{PBind, PChar, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat, PSequence, PString};
 
 // -------------------------------------------------------------------------------------------------
 // Grammar - Parser using Celma ^_^
@@ -214,15 +212,19 @@ fn atom<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 
     where
         S: Stream<Item=char>,
 {
-    char('(')
+    (char('(')
         .and_left(skip())
         .and_right(lazy(|| parser::<'a, _, ASTParsec, S>(parsec())))
         .and_left(skip())
-        .and_left(char(')'))
+        .and_left(char(')')))
         .or(code().fmap(PCode))
         .or(delimited_char().fmap(PChar))
         .or(delimited_string().fmap(PString))
         .or(ident().fmap(PIdent))
+        .or(char('^')
+            .and_right(lazy(|| parser::<'a, _, ASTParsec, S>(parsec())))
+            .fmap(|p| PNot(Box::new(p)))
+        )
 }
 
 #[inline]

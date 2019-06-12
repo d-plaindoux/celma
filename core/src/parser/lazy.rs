@@ -44,6 +44,12 @@ where
 
         f().parse(s)
     }
+
+    fn check(&self, s: S) -> Response<(), S> {
+        let Self(f, _, _) = self;
+
+        f().check(s)
+    }
 }
 
 pub fn lazy<F, P, A, S>(f: F) -> impl Parse<A, S> + Combine<A> + Clone

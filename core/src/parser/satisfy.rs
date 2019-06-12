@@ -62,6 +62,21 @@ where
             (None, p) => Reject(p, false),
         }
     }
+
+    fn check(&self, s: S) -> Response<(), S> {
+        let Self(predicate, _) = self;
+
+        match s.next() {
+            (Some(c), p) => {
+                if predicate(&c) {
+                    Success((), p, true)
+                } else {
+                    Reject(p, false)
+                }
+            }
+            (None, p) => Reject(p, false),
+        }
+    }
 }
 
 #[inline]
