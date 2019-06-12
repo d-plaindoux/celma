@@ -39,7 +39,6 @@ let parser = parsec!( '"' s=^'"'* '"' -> { TkString(s) } );
 ```rust
 parsec_rules!(
     let json:{()}    = S (string | null | boolean | array | object | number) S
-    let json:{()}    = S (string | null | boolean | array | object | number) S
     let number:{()}  = NUMBER                                   -> { () }
     let string:{()}  = STRING                                   -> { () }
     let null:{()}    = "null"                                   -> { () }
