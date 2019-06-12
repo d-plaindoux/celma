@@ -98,7 +98,7 @@ where
 {
     bencher.bytes = stream.len() as u64;
 
-    bencher.iter(|| match parser.parse(black_box(stream.clone())) {
+    bencher.iter(|| match parser.check(black_box(stream.clone())) {
         Success(_, _, _) => (),
         Reject(_, _) => panic!("Cannot parse stream"),
     });

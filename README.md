@@ -39,19 +39,19 @@ let parser = parsec!( '"' s=^'"'* '"' -> { TkString(s) } );
 ```rust
 parsec_rules!(
     let json:{()}    = S (string | null | boolean | array | object | number) S
-    let number:{()}  = NUMBER                                   -> { () }
-    let string:{()}  = STRING                                   -> { () }
-    let null:{()}    = "null"                                   -> { () }
-    let boolean:{()} = ("true"|"false")                         -> { () }
-    let array:{()}   = '[' (json (',' json)*)? ']'              -> { () }
-    let object:{()}  = '{' (attr (',' attr)*)? '}'              -> { () }
-    let attr:{()}    = S STRING S ":" json                      -> { () }
+    let number:{()}  = NUMBER                           -> {}
+    let string:{()}  = STRING                           -> {}
+    let null:{()}    = "null"                           -> {}
+    let boolean:{()} = ("true"|"false")                 -> {}
+    let array:{()}   = '[' (json (',' json)*)? ']'      -> {}
+    let object:{()}  = '{' (attr (',' attr)*)? '}'      -> {}
+    let attr:{()}    = S STRING S ":" json              -> {}
     
-    let STRING:{()}  = '"' (^'"')* '"'                          -> { () }
-    let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?          -> { () }
-    let INT:{()}     = ('-'|'+')? _=NAT                         -> { () }
-    let NAT:{()}     = digit+                                   -> { () }
-    let S:{()}       = {char_in_set(vec!(' ','\t','\r','\n'))}* -> { () }
+    let STRING:{()}  = '"' (^'"')* '"'                  -> {}
+    let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?  -> {}
+    let INT:{()}     = ('-'|'+')? NAT                   -> {}
+    let NAT:{()}     = digit+                           -> {}
+    let S:{()}       = space*                           -> {}
 );
 ```
 

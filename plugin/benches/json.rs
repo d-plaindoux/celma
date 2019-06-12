@@ -19,7 +19,7 @@ extern crate bencher;
 
 use bencher::{Bencher, black_box};
 
-use celma_core::parser::char::{digit, char_in_set};
+use celma_core::parser::char::{digit, space};
 use celma_core::parser::core::eos;
 use celma_core::parser::response::Response::{Reject, Success};
 use celma_core::stream::char_stream::CharStream;
@@ -28,19 +28,19 @@ use celma_plugin::parsec_rules;
 
 parsec_rules!(
     let json:{()}    = S (string | null | boolean | array | object | number) S
-    let number:{()}  = NUMBER                                   -> { () }
-    let string:{()}  = STRING                                   -> { () }
-    let null:{()}    = "null"                                   -> { () }
-    let boolean:{()} = ("true"|"false")                         -> { () }
-    let array:{()}   = '[' (json (',' json)*)? ']'              -> { () }
-    let object:{()}  = '{' (attr (',' attr)*)? '}'              -> { () }
-    let attr:{()}    = S STRING S ":" json                      -> { () }
+    let number:{()}  = NUMBER                           -> {}
+    let string:{()}  = STRING                           -> {}
+    let null:{()}    = "null"                           -> {}
+    let boolean:{()} = ("true"|"false")                 -> {}
+    let array:{()}   = '[' (json (',' json)*)? ']'      -> {}
+    let object:{()}  = '{' (attr (',' attr)*)? '}'      -> {}
+    let attr:{()}    = S STRING S ":" json              -> {}
 
-    let STRING:{()}  = '"' (^'"')* '"'                          -> { () }
-    let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?          -> { () }
-    let INT:{()}     = ('-'|'+')? _=NAT                         -> { () }
-    let NAT:{()}     = digit+                                   -> { () }
-    let S:{()}       = {char_in_set(vec!(' ','\t','\r','\n'))}* -> { () }
+    let STRING:{()}  = '"' (^'"')* '"'                  -> {}
+    let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?  -> {}
+    let INT:{()}     = ('-'|'+')? _=NAT                 -> {}
+    let NAT:{()}     = digit+                           -> {}
+    let S:{()}       = space*                           -> {}
 );
 
 // -------------------------------------------------------------------------------------------------

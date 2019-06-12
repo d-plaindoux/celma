@@ -85,3 +85,12 @@ where
 {
     alpha_lower().or(alpha_upper())
 }
+
+#[inline]
+pub fn space<S>() -> impl Parse<char, S> + Combine<char> + Clone
+    where
+        S: Stream<Item = char>,
+{
+    char_in_set(vec!(' ', '\t', '\r', '\n'))
+}
+
