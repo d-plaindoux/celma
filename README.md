@@ -45,8 +45,8 @@ parsec_rules!(
     let string:{()}  = STRING                           -> {}
     let null:{()}    = "null"                           -> {}
     let boolean:{()} = ("true"|"false")                 -> {}
-    let array:{()}   = '[' (json (',' json)*)? ']'      -> {}
-    let object:{()}  = '{' (attr (',' attr)*)? '}'      -> {}
+    let array:{()}   = '[' S (json (',' json)*)? ']'    -> {}
+    let object:{()}  = '{' S (attr (',' attr)*)? '}'    -> {}
     let attr:{()}    = S STRING S ":" json              -> {}
     
     let STRING:{()}  = '"' (^'"')* '"'                  -> {}
