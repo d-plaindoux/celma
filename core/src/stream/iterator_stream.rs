@@ -30,7 +30,7 @@ where
     I: Iterator<Item = E>,
 {
     pub fn new(s: I) -> IteratorStream<E, I> {
-        IteratorStream(s, 0, PhantomData)
+        IteratorStream(s, <usize>::new(), PhantomData)
     }
 }
 
@@ -40,13 +40,10 @@ where
     E: Clone,
 {
     type Item = E;
+    type Pos = usize;
 
-    fn position(&self) -> Position {
-        Position {
-            offset: self.1,
-            line: 0,
-            char: self.1,
-        }
+    fn position(&self) -> Self::Pos {
+        self.1
     }
 
     fn next(&self) -> (Option<Self::Item>, Self) {
@@ -56,7 +53,11 @@ where
 
         (
             option,
-            IteratorStream(this.0, this.1 + (if is_some { 1 } else { 0 }), PhantomData),
+            IteratorStream(
+                this.0,
+                if is_some { this.1.step(false) } else { self.1 },
+                PhantomData,
+            ),
         )
     }
 }

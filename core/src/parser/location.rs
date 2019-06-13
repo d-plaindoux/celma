@@ -24,9 +24,12 @@ use crate::parser::response::Response::Success;
 use crate::stream::stream::{Position, Stream};
 
 #[derive(Copy, Clone)]
-pub struct Location<A> {
-    start: Position,
-    end: Position,
+pub struct Location<A, L>
+where
+    L: Position,
+{
+    start: L,
+    end: L,
     value: A,
 }
 
@@ -35,14 +38,20 @@ pub struct Located<P, A>(P, PhantomData<A>)
 where
     P: Combine<A>;
 
-impl<P, A> Combine<Location<A>> for Located<P, A> where P: Combine<A> {}
+impl<P, A, L> Combine<Location<A, L>> for Located<P, A>
+where
+    P: Combine<A>,
+    L: Position,
+{
+}
 
-impl<P, A, S> Parse<Location<A>, S> for Located<P, A>
+impl<P, A, S, L> Parse<Location<A, L>, S> for Located<P, A>
 where
     P: Parse<A, S> + Combine<A>,
-    S: Stream,
+    S: Stream<Pos = L>,
+    L: Position,
 {
-    fn parse(&self, s: S) -> Response<Location<A>, S> {
+    fn parse(&self, s: S) -> Response<Location<A, L>, S> {
         let Self(p, _) = self;
         let start = s.position();
 

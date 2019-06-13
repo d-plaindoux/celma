@@ -16,15 +16,12 @@
 
 #[cfg(test)]
 mod tests_transpiler {
+    use celma_core::parser::and::AndOperation;
     use celma_core::parser::core::eos;
+    use celma_core::parser::parser::Parse;
     use celma_core::parser::response::Response::Success;
     use celma_core::stream::char_stream::CharStream;
     use celma_plugin::parsec_rules;
-    use celma_core::parser::char::char;
-    use celma_core::parser::satisfy::Satisfy;
-    use celma_core::parser::parser::{Parse, Combine};
-    use celma_core::stream::stream::Stream;
-
 
     #[test]
     fn it_parse_aaa() {
@@ -32,8 +29,7 @@ mod tests_transpiler {
             let a:{Vec<char>} = 'a'*
         );
 
-        let response = a().and_left(eos())
-            .parse(CharStream::new("aaa"));
+        let response = a().and_left(eos()).parse(CharStream::new("aaa"));
 
         match response {
             Success(v, _, _) => assert_eq!(v.len(), 3),
@@ -48,8 +44,7 @@ mod tests_transpiler {
             let b:{String}    = 'b' v=a -> { v.into_iter().collect() }
         );
 
-        let response = b().and_left(eos())
-            .parse(CharStream::new("baaa"));
+        let response = b().and_left(eos()).parse(CharStream::new("baaa"));
 
         match response {
             Success(v, _, _) => assert_eq!(v.len(), 3),
@@ -64,8 +59,7 @@ mod tests_transpiler {
                           | ("false" -> { false })
         );
 
-        let response = tf().and_left(eos())
-            .parse(CharStream::new("true"));
+        let response = tf().and_left(eos()).parse(CharStream::new("true"));
 
         match response {
             Success(v, _, _) => assert_eq!(v, true),
@@ -80,8 +74,7 @@ mod tests_transpiler {
                           | ("false" -> { false })
         );
 
-        let response = tf().and_left(eos())
-            .parse(CharStream::new("false"));
+        let response = tf().and_left(eos()).parse(CharStream::new("false"));
 
         match response {
             Success(v, _, _) => assert_eq!(v, false),
@@ -96,11 +89,10 @@ mod tests_transpiler {
             let ib:{(bool,u32)} = (a=('1' -> { 1 }) ',' b=("true" -> { true })) -> { (b, a) }
         );
 
-        let response = ib().and_left(eos())
-            .parse(CharStream::new("1,true"));
+        let response = ib().and_left(eos()).parse(CharStream::new("1,true"));
 
         match response {
-            Success(v, _, _) => assert_eq!(v, (true,1)),
+            Success(v, _, _) => assert_eq!(v, (true, 1)),
             _ => assert_eq!(true, false),
         }
     }
@@ -111,8 +103,37 @@ mod tests_transpiler {
             let parens:{()} = ('(' parens ')')? -> { () }
         );
 
-        let response = parens().and_left(eos())
+        let response = parens()
+            .and_left(eos())
             .parse(CharStream::new("((((((((()))))))))"));
+
+        match response {
+            Success(_, _, _) => assert_eq!(true, true),
+            _ => assert_eq!(true, false),
+        }
+    }
+
+    #[test]
+    fn it_parse_a_string_elem() {
+        parsec_rules!(
+            let parens:{()} = (^'"'|"\\\"" -> { '"' }) -> { () }
+        );
+
+        let response = parens().and_left(eos()).parse(CharStream::new("a"));
+
+        match response {
+            Success(_, _, _) => assert_eq!(true, true),
+            _ => assert_eq!(true, false),
+        }
+    }
+
+    #[test]
+    fn it_parse_a_special_string_elem() {
+        parsec_rules!(
+            let parens:{char} = ("\"" -> { '"' }) | ^'"'
+        );
+
+        let response = parens().and_left(eos()).parse(CharStream::new("\""));
 
         match response {
             Success(_, _, _) => assert_eq!(true, true),

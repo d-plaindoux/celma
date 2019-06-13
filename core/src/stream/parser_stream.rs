@@ -22,40 +22,45 @@ use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::{Position, Stream};
 
-pub struct ParserStream<'a, P, A, S>(&'a P, S, PhantomData<A>)
+pub struct ParserStream<'a, P, A, S, L>(&'a P, S, PhantomData<A>, PhantomData<L>)
 where
     P: Combine<A> + Parse<A, S>,
-    S: Stream;
+    S: Stream<Pos = L>,
+    L: Position;
 
-impl<'a, P, A, S> ParserStream<'a, P, A, S>
+impl<'a, P, A, S, L> ParserStream<'a, P, A, S, L>
 where
     P: Combine<A> + Parse<A, S>,
-    S: Stream,
+    S: Stream<Pos = L>,
+    L: Position,
 {
     #[inline]
     pub fn new(p: &'a P, s: S) -> Self {
-        ParserStream(p, s, PhantomData)
+        ParserStream(p, s, PhantomData, PhantomData)
     }
 }
 
-impl<'a, P, A, S> Clone for ParserStream<'a, P, A, S>
+impl<'a, P, A, S, L> Clone for ParserStream<'a, P, A, S, L>
 where
     P: Combine<A> + Parse<A, S>,
-    S: Stream,
+    S: Stream<Pos=L>,
+    L: Position
 {
     fn clone(&self) -> Self {
-        ParserStream(self.0, self.1.clone(), PhantomData)
+        ParserStream(self.0, self.1.clone(), PhantomData, PhantomData)
     }
 }
 
-impl<'a, P, A, S> Stream for ParserStream<'a, P, A, S>
+impl<'a, P, A, S, L> Stream for ParserStream<'a, P, A, S, L>
 where
     P: Combine<A> + Parse<A, S>,
-    S: Stream,
+    S: Stream<Pos = L>,
+    L: Position,
 {
     type Item = A;
+    type Pos = L;
 
-    fn position(&self) -> Position {
+    fn position(&self) -> Self::Pos {
         self.1.position()
     }
 

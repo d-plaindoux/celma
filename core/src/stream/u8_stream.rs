@@ -18,28 +18,29 @@ use crate::stream::stream::Stream;
 use crate::stream::stream::{Len, Position};
 
 #[derive(Clone)]
-pub struct U8Stream<'a>(&'a [u8], usize);
+pub struct U8Stream<'a>(&'a [u8], (usize, usize, usize));
 
 impl<'a> U8Stream<'a> {
     pub fn new(s: &'a [u8]) -> U8Stream<'a> {
-        U8Stream(s, 0)
+        U8Stream(s, <(usize, usize, usize)>::new())
     }
 }
 
 impl<'a> Stream for U8Stream<'a> {
     type Item = u8;
+    type Pos = (usize, usize, usize);
 
-    fn position(&self) -> Position {
-        Position {
-            offset: self.1,
-            line: 0,
-            char: self.1,
-        }
+    fn position(&self) -> Self::Pos {
+        self.1
     }
 
     fn next(&self) -> (Option<Self::Item>, Self) {
-        if self.1 < self.0.len() {
-            (Some(self.0[self.1]), U8Stream(self.0, self.1 + 1))
+        let offset = self.1.offset();
+
+        if offset < self.0.len() {
+            let c = self.0[offset];
+
+            (Some(c), U8Stream(self.0, self.1.step(c == '\n' as u8)))
         } else {
             (None, U8Stream(self.0, self.1))
         }

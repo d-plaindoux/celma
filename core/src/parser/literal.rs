@@ -27,8 +27,8 @@ pub struct Chars<'b>(&'b str);
 impl<'a> Combine<&'a str> for Chars<'a> {}
 
 impl<'a, 'b, S> Parse<&'b str, S> for Chars<'b>
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     fn parse(&self, s: S) -> Response<&'b str, S> {
         let Self(v) = self;
@@ -63,8 +63,8 @@ pub struct StringDelimited;
 impl<'a> Combine<&'a str> for StringDelimited {}
 
 impl<'a, 'b, S> Parse<&'b str, S> for StringDelimited
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     fn parse(&self, s: S) -> Response<&'b str, S> {
         let (c, nsp) = s.next();
@@ -76,7 +76,7 @@ impl<'a, 'b, S> Parse<&'b str, S> for StringDelimited
         let mut ns = nsp;
 
         loop {
-            let (c,nsp) = ns.next();
+            let (c, nsp) = ns.next();
 
             if c.is_none() {
                 return Reject(ns, true);
@@ -87,10 +87,8 @@ impl<'a, 'b, S> Parse<&'b str, S> for StringDelimited
             } else {
                 ns = nsp;
             }
-
         }
     }
-
 }
 
 pub fn delimited_string() -> StringDelimited {

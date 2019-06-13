@@ -18,41 +18,34 @@ use crate::stream::stream::Stream;
 use crate::stream::stream::{Len, Position};
 
 #[derive(Clone)]
-pub struct CharStream<'a>(&'a str, usize, usize, usize);
+pub struct CharStream<'a>(&'a str, (usize, usize, usize));
 
 impl<'a> CharStream<'a> {
     pub fn new(s: &'a str) -> CharStream<'a> {
-        CharStream(s, 0, 1, 0)
+        CharStream(s, <(usize, usize, usize)>::new())
     }
 }
 
 impl<'a> Stream for CharStream<'a> {
     type Item = char;
+    type Pos = (usize, usize, usize);
 
-    fn position(&self) -> Position {
-        Position {
-            offset: self.1,
-            line: self.2,
-            char: self.3,
-        }
+    fn position(&self) -> Self::Pos {
+        self.1
     }
 
     fn next(&self) -> (Option<Self::Item>, Self) {
         let option = self.0.chars().next();
 
         if option.is_some() {
-            let (offset, line, char) = if option.unwrap() == '\n' {
-                (self.1 + 1, self.2 + 1, 0)
-            } else {
-                (self.1 + 1, self.2, self.3 + 1)
-            };
+            let np = self.1.step(option.unwrap() == '\n');
 
             (
                 option,
-                CharStream(self.0.get(1..self.0.len()).unwrap_or(""), offset, line, char),
+                CharStream(self.0.get(1..self.0.len()).unwrap_or(""), np),
             )
         } else {
-            (None, CharStream(self.0, self.1, self.2, self.3))
+            (None, CharStream(self.0, self.1))
         }
     }
 }

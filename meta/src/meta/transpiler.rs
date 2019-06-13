@@ -20,7 +20,9 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 
 use crate::meta::syntax::ASTParsec;
-use crate::meta::syntax::ASTParsec::{PBind, PChar, PChoice, PCode, PIdent, PMap, POptional, PRepeat, PSequence, PString, PNot};
+use crate::meta::syntax::ASTParsec::{
+    PBind, PChar, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat, PSequence, PString,
+};
 use crate::meta::syntax::ASTParsecRule;
 
 pub trait Transpile<E> {
@@ -32,14 +34,6 @@ impl Transpile<TokenStream> for Vec<ASTParsecRule> {
         let parsers: TokenStream = self.iter().map(|a| a.transpile()).collect();
 
         quote!(
-            use celma_core::parser::and::AndOperation;
-            use celma_core::parser::fmap::FMapOperation;
-            use celma_core::parser::not::NotOperation;
-            use celma_core::parser::option::OptionalOperation;
-            use celma_core::parser::or::OrOperation;
-            use celma_core::parser::parser::Parse;
-            use celma_core::parser::repeat::RepeatOperation;
-
             #parsers
         )
     }
@@ -61,6 +55,14 @@ impl Transpile<TokenStream> for ASTParsecRule {
             pub fn #name<'a,S:'a>() -> impl celma_core::parser::parser::Parse<#returns,S> + celma_core::parser::parser::Combine<#returns> + Clone + 'a
                 where S:celma_core::stream::stream::Stream<Item=char>,
             {
+                use celma_core::parser::and::AndOperation;
+                use celma_core::parser::fmap::FMapOperation;
+                use celma_core::parser::not::NotOperation;
+                use celma_core::parser::option::OptionalOperation;
+                use celma_core::parser::or::OrOperation;
+                use celma_core::parser::parser::Parse;
+                use celma_core::parser::repeat::RepeatOperation;
+
                 celma_core::parser::core::parser(#body)
             }
         )

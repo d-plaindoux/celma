@@ -17,30 +17,35 @@
 #[macro_use]
 extern crate bencher;
 
-use bencher::{Bencher, black_box};
+use bencher::{black_box, Bencher};
 
+use celma_core::parser::and::AndOperation;
 use celma_core::parser::char::{digit, space};
 use celma_core::parser::core::eos;
+use celma_core::parser::parser::Parse;
 use celma_core::parser::response::Response::{Reject, Success};
 use celma_core::stream::char_stream::CharStream;
 use celma_core::stream::stream::Stream;
 use celma_plugin::parsec_rules;
 
 parsec_rules!(
-    let json:{()}    = S (string | null | boolean | array | object | number) S
-    let number:{()}  = NUMBER                           -> {}
-    let string:{()}  = STRING                           -> {}
-    let null:{()}    = "null"                           -> {}
-    let boolean:{()} = ("true"|"false")                 -> {}
-    let array:{()}   = '[' (json (',' json)*)? ']'      -> {}
-    let object:{()}  = '{' (attr (',' attr)*)? '}'      -> {}
-    let attr:{()}    = S STRING S ":" json              -> {}
-
-    let STRING:{()}  = '"' (^'"')* '"'                  -> {}
-    let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?  -> {}
-    let INT:{()}     = ('-'|'+')? _=NAT                 -> {}
-    let NAT:{()}     = digit+                           -> {}
-    let S:{()}       = space*                           -> {}
+    let json:{()}    = S (string | null | boolean  | array | object | number) S
+    //------------------------------------------------------------------------
+    let number:{()}  = NUMBER                                           -> {}
+    let string:{()}  = STRING                                           -> {}
+    let null:{()}    = "null"                                           -> {}
+    let boolean:{()} = ("true"|"false")                                 -> {}
+    let array:{()}   = '[' S (json (',' json)*)? ']'                    -> {}
+    let object:{()}  = '{' S (attr (',' attr)*)? '}'                    -> {}
+    let attr:{()}    = S STRING S ":" json                              -> {}
+    //------------------------------------------------------------------------
+    let STRING:{()}  = '"' (("\\\"" -> { '\"' }) | ^'"')* '"'             -> {}
+    //------------------------------------------------------------------------
+    let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?                  -> {}
+    let INT:{()}     = ('-'|'+')? NAT                                   -> {}
+    let NAT:{()}     = digit+                                           -> {}
+    //------------------------------------------------------------------------
+    let S:{()}       = space*                                           -> {}
 );
 
 // -------------------------------------------------------------------------------------------------
@@ -79,8 +84,7 @@ fn json_apache(b: &mut Bencher) {
 
 // -------------------------------------------------------------------------------------------------
 
-fn parse(b: &mut Bencher, buffer: &str)
-{
+fn parse(b: &mut Bencher, buffer: &str) {
     b.iter(|| {
         let buffer = black_box(buffer);
 
@@ -88,7 +92,7 @@ fn parse(b: &mut Bencher, buffer: &str)
 
         match response {
             Success(_, _, _) => (),
-            Reject(s, _) => panic!("parse error at {:?}", s.position())
+            Reject(s, _) => panic!("parse error at {:?}", s.position()),
         }
     });
 }

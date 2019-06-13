@@ -14,17 +14,69 @@
    limitations under the License.
 */
 
-#[derive(Copy, Clone, Debug)]
-pub struct Position {
-    pub offset: usize,
-    pub line: usize,
-    pub char: usize,
+pub trait Position {
+    fn new() -> Self;
+
+    fn step(self, newline: bool) -> Self;
+
+    fn offset(&self) -> usize;
+
+    fn char_number(&self) -> usize {
+        self.offset()
+    }
+
+    fn line_number(&self) -> usize {
+        0
+    }
+}
+
+impl Position for usize {
+    fn new() -> Self {
+        0
+    }
+
+    #[inline]
+    fn step(self, _: bool) -> Self {
+        self + 1
+    }
+
+    fn offset(&self) -> usize {
+        self.clone()
+    }
+}
+
+impl Position for (usize, usize, usize) {
+    fn new() -> Self {
+        (0, 1, 0)
+    }
+
+    #[inline]
+    fn step(self, newline: bool) -> Self {
+        if newline {
+            (self.0 + 1, self.1 + 1, 0)
+        } else {
+            (self.0 + 1, self.1, self.2 + 1)
+        }
+    }
+
+    fn offset(&self) -> usize {
+        self.0
+    }
+
+    fn char_number(&self) -> usize {
+        self.1
+    }
+
+    fn line_number(&self) -> usize {
+        self.2
+    }
 }
 
 pub trait Stream: Clone {
     type Item;
+    type Pos: Position;
 
-    fn position(&self) -> Position;
+    fn position(&self) -> Self::Pos;
 
     fn next(&self) -> (Option<Self::Item>, Self);
 }

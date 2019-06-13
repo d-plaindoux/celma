@@ -22,7 +22,7 @@ pub struct VecStream<'a, A>(&'a [A], usize);
 
 impl<'a, A> VecStream<'a, A> {
     pub fn new(v: &'a [A]) -> VecStream<'a, A> {
-        VecStream(v, 0)
+        VecStream(v, <usize>::new())
     }
 }
 
@@ -31,20 +31,17 @@ where
     A: Clone,
 {
     type Item = A;
+    type Pos = usize;
 
-    fn position(&self) -> Position {
-        Position {
-            offset: self.1,
-            line: 0,
-            char: self.1,
-        }
+    fn position(&self) -> Self::Pos {
+        self.1
     }
 
     fn next(&self) -> (Option<Self::Item>, Self) {
-        let option = self.0.get(self.1);
+        let option = self.0.get(self.1.offset());
 
         if option.is_some() {
-            (option.cloned(), VecStream(self.0, self.1 + 1))
+            (option.cloned(), VecStream(self.0, self.1.step(false)))
         } else {
             (option.cloned(), VecStream(self.0, self.1))
         }
