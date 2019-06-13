@@ -59,11 +59,11 @@ parsec_rules!(
 
 ### Stage 1
 
-The Celma parser v0 is written with parser combinators.
+The [Celma parser v0](https://github.com/d-plaindoux/celma/blob/master/meta/src/meta/parser.rs) is written with parser combinators
 
-### Stage 2
+### [WIP] Stage 2
 
-The Celma parser V1 is written using the Celma parser V0
+The Celma parser V1 is written using the Celma parser V0.
 
 # License
 
