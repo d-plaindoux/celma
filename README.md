@@ -31,7 +31,7 @@ ident        = [a..zA..Z]+ - {"let",  "try"}
 Therefore a parser can be defined using this meta-language.
 
 ```rust
-let parser = parsec!( '"' s=(("\\\"" -> { '\n' })|^'"')* '"' -> { TkString(s) } );
+let parser = parsec!( '"' s=(("\"" -> { '\"' })|^'"')* '"' -> { TkString(s) } );
 ```
 
 ## A Full Example: JSON
@@ -41,19 +41,19 @@ A [JSon parser](https://github.com/d-plaindoux/celma/blob/master/plugin/benches/
 ```rust
 parsec_rules!(
     let json:{()}    = S (string | null | boolean | array | object | number) S
-    let number:{()}  = NUMBER                           -> {}
-    let string:{()}  = STRING                           -> {}
-    let null:{()}    = "null"                           -> {}
-    let boolean:{()} = ("true"|"false")                 -> {}
-    let array:{()}   = '[' S (json (',' json)*)? ']'    -> {}
-    let object:{()}  = '{' S (attr (',' attr)*)? '}'    -> {}
-    let attr:{()}    = S STRING S ":" json              -> {}
+    let number:{()}  = NUMBER                              -> {}
+    let string:{()}  = STRING                              -> {}
+    let null:{()}    = "null"                              -> {}
+    let boolean:{()} = ("true"|"false")                    -> {}
+    let array:{()}   = '[' S (json (',' json)*)? ']'       -> {}
+    let object:{()}  = '{' S (attr (',' attr)*)? '}'       -> {}
+    let attr:{()}    = S STRING S ":" json                 -> {}
     
-    let STRING:{()}  = '"' (^'"')* '"'                  -> {}
-    let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?  -> {}
-    let INT:{()}     = ('-'|'+')? NAT                   -> {}
-    let NAT:{()}     = digit+                           -> {}
-    let S:{()}       = space*                           -> {}
+    let STRING:{()}  = '"' (("\"" -> { '\"' })|^'"')** '"' -> {}
+    let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?     -> {}
+    let INT:{()}     = ('-'|'+')? NAT                      -> {}
+    let NAT:{()}     = digit+                              -> {}
+    let S:{()}       = space*                              -> {}
 );
 ```
 
