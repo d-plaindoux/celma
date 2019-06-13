@@ -12,11 +12,7 @@ name = "str_bench"
 harness = false
 
 [[bench]]
-name = "u8_bench"
-harness = false
-
-[[bench]]
-name = "vec_bench"
+name = "array_bench"
 harness = false
 
 [[bench]]

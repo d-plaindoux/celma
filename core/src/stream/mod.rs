@@ -15,8 +15,9 @@
 */
 
 pub mod char_stream;
+pub mod endline;
 pub mod iterator_stream;
 pub mod parser_stream;
+pub mod position;
 pub mod stream;
-pub mod u8_stream;
-pub mod vec_stream;
+pub mod array_stream;

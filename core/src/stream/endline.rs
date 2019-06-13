@@ -14,21 +14,18 @@
    limitations under the License.
 */
 
-use crate::stream::position::Position;
-
-pub trait Stream: Clone {
-    type Item;
-    type Pos: Position;
-
-    fn position(&self) -> Self::Pos;
-
-    fn next(&self) -> (Option<Self::Item>, Self);
+pub trait EndLine {
+    fn is_end_line(&self) -> bool;
 }
 
-pub trait Len {
-    fn len(&self) -> usize;
+impl EndLine for u8 {
+    fn is_end_line(&self) -> bool {
+        *self  == '\n' as u8
+    }
+}
 
-    fn is_empty(&self) -> bool {
-        self.len() == 0
+impl EndLine for char {
+    fn is_end_line(&self) -> bool {
+        *self == '\n'
     }
 }

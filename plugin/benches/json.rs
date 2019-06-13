@@ -25,9 +25,10 @@ use celma_core::parser::core::eos;
 use celma_core::parser::literal::delimited_string;
 use celma_core::parser::parser::Parse;
 use celma_core::parser::response::Response::{Reject, Success};
-use celma_core::stream::char_stream::CharStream;
 use celma_core::stream::stream::Stream;
 use celma_plugin::parsec_rules;
+use celma_core::stream::iterator_stream::IteratorStream;
+use celma_core::stream::position::Position;
 
 parsec_rules!(
     let json:{()}    = S (string | null | boolean  | array | object | number) S
@@ -88,8 +89,9 @@ fn json_apache(b: &mut Bencher) {
 fn parse(b: &mut Bencher, buffer: &str) {
     b.iter(|| {
         let buffer = black_box(buffer);
+        let stream = IteratorStream::new_with_position(buffer.chars(), <usize>::new());
 
-        let response = json().and_left(eos()).check(CharStream::new(buffer));
+        let response = json().and_left(eos()).check(stream);
 
         match response {
             Success(_, _, _) => (),

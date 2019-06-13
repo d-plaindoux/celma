@@ -17,54 +17,69 @@
 use std::iter::Iterator;
 use std::marker::PhantomData;
 
+use crate::stream::endline::EndLine;
+use crate::stream::position::Position;
+use crate::stream::stream::Len;
 use crate::stream::stream::Stream;
-use crate::stream::stream::{Len, Position};
 
 #[derive(Clone)]
-pub struct IteratorStream<E, I>(I, usize, PhantomData<E>)
-where
-    I: Iterator<Item = E>;
+pub struct IteratorStream<E, I, P>(I, P, PhantomData<E>)
+    where
+        I: Iterator<Item=E>,
+        E: EndLine,
+        P: Position;
 
-impl<'a, E, I> IteratorStream<E, I>
-where
-    I: Iterator<Item = E>,
+impl<'a, E, I> IteratorStream<E, I, (usize, usize, usize)>
+    where
+        I: Iterator<Item=E>,
+        E: EndLine,
 {
-    pub fn new(s: I) -> IteratorStream<E, I> {
-        IteratorStream(s, <usize>::new(), PhantomData)
+    pub fn new(s: I) -> Self {
+        IteratorStream(s, <(usize, usize, usize)>::new(), PhantomData)
     }
 }
 
-impl<E, I> Stream for IteratorStream<E, I>
-where
-    I: Iterator<Item = E> + Clone,
-    E: Clone,
+impl<'a, E, I, P> IteratorStream<E, I, P>
+    where
+        I: Iterator<Item=E>,
+        E: EndLine,
+        P: Position
+{
+    pub fn new_with_position(s: I, p: P) -> Self {
+        IteratorStream(s, p, PhantomData)
+    }
+}
+
+impl<E, I, P> Stream for IteratorStream<E, I, P>
+    where
+        I: Iterator<Item=E> + Clone,
+        E: EndLine + Clone,
+        P: Position + Clone,
 {
     type Item = E;
-    type Pos = usize;
+    type Pos = P;
 
     fn position(&self) -> Self::Pos {
-        self.1
+        self.1.clone()
     }
 
     fn next(&self) -> (Option<Self::Item>, Self) {
         let mut this = self.clone(); // Ugly code preventing mutability / Check efficiency
         let option = this.0.next();
-        let is_some = option.is_some();
 
-        (
-            option,
-            IteratorStream(
-                this.0,
-                if is_some { this.1.step(false) } else { self.1 },
-                PhantomData,
-            ),
-        )
+        if option.is_some() {
+            (option.clone(), IteratorStream(this.0, this.1.step(option.unwrap().is_end_line()), PhantomData))
+        } else {
+            (option, IteratorStream(this.0, this.1, PhantomData))
+        }
     }
 }
 
-impl<E, I> Len for IteratorStream<E, I>
-where
-    I: Iterator<Item = E> + Clone,
+impl<E, I, P> Len for IteratorStream<E, I, P>
+    where
+        I: Iterator<Item=E> + Clone,
+        E: EndLine,
+        P: Position
 {
     fn len(&self) -> usize {
         self.0.clone().count()

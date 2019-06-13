@@ -33,7 +33,7 @@ use celma_core::parser::response::Response::Success;
 use celma_core::parser::satisfy::Satisfy;
 use celma_core::stream::stream::Len;
 use celma_core::stream::stream::Stream;
-use celma_core::stream::vec_stream::VecStream;
+use celma_core::stream::array_stream::ArrayStream;
 
 // -------------------------------------------------------------------------------------------------
 // Basic benchmarks
@@ -60,7 +60,7 @@ fn basic_any(bencher: &mut Bencher) {
 
     let parser = any().opt_rep().and(eos());
 
-    do_parse(parser, bencher, VecStream::new(&data));
+    do_parse(parser, bencher, ArrayStream::new(&data));
 }
 
 fn basic_a(bencher: &mut Bencher) {
@@ -68,7 +68,7 @@ fn basic_a(bencher: &mut Bencher) {
 
     let parser = u8('a').opt_rep().and(eos());
 
-    do_parse(parser, bencher, VecStream::new(&data));
+    do_parse(parser, bencher, ArrayStream::new(&data));
 }
 
 fn basic_a_or_b(bencher: &mut Bencher) {
@@ -76,7 +76,7 @@ fn basic_a_or_b(bencher: &mut Bencher) {
 
     let parser = u8('a').or(u8('b')).opt_rep().and(eos());
 
-    do_parse(parser, bencher, VecStream::new(&data));
+    do_parse(parser, bencher, ArrayStream::new(&data));
 }
 
 fn basic_a_and_b(bencher: &mut Bencher) {
@@ -84,7 +84,7 @@ fn basic_a_and_b(bencher: &mut Bencher) {
 
     let parser = u8('a').and(u8('b')).opt_rep().and(eos());
 
-    do_parse(parser, bencher, VecStream::new(&data));
+    do_parse(parser, bencher, ArrayStream::new(&data));
 }
 
 fn basic_delimited_string(bencher: &mut Bencher) {
@@ -96,7 +96,7 @@ fn basic_delimited_string(bencher: &mut Bencher) {
         .opt_rep()
         .and(eos());
 
-    do_parse(parser, bencher, VecStream::new(&data));
+    do_parse(parser, bencher, ArrayStream::new(&data));
 }
 
 // -------------------------------------------------------------------------------------------------

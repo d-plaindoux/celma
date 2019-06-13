@@ -14,27 +14,32 @@
    limitations under the License.
 */
 
+use crate::stream::endline::EndLine;
 use crate::stream::position::Position;
 use crate::stream::stream::Len;
 use crate::stream::stream::Stream;
 
-#[derive(Clone)]
-pub struct CharStream<'a, P>(&'a str, P) where P: Position;
+#[derive(Copy, Clone)]
+pub struct ArrayStream<'a, A, P>(&'a [A], P) where A: EndLine, P: Position;
 
-impl<'a> CharStream<'a, (usize, usize, usize)> {
-    pub fn new(v: &'a str) -> Self {
-        Self::new_with_position(v, <(usize,usize,usize)>::new())
+impl<'a, A> ArrayStream<'a, A, (usize, usize, usize)> where A: EndLine {
+    pub fn new(v: &'a [A]) -> Self {
+        Self::new_with_position(v, <(usize, usize, usize)>::new())
     }
 }
 
-impl<'a, P> CharStream<'a, P> where P: Position {
-    pub fn new_with_position(v: &'a str, p: P) -> Self {
+impl<'a, A, P> ArrayStream<'a, A, P> where A: EndLine, P: Position {
+    pub fn new_with_position(v: &'a [A], p: P) -> Self {
         Self(v, p)
     }
 }
 
-impl<'a, P> Stream for CharStream<'a, P> where P: Position + Clone {
-    type Item = char;
+impl<'a, A, P> Stream for ArrayStream<'a, A, P>
+    where
+        A: EndLine + Clone,
+        P: Position + Clone
+{
+    type Item = A;
     type Pos = P;
 
     fn position(&self) -> Self::Pos {
@@ -42,22 +47,19 @@ impl<'a, P> Stream for CharStream<'a, P> where P: Position + Clone {
     }
 
     fn next(&self) -> (Option<Self::Item>, Self) {
-        let option = self.0.chars().next();
+        let option = self.0.get(self.1.offset());
 
         if option.is_some() {
-            let np = self.1.step(option.unwrap() == '\n');
-
-            (
-                option,
-                CharStream(self.0.get(1..self.0.len()).unwrap_or(""), np),
-            )
+            (option.cloned(), ArrayStream(self.0, self.1.step(option.unwrap().is_end_line())))
         } else {
-            (None, CharStream(self.0, self.1.clone()))
+            (option.cloned(), ArrayStream(self.0, self.1.clone()))
         }
     }
 }
 
-impl<'a, P> Len for CharStream<'a, P> where P: Position {
+impl<'a, A, P> Len for ArrayStream<'a, A, P>
+    where A: EndLine, P: Position
+{
     fn len(&self) -> usize {
         self.0.len()
     }
