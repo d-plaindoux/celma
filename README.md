@@ -1,6 +1,7 @@
 # Celma 
 
 [![Build Status](https://travis-ci.org/d-plaindoux/celma.svg?branch=master)](https://travis-ci.org/d-plaindoux/celma)
+[![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
 [Celma ("k")noun "channel" (KEL) in Quenya](https://www.elfdict.com/w/kelma)
 
@@ -42,19 +43,19 @@ A [JSon parser](https://github.com/d-plaindoux/celma/blob/master/plugin/benches/
 ```rust
 parsec_rules!(
     let json:{()}    = S (string | null | boolean | array | object | number) S
-    let number:{()}  = NUMBER                              -> {}
-    let string:{()}  = STRING                              -> {}
-    let null:{()}    = "null"                              -> {}
-    let boolean:{()} = ("true"|"false")                    -> {}
-    let array:{()}   = '[' S (json (',' json)*)? ']'       -> {}
-    let object:{()}  = '{' S (attr (',' attr)*)? '}'       -> {}
-    let attr:{()}    = S STRING S ":" json                 -> {}
+    let number:{()}  = NUMBER                             -> {}
+    let string:{()}  = STRING                             -> {}
+    let null:{()}    = "null"                             -> {}
+    let boolean:{()} = ("true"|"false")                   -> {}
+    let array:{()}   = '[' S (json (',' json)*)? ']'      -> {}
+    let object:{()}  = '{' S (attr (',' attr)*)? '}'      -> {}
+    let attr:{()}    = S STRING S ":" json                -> {}
     
-    let STRING:{()}  = '"' (("\"" -> { '\"' })|^'"')** '"' -> {}
-    let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?     -> {}
-    let INT:{()}     = ('-'|'+')? NAT                      -> {}
-    let NAT:{()}     = digit+                              -> {}
-    let S:{()}       = space*                              -> {}
+    let STRING:{()}  = '"' (("\"" -> { '\"' })|^'"')* '"' -> {}
+    let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?    -> {}
+    let INT:{()}     = ('-'|'+')? NAT                     -> {}
+    let NAT:{()}     = digit+                             -> {}
+    let S:{()}       = space*                             -> {}
 );
 ```
 
