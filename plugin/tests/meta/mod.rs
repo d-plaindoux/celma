@@ -15,3 +15,4 @@
 */
 
 pub mod transpiler;
+pub mod transpiler_rules;

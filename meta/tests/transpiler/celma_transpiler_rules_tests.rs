@@ -43,6 +43,7 @@ mod tests_and {
                     where
                         S: celma_core::stream::stream::Stream<Item = char>,
                     {
+                        use celma_core::parser::a_try::a_try;
                         use celma_core::parser::and::AndOperation;
                         use celma_core::parser::fmap::FMapOperation;
                         use celma_core::parser::not::NotOperation;
@@ -61,6 +62,7 @@ mod tests_and {
                     where
                         S: celma_core::stream::stream::Stream<Item = char>,
                     {
+                        use celma_core::parser::a_try::a_try;
                         use celma_core::parser::and::AndOperation;
                         use celma_core::parser::fmap::FMapOperation;
                         use celma_core::parser::not::NotOperation;

@@ -32,7 +32,7 @@ use celma_plugin::parsec_rules;
 parsec_rules!(
     let json:{()}    = S (string | null | boolean  | array | object | number) S
     //------------------------------------------------------------------------
-    let number:{()}  = NUMBER                                           -> {}
+    let number:{()}  = try NUMBER                                       -> {}
     let string:{()}  = STRING                                           -> {}
     let null:{()}    = "null"                                           -> {}
     let boolean:{()} = ("true"|"false")                                 -> {}

@@ -21,7 +21,7 @@ use celma_core::parser::char::{char, char_in_range, char_in_set, not_char};
 use celma_core::parser::core::{eos, fail, parser, returns};
 use celma_core::parser::fmap::FMapOperation;
 use celma_core::parser::lazy::lazy;
-use celma_core::parser::literal::{string, delimited_string};
+use celma_core::parser::literal::{delimited_string, string};
 use celma_core::parser::option::OptionalOperation;
 use celma_core::parser::or::OrOperation;
 use celma_core::parser::parser::{Combine, Parse};
@@ -29,7 +29,7 @@ use celma_core::parser::repeat::RepeatOperation;
 use celma_core::stream::stream::Stream;
 
 use crate::meta::syntax::ASTParsec::{
-    PBind, PChar, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat, PSequence, PString,
+    PBind, PChar, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat, PSequence, PString, PTry,
 };
 use crate::meta::syntax::{ASTParsec, ASTParsecRule};
 
@@ -69,10 +69,10 @@ where
     .rep()
     .fmap(|v| v.into_iter().collect())
     .bind(|s| {
-        if s != String::from("let") {
-            parser(returns(s))
-        } else {
+        if s == String::from("let") || s == String::from("try") {
             parser(fail(false))
+        } else {
+            parser(returns(s))
         }
     })
 }
@@ -205,7 +205,23 @@ fn atom<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 
 where
     S: Stream<Item = char>,
 {
-    (char('(')
+    char('^')
+        .and_left(skip())
+        .and_right(atom2())
+        .fmap(|p| PNot(Box::new(p)))
+        .or(string("try")
+            .and_left(skip())
+            .and_right(atom2())
+            .fmap(|p| PTry(Box::new(p))))
+        .or(atom2())
+}
+
+#[inline]
+fn atom2<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 'a
+where
+    S: Stream<Item = char>,
+{
+    ((char('(')
         .and_left(skip())
         .and_right(lazy(|| parser::<'a, _, ASTParsec, S>(parsec())))
         .and_left(skip())
@@ -213,10 +229,7 @@ where
     .or(code().fmap(PCode))
     .or(delimited_char().fmap(PChar))
     .or(delimited_string().fmap(PString))
-    .or(ident().fmap(PIdent))
-    .or(char('^')
-        .and_right(lazy(|| parser::<'a, _, ASTParsec, S>(parsec())))
-        .fmap(|p| PNot(Box::new(p))))
+    .or(ident().fmap(PIdent)))
 }
 
 #[inline]

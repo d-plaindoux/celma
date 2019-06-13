@@ -43,8 +43,8 @@ where
 impl<'a, P, A, S, L> Clone for ParserStream<'a, P, A, S, L>
 where
     P: Combine<A> + Parse<A, S>,
-    S: Stream<Pos=L>,
-    L: Position
+    S: Stream<Pos = L>,
+    L: Position,
 {
     fn clone(&self) -> Self {
         ParserStream(self.0, self.1.clone(), PhantomData, PhantomData)

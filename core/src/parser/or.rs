@@ -46,7 +46,7 @@ where
 
         match l.parse(s.clone()) {
             Reject(_, false) => r.parse(s),
-            r => r
+            r => r,
         }
     }
 
@@ -55,7 +55,7 @@ where
 
         match l.check(s.clone()) {
             Reject(_, false) => r.check(s),
-            r => r
+            r => r,
         }
     }
 }

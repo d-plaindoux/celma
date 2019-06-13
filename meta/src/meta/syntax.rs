@@ -25,6 +25,7 @@ pub enum ASTParsec {
     PSequence(Box<ASTParsec>, Box<ASTParsec>),
     PChoice(Box<ASTParsec>, Box<ASTParsec>),
     PNot(Box<ASTParsec>),
+    PTry(Box<ASTParsec>),
     POptional(Box<ASTParsec>),
     PRepeat(bool, Box<ASTParsec>),
 }

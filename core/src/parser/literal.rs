@@ -27,8 +27,8 @@ pub struct Chars<'b>(&'b str);
 impl<'a> Combine<&'a str> for Chars<'a> {}
 
 impl<'a, 'b, S> Parse<&'b str, S> for Chars<'b>
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     fn parse(&self, s: S) -> Response<&'b str, S> {
         let Self(v) = self;
@@ -66,8 +66,8 @@ pub struct StringDelimited;
 impl<'a> Combine<String> for StringDelimited {}
 
 impl<'a, 'b, S> Parse<String, S> for StringDelimited
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     fn parse(&self, s: S) -> Response<String, S> {
         let (c, nsp) = s.next();
