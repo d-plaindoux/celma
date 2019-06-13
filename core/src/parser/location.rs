@@ -21,8 +21,8 @@ use crate::parser::parser::Parse;
 use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
-use crate::stream::stream::Stream;
 use crate::stream::position::Position;
+use crate::stream::stream::Stream;
 
 #[derive(Copy, Clone)]
 pub struct Location<A, L>

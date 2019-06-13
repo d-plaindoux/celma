@@ -72,7 +72,7 @@ impl Transpile<TokenStream> for ASTParsecRule {
 
 impl Transpile<TokenStream> for ASTParsec {
     fn transpile(&self) -> TokenStream {
-        let  body = self.transpile_body().1;
+        let body = self.transpile_body().1;
 
         quote!(
             {

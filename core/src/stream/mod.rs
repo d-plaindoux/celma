@@ -14,10 +14,10 @@
    limitations under the License.
 */
 
+pub mod array_stream;
 pub mod char_stream;
 pub mod endline;
 pub mod iterator_stream;
 pub mod parser_stream;
 pub mod position;
 pub mod stream;
-pub mod array_stream;

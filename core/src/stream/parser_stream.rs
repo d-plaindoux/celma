@@ -20,8 +20,8 @@ use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
-use crate::stream::stream::Stream;
 use crate::stream::position::Position;
+use crate::stream::stream::Stream;
 
 pub struct ParserStream<'a, P, A, S, L>(&'a P, S, PhantomData<A>, PhantomData<L>)
 where

@@ -19,21 +19,29 @@ use crate::stream::stream::Len;
 use crate::stream::stream::Stream;
 
 #[derive(Clone)]
-pub struct CharStream<'a, P>(&'a str, P) where P: Position;
+pub struct CharStream<'a, P>(&'a str, P)
+where
+    P: Position;
 
 impl<'a> CharStream<'a, (usize, usize, usize)> {
     pub fn new(v: &'a str) -> Self {
-        Self::new_with_position(v, <(usize,usize,usize)>::new())
+        Self::new_with_position(v, <(usize, usize, usize)>::new())
     }
 }
 
-impl<'a, P> CharStream<'a, P> where P: Position {
+impl<'a, P> CharStream<'a, P>
+where
+    P: Position,
+{
     pub fn new_with_position(v: &'a str, p: P) -> Self {
         Self(v, p)
     }
 }
 
-impl<'a, P> Stream for CharStream<'a, P> where P: Position + Clone {
+impl<'a, P> Stream for CharStream<'a, P>
+where
+    P: Position + Clone,
+{
     type Item = char;
     type Pos = P;
 
@@ -57,7 +65,10 @@ impl<'a, P> Stream for CharStream<'a, P> where P: Position + Clone {
     }
 }
 
-impl<'a, P> Len for CharStream<'a, P> where P: Position {
+impl<'a, P> Len for CharStream<'a, P>
+where
+    P: Position,
+{
     fn len(&self) -> usize {
         self.0.len()
     }

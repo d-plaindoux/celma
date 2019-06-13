@@ -20,24 +20,34 @@ use crate::stream::stream::Len;
 use crate::stream::stream::Stream;
 
 #[derive(Copy, Clone)]
-pub struct ArrayStream<'a, A, P>(&'a [A], P) where A: EndLine, P: Position;
+pub struct ArrayStream<'a, A, P>(&'a [A], P)
+where
+    A: EndLine,
+    P: Position;
 
-impl<'a, A> ArrayStream<'a, A, (usize, usize, usize)> where A: EndLine {
+impl<'a, A> ArrayStream<'a, A, (usize, usize, usize)>
+where
+    A: EndLine,
+{
     pub fn new(v: &'a [A]) -> Self {
         Self::new_with_position(v, <(usize, usize, usize)>::new())
     }
 }
 
-impl<'a, A, P> ArrayStream<'a, A, P> where A: EndLine, P: Position {
+impl<'a, A, P> ArrayStream<'a, A, P>
+where
+    A: EndLine,
+    P: Position,
+{
     pub fn new_with_position(v: &'a [A], p: P) -> Self {
         Self(v, p)
     }
 }
 
 impl<'a, A, P> Stream for ArrayStream<'a, A, P>
-    where
-        A: EndLine + Clone,
-        P: Position + Clone
+where
+    A: EndLine + Clone,
+    P: Position + Clone,
 {
     type Item = A;
     type Pos = P;
@@ -50,7 +60,10 @@ impl<'a, A, P> Stream for ArrayStream<'a, A, P>
         let option = self.0.get(self.1.offset());
 
         if option.is_some() {
-            (option.cloned(), ArrayStream(self.0, self.1.step(option.unwrap().is_end_line())))
+            (
+                option.cloned(),
+                ArrayStream(self.0, self.1.step(option.unwrap().is_end_line())),
+            )
         } else {
             (option.cloned(), ArrayStream(self.0, self.1.clone()))
         }
@@ -58,7 +71,9 @@ impl<'a, A, P> Stream for ArrayStream<'a, A, P>
 }
 
 impl<'a, A, P> Len for ArrayStream<'a, A, P>
-    where A: EndLine, P: Position
+where
+    A: EndLine,
+    P: Position,
 {
     fn len(&self) -> usize {
         self.0.len()

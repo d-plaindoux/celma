@@ -24,15 +24,15 @@ use crate::stream::stream::Stream;
 
 #[derive(Clone)]
 pub struct IteratorStream<E, I, P>(I, P, PhantomData<E>)
-    where
-        I: Iterator<Item=E>,
-        E: EndLine,
-        P: Position;
+where
+    I: Iterator<Item = E>,
+    E: EndLine,
+    P: Position;
 
 impl<'a, E, I> IteratorStream<E, I, (usize, usize, usize)>
-    where
-        I: Iterator<Item=E>,
-        E: EndLine,
+where
+    I: Iterator<Item = E>,
+    E: EndLine,
 {
     pub fn new(s: I) -> Self {
         IteratorStream(s, <(usize, usize, usize)>::new(), PhantomData)
@@ -40,10 +40,10 @@ impl<'a, E, I> IteratorStream<E, I, (usize, usize, usize)>
 }
 
 impl<'a, E, I, P> IteratorStream<E, I, P>
-    where
-        I: Iterator<Item=E>,
-        E: EndLine,
-        P: Position
+where
+    I: Iterator<Item = E>,
+    E: EndLine,
+    P: Position,
 {
     pub fn new_with_position(s: I, p: P) -> Self {
         IteratorStream(s, p, PhantomData)
@@ -51,10 +51,10 @@ impl<'a, E, I, P> IteratorStream<E, I, P>
 }
 
 impl<E, I, P> Stream for IteratorStream<E, I, P>
-    where
-        I: Iterator<Item=E> + Clone,
-        E: EndLine + Clone,
-        P: Position + Clone,
+where
+    I: Iterator<Item = E> + Clone,
+    E: EndLine + Clone,
+    P: Position + Clone,
 {
     type Item = E;
     type Pos = P;
@@ -68,7 +68,14 @@ impl<E, I, P> Stream for IteratorStream<E, I, P>
         let option = this.0.next();
 
         if option.is_some() {
-            (option.clone(), IteratorStream(this.0, this.1.step(option.unwrap().is_end_line()), PhantomData))
+            (
+                option.clone(),
+                IteratorStream(
+                    this.0,
+                    this.1.step(option.unwrap().is_end_line()),
+                    PhantomData,
+                ),
+            )
         } else {
             (option, IteratorStream(this.0, this.1, PhantomData))
         }
@@ -76,10 +83,10 @@ impl<E, I, P> Stream for IteratorStream<E, I, P>
 }
 
 impl<E, I, P> Len for IteratorStream<E, I, P>
-    where
-        I: Iterator<Item=E> + Clone,
-        E: EndLine,
-        P: Position
+where
+    I: Iterator<Item = E> + Clone,
+    E: EndLine,
+    P: Position,
 {
     fn len(&self) -> usize {
         self.0.clone().count()

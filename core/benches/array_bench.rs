@@ -31,9 +31,9 @@ use celma_core::parser::repeat::RepeatOperation;
 use celma_core::parser::response::Response::Reject;
 use celma_core::parser::response::Response::Success;
 use celma_core::parser::satisfy::Satisfy;
+use celma_core::stream::array_stream::ArrayStream;
 use celma_core::stream::stream::Len;
 use celma_core::stream::stream::Stream;
-use celma_core::stream::array_stream::ArrayStream;
 
 // -------------------------------------------------------------------------------------------------
 // Basic benchmarks
