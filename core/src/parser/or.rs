@@ -20,7 +20,6 @@ use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
-use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
 
 #[derive(Copy, Clone)]
@@ -46,14 +45,8 @@ where
         let Self(l, r, _) = self;
 
         match l.parse(s.clone()) {
-            Success(a, s, ba) => Success(a, s, ba),
-            Reject(ns, ba) => {
-                if ba {
-                    Reject(ns, ba)
-                } else {
-                    r.parse(s)
-                }
-            }
+            Reject(_, false) => r.parse(s),
+            r => r
         }
     }
 
@@ -61,14 +54,8 @@ where
         let Self(l, r, _) = self;
 
         match l.check(s.clone()) {
-            Success(_, s, ba) => Success((), s, ba),
-            Reject(ns, ba) => {
-                if ba {
-                    Reject(ns, ba)
-                } else {
-                    r.check(s)
-                }
-            }
+            Reject(_, false) => r.check(s),
+            r => r
         }
     }
 }

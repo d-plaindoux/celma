@@ -49,6 +49,21 @@ where
             }
         }
     }
+
+    fn check(&self, s: S) -> Response<(), S> {
+        let Self(p, _) = self;
+
+        match p.check(s.clone()) {
+            Success(v, s, c) => Success(v, s, c),
+            Reject(ns, c) => {
+                if c {
+                    Reject(ns, c)
+                } else {
+                    Success((), s, false)
+                }
+            }
+        }
+    }
 }
 
 pub trait OptionalOperation<L, A>

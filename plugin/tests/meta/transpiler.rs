@@ -116,10 +116,10 @@ mod tests_transpiler {
     #[test]
     fn it_parse_a_string_elem() {
         parsec_rules!(
-            let parens:{()} = (^'"'|"\\\"" -> { '"' }) -> { () }
+            let a:{char} = ("\"" -> { '"' }) | ^'"'
         );
 
-        let response = parens().and_left(eos()).parse(CharStream::new("a"));
+        let response = a().and_left(eos()).parse(CharStream::new("a"));
 
         match response {
             Success(_, _, _) => assert_eq!(true, true),
@@ -130,10 +130,10 @@ mod tests_transpiler {
     #[test]
     fn it_parse_a_special_string_elem() {
         parsec_rules!(
-            let parens:{char} = ("\"" -> { '"' }) | ^'"'
+            let a:{char} = '"' (("\\\"" -> { '"' }) | ^'"') '"'
         );
 
-        let response = parens().and_left(eos()).parse(CharStream::new("\""));
+        let response = a().and_left(eos()).parse(CharStream::new(r#""\"""#));
 
         match response {
             Success(_, _, _) => assert_eq!(true, true),

@@ -54,7 +54,7 @@ where
     fn check(&self, s: S) -> Response<(), S> {
         let Self(p, _, _, _) = self;
 
-        match p.parse(s) {
+        match p.check(s) {
             Success(_, s, c) => Success((), s, c),
             Reject(s, c) => Reject(s, c),
         }
