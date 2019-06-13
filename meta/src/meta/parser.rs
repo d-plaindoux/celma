@@ -21,7 +21,7 @@ use celma_core::parser::char::{char, char_in_range, char_in_set, not_char};
 use celma_core::parser::core::{eos, fail, parser, returns};
 use celma_core::parser::fmap::FMapOperation;
 use celma_core::parser::lazy::lazy;
-use celma_core::parser::literal::string;
+use celma_core::parser::literal::{string, delimited_string};
 use celma_core::parser::option::OptionalOperation;
 use celma_core::parser::or::OrOperation;
 use celma_core::parser::parser::{Combine, Parse};
@@ -85,17 +85,6 @@ where
     char('\'')
         .and_right(string("\'").fmap(|_| '\'').or(not_char('\'')))
         .and_left(char('\''))
-}
-
-#[inline]
-fn delimited_string<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
-where
-    S: Stream<Item = char>,
-{
-    char('"')
-        .and_right(string("\\\"").fmap(|_| '\"').or(not_char('"')).opt_rep())
-        .and_left(char('"'))
-        .fmap(|v| v.into_iter().collect())
 }
 
 // -------------------------------------------------------------------------------------------------

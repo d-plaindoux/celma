@@ -22,6 +22,7 @@ use bencher::{black_box, Bencher};
 use celma_core::parser::and::AndOperation;
 use celma_core::parser::char::{digit, space};
 use celma_core::parser::core::eos;
+use celma_core::parser::literal::delimited_string;
 use celma_core::parser::parser::Parse;
 use celma_core::parser::response::Response::{Reject, Success};
 use celma_core::stream::char_stream::CharStream;
@@ -39,7 +40,7 @@ parsec_rules!(
     let object:{()}  = '{' S (attr (',' attr)*)? '}'                    -> {}
     let attr:{()}    = S STRING S ":" json                              -> {}
     //------------------------------------------------------------------------
-    let STRING:{()}  = '"' (("\\\"" -> { '\"' }) | ^'"')* '"'             -> {}
+    let STRING:{()}  = delimited_string                                 -> {}
     //------------------------------------------------------------------------
     let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?                  -> {}
     let INT:{()}     = ('-'|'+')? NAT                                   -> {}
@@ -102,7 +103,7 @@ benchmark_group!(
     json_data,
     json_canada_pest,
     json_canada_nom,
-    //json_apache
+    json_apache
 );
 
 benchmark_main!(benches);

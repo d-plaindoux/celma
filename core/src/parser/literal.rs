@@ -27,8 +27,8 @@ pub struct Chars<'b>(&'b str);
 impl<'a> Combine<&'a str> for Chars<'a> {}
 
 impl<'a, 'b, S> Parse<&'b str, S> for Chars<'b>
-where
-    S: Stream<Item = char>,
+    where
+        S: Stream<Item=char>,
 {
     fn parse(&self, s: S) -> Response<&'b str, S> {
         let Self(v) = self;
@@ -40,10 +40,13 @@ where
                 return Success(v, ns, index > 0);
             }
 
-            match (ns.next(), v.chars().nth(index)) {
-                ((Some(c), ref next), Some(v)) if c == v => {
+            let (oc, next) = ns.next();
+            let sc = v.chars().nth(index);
+
+            match (oc, sc) {
+                (Some(c), Some(v)) if c == v => {
                     index += 1;
-                    ns = next.clone();
+                    ns = next;
                 }
                 _ => {
                     return Reject(ns, false);
@@ -55,4 +58,72 @@ where
 
 pub fn string(s: &str) -> Chars {
     Chars(s)
+}
+
+#[derive(Copy, Clone)]
+pub struct StringDelimited;
+
+impl<'a> Combine<String> for StringDelimited {}
+
+impl<'a, 'b, S> Parse<String, S> for StringDelimited
+    where
+        S: Stream<Item=char>,
+{
+    fn parse(&self, s: S) -> Response<String, S> {
+        let (c, nsp) = s.next();
+
+        if c.is_none() || c.unwrap() != '"' {
+            return Reject(s, false);
+        }
+
+        let mut ns = nsp;
+        let mut rs = Vec::<char>::new();
+
+        loop {
+            let (c, nsp) = ns.next();
+
+            if c.is_none() {
+                return Reject(ns, true);
+            } else if c.unwrap() == '"' {
+                let r: String = rs.into_iter().collect();
+                return Success(r, nsp, true);
+            } else if c.unwrap() == '\\' {
+                let (c, nsp) = nsp.next();
+                rs.push('\\');
+                rs.push(c.unwrap());
+                ns = nsp;
+            } else {
+                rs.push(c.unwrap());
+                ns = nsp;
+            }
+        }
+    }
+
+    fn check(&self, s: S) -> Response<(), S> {
+        let (c, nsp) = s.next();
+
+        if c.is_none() || c.unwrap() != '"' {
+            return Reject(s, false);
+        }
+
+        let mut ns = nsp;
+
+        loop {
+            let (c, nsp) = ns.next();
+
+            if c.is_none() {
+                return Reject(ns, true);
+            } else if c.unwrap() == '"' {
+                return Success((), nsp, true);
+            } else if c.unwrap() == '\\' {
+                ns = nsp.next().1;
+            } else {
+                ns = nsp;
+            }
+        }
+    }
+}
+
+pub fn delimited_string() -> StringDelimited {
+    StringDelimited
 }
