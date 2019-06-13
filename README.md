@@ -22,7 +22,8 @@ binding      = ident '='
 occurrence   = ("*" | "+" | "?")
 additional   = "|"? parser
 transform    = "->" '{' rust_code '}'
-atom         = '(' parser ')' | CHAR | STRING | ident | '{' rust_code '}' | '^' atom | "try" atom
+atom         = alter? '(' parser ')' | CHAR | STRING | ident | '{' rust_code '}'
+alter        = ("^"|"try")
 ident        = [a..zA..Z]+ - {"let",  "try"}
 ```
 
