@@ -36,6 +36,8 @@ let parser = parsec!( '"' s=(("\\\n" => { '\n' })|^'"')* '"' -> { TkString(s) } 
 
 ## A Full Example: JSON
 
+A [JSon parser](https://github.com/d-plaindoux/celma/blob/master/plugin/benches/json.rs) can be designed thanks to the Celma parser meta language.
+
 ```rust
 parsec_rules!(
     let json:{()}    = S (string | null | boolean | array | object | number) S
