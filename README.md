@@ -77,25 +77,23 @@ fn mk_f64(a: Vec<char>) -> f64 {
 
 ```rust
 parsec_rules!(
-    //-------------------------------------------------------------------------
-    let json:{JSON}          = S _=(string | null | boolean  | array | object | number) S
-    //-------------------------------------------------------------------------
-    let number:{JSON}        = f=NUMBER                                 -> {JSON::Number(f)}
-    let string:{JSON}        = s=STRING                                 -> {JSON::String(s)}
-    let null:{JSON}          = "null"                                   -> {JSON::Null}
-    let boolean:{JSON}       = b=("true"|"false")                       -> {JSON::Bool(b=="true")}
-    let array:{JSON}         = ('[' S a=(_=json _=(',' _=json)*)? ']')  -> {JSON::Array(mk_vec(a))}
-    let object:{JSON}        = ('{' S a=(_=attr _=(',' _=attr)*)? '}')  -> {JSON::Object(mk_vec(a))}
-    let attr:{(String,JSON)} = (S s=STRING S ":" j=json)                -> {(s,j)}
-    //-------------------------------------------------------------------------
-    let STRING:{String}      = delimited_string
-    //-------------------------------------------------------------------------
-    let NUMBER:{f64}         = c=#(INT ('.' NAT)? (('E'|'e') INT)?)     -> {mk_f64(c)}
-    let INT:{()}             = ('-'|'+')? NAT                           -> {}
-    let NAT:{()}             = digit+                                   -> {}
-    //-------------------------------------------------------------------------
-    let S:{()}               = space*                                   -> {}
-    //-------------------------------------------------------------------------
+let json:{JSON}          = S _=(string | null | boolean  | array | object | number) S
+let number:{JSON}        = f=NUMBER                                 -> {JSON::Number(f)}
+let string:{JSON}        = s=STRING                                 -> {JSON::String(s)}
+let null:{JSON}          = "null"                                   -> {JSON::Null}
+let boolean:{JSON}       = b=("true"|"false")                       -> {JSON::Bool(b=="true")}
+
+let array:{JSON}         = ('[' S a=(_=json _=(',' _=json)*)? ']')  -> {JSON::Array(mk_vec(a))}
+
+let object:{JSON}        = ('{' S a=(_=attr _=(',' _=attr)*)? '}')  -> {JSON::Object(mk_vec(a))}
+let attr:{(String,JSON)} = (S s=STRING S ":" j=json)                -> {(s,j)}
+
+let STRING:{String}      = delimited_string
+let NUMBER:{f64}         = c=#(INT ('.' NAT)? (('E'|'e') INT)?)     -> {mk_f64(c)}
+let INT:{()}             = ('-'|'+')? NAT                           -> {}
+let NAT:{()}             = digit+                                   -> {}
+
+let S:{()}               = space*                                   -> {}
 );
 ```
 
