@@ -22,7 +22,6 @@ use bencher::{Bencher, black_box};
 use celma_core::parser::and::AndOperation;
 use celma_core::parser::char::{digit, space};
 use celma_core::parser::core::eos;
-use celma_core::parser::literal::delimited_string;
 use celma_core::parser::parser::Parse;
 use celma_core::parser::response::Response::{Reject, Success};
 use celma_core::stream::iterator_stream::IteratorStream;
@@ -51,30 +50,31 @@ fn mk_vec<E>(a: Option<(E, Vec<E>)>) -> Vec<E> {
     }
 }
 
+fn mk_string(a: Vec<char>) -> String {
+    a.into_iter().collect::<String>()
+}
+
 fn mk_f64(a: Vec<char>) -> f64 {
-    a.into_iter().collect::<String>().parse().unwrap()
+    mk_string(a).parse().unwrap()
 }
 
 parsec_rules!(
-    //-------------------------------------------------------------------------
     let json:{JSON}          = S _=(string | null | boolean  | array | object | number) S
-    //-------------------------------------------------------------------------
-    let number:{JSON}        = f=NUMBER                                 -> {JSON::Number(f)}
-    let string:{JSON}        = s=STRING                                 -> {JSON::String(s)}
-    let null:{JSON}          = "null"                                   -> {JSON::Null}
-    let boolean:{JSON}       = b=("true"|"false")                       -> {JSON::Bool(b=="true")}
-    let array:{JSON}         = ('[' S a=(_=json _=(',' _=json)*)? ']')  -> {JSON::Array(mk_vec(a))}
-    let object:{JSON}        = ('{' S a=(_=attr _=(',' _=attr)*)? '}')  -> {JSON::Object(mk_vec(a))}
-    let attr:{(String,JSON)} = (S s=STRING S ":" j=json)                -> {(s,j)}
-    //-------------------------------------------------------------------------
-    let STRING:{String}      = delimited_string
-    //-------------------------------------------------------------------------
-    let NUMBER:{f64}         = c=#(INT ('.' NAT)? (('E'|'e') INT)?)     -> {mk_f64(c)}
-    let INT:{()}             = ('-'|'+')? NAT                           -> {}
-    let NAT:{()}             = digit+                                   -> {}
-    //-------------------------------------------------------------------------
-    let S:{()}               = space*                                   -> {}
-    //-------------------------------------------------------------------------
+    let number:{JSON}        = f=NUMBER                                -> {JSON::Number(f)}
+    let string:{JSON}        = s=STRING                                -> {JSON::String(s)}
+    let null:{JSON}          = "null"                                  -> {JSON::Null}
+    let boolean:{JSON}       = b=("true"|"false")                      -> {JSON::Bool(b=="true")}
+    let array:{JSON}         = ('[' S a=(_=json _=(',' _=json)*)? ']') -> {JSON::Array(mk_vec(a))}
+    let object:{JSON}        = ('{' S a=(_=attr _=(',' _=attr)*)? '}') -> {JSON::Object(mk_vec(a))}
+    let attr:{(String,JSON)} = (S s=STRING S ":" j=json)               -> {(s,j)}
+);
+
+parsec_rules!(
+    let STRING:{String}      = ('"' c=#((("\"" -> {'\"'})|^'"')*) '"') -> {mk_string(c)}
+    let NUMBER:{f64}         = c=#(INT ('.' NAT)? (('E'|'e') INT)?)    -> {mk_f64(c)}
+    let INT:{()}             = ('-'|'+')? NAT                          -> {}
+    let NAT:{()}             = digit+                                  -> {}
+    let S:{()}               = space*                                  -> {}
 );
 
 // -------------------------------------------------------------------------------------------------
@@ -114,11 +114,10 @@ fn json_apache(b: &mut Bencher) {
 // -------------------------------------------------------------------------------------------------
 
 fn parse(b: &mut Bencher, buffer: &str) {
-    b.iter(|| {
-        let buffer = black_box(buffer);
-        let stream = IteratorStream::new_with_position(buffer.chars(), <usize>::new());
+    let stream = IteratorStream::new_with_position(buffer.chars(), <usize>::new());
 
-        let response = json().and_left(eos()).parse(stream);
+    b.iter(|| {
+        let response = json().and_left(eos()).parse(black_box(stream.clone()));
 
         match response {
             Success(_, _, _) => (),
