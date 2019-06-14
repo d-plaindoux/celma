@@ -20,9 +20,7 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 
 use crate::meta::syntax::ASTParsec;
-use crate::meta::syntax::ASTParsec::{
-    PBind, PChar, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat, PSequence, PString, PTry,
-};
+use crate::meta::syntax::ASTParsec::{PBind, PChar, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat, PSequence, PString, PTry, PCheck};
 use crate::meta::syntax::ASTParsecRule;
 
 pub trait Transpile<E> {
@@ -57,6 +55,7 @@ impl Transpile<TokenStream> for ASTParsecRule {
             {
                 use celma_core::parser::a_try::a_try;
                 use celma_core::parser::and::AndOperation;
+                use celma_core::parser::check::check;
                 use celma_core::parser::fmap::FMapOperation;
                 use celma_core::parser::not::NotOperation;
                 use celma_core::parser::option::OptionalOperation;
@@ -78,6 +77,7 @@ impl Transpile<TokenStream> for ASTParsec {
             {
                 use celma_core::parser::a_try::a_try;
                 use celma_core::parser::and::AndOperation;
+                use celma_core::parser::check::check;
                 use celma_core::parser::fmap::FMapOperation;
                 use celma_core::parser::not::NotOperation;
                 use celma_core::parser::option::OptionalOperation;
@@ -129,10 +129,7 @@ impl TranspileBody<(Option<String>, TokenStream)> for ASTParsec {
                 } else if rp.is_none() {
                     (lp, quote!(#lt.and_left(#rt)))
                 } else {
-                    (
-                        Some(format!("({},{})", lp.unwrap(), rp.unwrap())),
-                        quote!(#lt.and(#rt)),
-                    )
+                    (Some(format!("({},{})", lp.unwrap(), rp.unwrap())), quote!(#lt.and(#rt)))
                 }
             }
             PChoice(l, r) => {
@@ -148,6 +145,10 @@ impl TranspileBody<(Option<String>, TokenStream)> for ASTParsec {
             PTry(p) => {
                 let (_, pt) = p.transpile_body();
                 (None, quote!(a_try(#pt)))
+            }
+            PCheck(p) => {
+                let (_, pt) = p.transpile_body();
+                (None, quote!(check(#pt)))
             }
             POptional(p) => {
                 let (_, pt) = p.transpile_body();

@@ -28,25 +28,8 @@ use celma_core::parser::parser::{Combine, Parse};
 use celma_core::parser::repeat::RepeatOperation;
 use celma_core::stream::stream::Stream;
 
-use crate::meta::syntax::ASTParsec::{
-    PBind, PChar, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat, PSequence, PString, PTry,
-};
+use crate::meta::syntax::ASTParsec::{PBind, PChar, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat, PSequence, PString, PTry, PCheck};
 use crate::meta::syntax::{ASTParsec, ASTParsecRule};
-
-// -------------------------------------------------------------------------------------------------
-// Grammar - Parser using Celma ^_^
-// -------------------------------------------------------------------------------------------------
-//
-// parsec_rules ::= (let IDENT ':' '{' rust_code '}' "::=" parsec)+
-// parsec       ::= (binding? atom)+ occurrence? additional? transform?
-// binding      ::= IDENT '='
-// occurrence   ::= ("*" | "+" | "?")
-// additional   ::= "|"? parser
-// transform    ::= "=>" '{' rust_code '}'
-// atom         ::= '(' parser ')' | CHAR | STRING | IDENT | '{' rust_code '}'//
-// -------------------------------------------------------------------------------------------------
-// Note: Syn should be better but this done for dog-fooding purpose)
-// -------------------------------------------------------------------------------------------------
 
 #[inline]
 fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + Clone + 'a
@@ -69,7 +52,7 @@ where
     .rep()
     .fmap(|v| v.into_iter().collect())
     .bind(|s| {
-        if s == String::from("let") || s == String::from("try") {
+        if s == String::from("let") {
             parser(fail(false))
         } else {
             parser(returns(s))
@@ -209,10 +192,14 @@ where
         .and_left(skip())
         .and_right(atom2())
         .fmap(|p| PNot(Box::new(p)))
-        .or(string("try")
+        .or(char('!')
             .and_left(skip())
             .and_right(atom2())
             .fmap(|p| PTry(Box::new(p))))
+        .or(char('#')
+            .and_left(skip())
+            .and_right(atom2())
+            .fmap(|p| PCheck(Box::new(p))))
         .or(atom2())
 }
 

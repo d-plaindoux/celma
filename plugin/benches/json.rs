@@ -17,7 +17,7 @@
 #[macro_use]
 extern crate bencher;
 
-use bencher::{black_box, Bencher};
+use bencher::{Bencher, black_box};
 
 use celma_core::parser::and::AndOperation;
 use celma_core::parser::char::{digit, space};
@@ -30,25 +30,50 @@ use celma_core::stream::position::Position;
 use celma_core::stream::stream::Stream;
 use celma_plugin::parsec_rules;
 
+#[derive(Clone)]
+pub enum JSON {
+    Number(f64),
+    String(String),
+    Null,
+    Bool(bool),
+    Array(Vec<JSON>),
+    Object(Vec<(String, JSON)>),
+}
+
+fn mk_vec<E>(a: Option<(E, Vec<E>)>) -> Vec<E> {
+    if a.is_none() {
+        Vec::new()
+    } else {
+        let (a, v) = a.unwrap();
+        let mut r = v;
+        r.insert(0, a);
+        r
+    }
+}
+
+fn mk_f64(a: Vec<char>) -> f64 {
+    a.into_iter().collect::<String>().parse().unwrap()
+}
+
 parsec_rules!(
     //-------------------------------------------------------------------------
-    let json:{()}    = S (string | null | boolean  | array | object | number) S
+    let json:{JSON}          = S _=(string | null | boolean  | array | object | number) S
     //-------------------------------------------------------------------------
-    let number:{()}  = NUMBER                                             -> {}
-    let string:{()}  = STRING                                             -> {}
-    let null:{()}    = "null"                                             -> {}
-    let boolean:{()} = ("true"|"false")                                   -> {}
-    let array:{()}   = '[' S (json (',' json)*)? ']'                      -> {}
-    let object:{()}  = '{' S (attr (',' attr)*)? '}'                      -> {}
-    let attr:{()}    = S STRING S ":" json                                -> {}
+    let number:{JSON}        = f=NUMBER                                 -> {JSON::Number(f)}
+    let string:{JSON}        = s=STRING                                 -> {JSON::String(s)}
+    let null:{JSON}          = "null"                                   -> {JSON::Null}
+    let boolean:{JSON}       = b=("true"|"false")                       -> {JSON::Bool(b=="true")}
+    let array:{JSON}         = ('[' S a=(_=json _=(',' _=json)*)? ']')  -> {JSON::Array(mk_vec(a))}
+    let object:{JSON}        = ('{' S a=(_=attr _=(',' _=attr)*)? '}')  -> {JSON::Object(mk_vec(a))}
+    let attr:{(String,JSON)} = (S s=STRING S ":" j=json)                -> {(s,j)}
     //-------------------------------------------------------------------------
-    let STRING:{()}  = delimited_string                                   -> {}
+    let STRING:{String}      = delimited_string
     //-------------------------------------------------------------------------
-    let NUMBER:{()}  = INT ('.' NAT)? (('E'|'e') INT)?                    -> {}
-    let INT:{()}     = ('-'|'+')? NAT                                     -> {}
-    let NAT:{()}     = digit+                                             -> {}
+    let NUMBER:{f64}         = c=#(INT ('.' NAT)? (('E'|'e') INT)?)     -> {mk_f64(c)}
+    let INT:{()}             = ('-'|'+')? NAT                           -> {}
+    let NAT:{()}             = digit+                                   -> {}
     //-------------------------------------------------------------------------
-    let S:{()}       = space*                                             -> {}
+    let S:{()}               = space*                                   -> {}
     //-------------------------------------------------------------------------
 );
 
@@ -93,7 +118,7 @@ fn parse(b: &mut Bencher, buffer: &str) {
         let buffer = black_box(buffer);
         let stream = IteratorStream::new_with_position(buffer.chars(), <usize>::new());
 
-        let response = json().and_left(eos()).check(stream);
+        let response = json().and_left(eos()).parse(stream);
 
         match response {
             Success(_, _, _) => (),

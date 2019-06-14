@@ -24,8 +24,8 @@ occurrence   = ("*" | "+" | "?")
 additional   = "|"? parser
 transform    = "->" '{' rust_code '}'
 atom         = alter? '(' parser ')' | CHAR | STRING | ident | '{' rust_code '}'
-alter        = ("^"|"try")
-ident        = [a..zA..Z]+ - {"let",  "try"}
+alter        = ("^"|"!"|"#")
+ident        = [a..zA..Z]+ - {"let", "try", "check"}
 ```
 
 ##  Using the meta language

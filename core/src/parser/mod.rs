@@ -18,6 +18,7 @@ pub mod a_try;
 pub mod and;
 pub mod bind;
 pub mod char;
+pub mod check;
 pub mod core;
 pub mod fmap;
 pub mod lazy;

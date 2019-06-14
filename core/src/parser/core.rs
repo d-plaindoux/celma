@@ -124,6 +124,12 @@ where
 
         p.parse(s)
     }
+
+    fn check(&self, s: S) -> Response<(), S> {
+        let Self(p) = self;
+
+        p.check(s)
+    }
 }
 
 pub fn parser<'a, P, A, S>(p: P) -> Parser<'a, A, S>

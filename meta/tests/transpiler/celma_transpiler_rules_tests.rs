@@ -45,6 +45,7 @@ mod tests_and {
                     {
                         use celma_core::parser::a_try::a_try;
                         use celma_core::parser::and::AndOperation;
+                        use celma_core::parser::check::check;
                         use celma_core::parser::fmap::FMapOperation;
                         use celma_core::parser::not::NotOperation;
                         use celma_core::parser::option::OptionalOperation;
@@ -64,6 +65,7 @@ mod tests_and {
                     {
                         use celma_core::parser::a_try::a_try;
                         use celma_core::parser::and::AndOperation;
+                        use celma_core::parser::check::check;
                         use celma_core::parser::fmap::FMapOperation;
                         use celma_core::parser::not::NotOperation;
                         use celma_core::parser::option::OptionalOperation;
