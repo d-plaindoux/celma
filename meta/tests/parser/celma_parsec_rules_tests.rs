@@ -32,6 +32,7 @@ mod tests_and {
                 ast,
                 vec!(ASTParsecRule {
                     name: String::from("a"),
+                    input: String::from("char"),
                     returns: String::from("char"),
                     body: Box::new(PCode(String::from("char(\'a\')"))),
                 })
@@ -52,11 +53,13 @@ mod tests_and {
                 vec!(
                     ASTParsecRule {
                         name: String::from("a"),
+                        input: String::from("char"),
                         returns: String::from("char"),
                         body: Box::new(PCode(String::from("char(\'a\')"))),
                     },
                     ASTParsecRule {
                         name: String::from("b"),
+                        input: String::from("char"),
                         returns: String::from("char"),
                         body: Box::new(PCode(String::from("char(\'b\')"))),
                     }
@@ -78,6 +81,7 @@ mod tests_and {
                 vec!(
                     ASTParsecRule {
                         name: String::from("a"),
+                        input: String::from("char"),
                         returns: String::from("char"),
                         body: Box::new(PChoice(
                             Box::new(PChar('a')),
@@ -86,6 +90,7 @@ mod tests_and {
                     },
                     ASTParsecRule {
                         name: String::from("b"),
+                        input: String::from("char"),
                         returns: String::from("char"),
                         body: Box::new(PCode(String::from("char(\'c\')"))),
                     }

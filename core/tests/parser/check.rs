@@ -15,18 +15,20 @@
 */
 
 #[cfg(test)]
-mod tests_check{
+mod tests_check {
     use celma_core::parser::and::AndOperation;
     use celma_core::parser::char::char;
+    use celma_core::parser::check::check;
     use celma_core::parser::parser::Parse;
     use celma_core::stream::char_stream::CharStream;
-    use celma_core::parser::check::check;
 
     #[test]
     fn it_parse_two_character() {
-        let response = check(char('a').and(char('b')))
-            .parse(CharStream::new("ab"));
+        let response = check(char('a').and(char('b'))).parse(CharStream::new("ab"));
 
-        assert_eq!(response.fold(|v, _, _| v == vec!['a', 'b'], |_, _| false), true);
+        assert_eq!(
+            response.fold(|v, _, _| v == vec!['a', 'b'], |_, _| false),
+            true
+        );
     }
 }

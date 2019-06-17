@@ -28,7 +28,10 @@ use celma_core::parser::parser::{Combine, Parse};
 use celma_core::parser::repeat::RepeatOperation;
 use celma_core::stream::stream::Stream;
 
-use crate::meta::syntax::ASTParsec::{PBind, PChar, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat, PSequence, PString, PTry, PCheck};
+use crate::meta::syntax::ASTParsec::{
+    PBind, PChar, PCheck, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat, PSequence,
+    PString, PTry,
+};
 use crate::meta::syntax::{ASTParsec, ASTParsecRule};
 
 #[inline]
@@ -48,6 +51,7 @@ where
 {
     (char_in_range('A'..'Z')
         .or(char_in_range('a'..'z'))
+        .or(char_in_range('0'..'9'))
         .or(char('_')))
     .rep()
     .fmap(|v| v.into_iter().collect())
@@ -82,6 +86,8 @@ where
         .and_left(skip())
         .and_right(ident())
         .and_left(skip())
+        .and(code().opt())
+        .and_left(skip())
         .and_left(char(':'))
         .and_left(skip())
         .and(code())
@@ -90,11 +96,14 @@ where
         .and_left(skip())
         .and(parsec())
         .and_left(skip())
-        .fmap(|((n, c), b): ((String, String), ASTParsec)| ASTParsecRule {
-            name: n,
-            returns: c,
-            body: Box::new(b),
-        })
+        .fmap(
+            |(((n, i), r), b): (((String, Option<String>), String), ASTParsec)| ASTParsecRule {
+                name: n,
+                input: i.unwrap_or(String::from("char")),
+                returns: r,
+                body: Box::new(b),
+            },
+        )
         .rep()
 }
 

@@ -36,24 +36,22 @@ mod tests_transpiler {
             match self {
                 Expr::Number(f) => *f,
                 Expr::Plus(l, r) => l.eval() + r.eval(),
-                Expr::Mult(l, r) => l.eval() * r.eval()
+                Expr::Mult(l, r) => l.eval() * r.eval(),
             }
         }
     }
 
     #[derive(Clone)]
-    pub enum Operator { Plus, Mult }
+    pub enum Operator {
+        Plus,
+        Mult,
+    }
 
     fn mk_operation(l: Expr, r: Option<(Operator, Expr)>) -> Expr {
-        if r.is_none() {
-            return l;
-        }
-
-        let (o, r) = r.unwrap();
-
-        match o {
-            Operator::Plus => Expr::Plus(Box::new(l), Box::new(r)),
-            Operator::Mult => Expr::Mult(Box::new(l), Box::new(r)),
+        match r {
+            None => l,
+            Some((Operator::Plus, r)) => Expr::Plus(Box::new(l), Box::new(r)),
+            Some((Operator::Mult, r)) => Expr::Mult(Box::new(l), Box::new(r)),
         }
     }
 
@@ -66,11 +64,11 @@ mod tests_transpiler {
     }
 
     parsec_rules!(
-        let expr:{Expr}         = (s=sexpr S e=(_=operator S _=expr)?) -> {mk_operation(s,e)}
-        let operator:{Operator} = ('+' -> { Operator::Plus })
-                                | ('*' -> { Operator::Mult })
-        let sexpr:{Expr}        = ('(' S _=expr S ')') | number
-        let number:{Expr}       = f=NUMBER -> {Expr::Number(f)}
+        let expr:{Expr}   = (s=sexpr S e=(_=op S _=expr)?) -> {mk_operation(s,e)}
+        let op:{Operator} = ('+' -> { Operator::Plus })
+                          | ('*' -> { Operator::Mult })
+        let sexpr:{Expr}  = ('(' S _=expr S ')') | number
+        let number:{Expr} = f=NUMBER -> {Expr::Number(f)}
     );
 
     parsec_rules!(
@@ -92,7 +90,9 @@ mod tests_transpiler {
 
     #[test]
     fn it_parse_expr2() {
-        let response = expr().and_left(eos()).parse(CharStream::new("(1 + -2) * 4"));
+        let response = expr()
+            .and_left(eos())
+            .parse(CharStream::new("(1 + -2) * 4"));
 
         match response {
             Success(v, _, _) => assert_eq!(v.eval(), -4.0),

@@ -31,9 +31,9 @@ use celma_core::parser::repeat::RepeatOperation;
 use celma_core::parser::response::Response::Reject;
 use celma_core::parser::response::Response::Success;
 use celma_core::stream::char_stream::CharStream;
+use celma_core::stream::position::Position;
 use celma_core::stream::stream::Len;
 use celma_core::stream::stream::Stream;
-use celma_core::stream::position::Position;
 
 // -------------------------------------------------------------------------------------------------
 // Basic benchmarks
@@ -47,7 +47,11 @@ fn basic_any(bencher: &mut Bencher) {
 
     let parser = any().opt_rep().and(eos());
 
-    do_parse(parser, bencher, CharStream::new_with_position(data,<usize>::new()));
+    do_parse(
+        parser,
+        bencher,
+        CharStream::new_with_position(data, <usize>::new()),
+    );
 }
 
 fn basic_a(bencher: &mut Bencher) {
@@ -56,7 +60,11 @@ fn basic_a(bencher: &mut Bencher) {
 
     let parser = char('a').opt_rep().and(eos());
 
-    do_parse(parser, bencher, CharStream::new_with_position(data,<usize>::new()));
+    do_parse(
+        parser,
+        bencher,
+        CharStream::new_with_position(data, <usize>::new()),
+    );
 }
 
 fn basic_a_or_b(bencher: &mut Bencher) {
@@ -65,7 +73,11 @@ fn basic_a_or_b(bencher: &mut Bencher) {
 
     let parser = char('a').or(char('b')).opt_rep().and(eos());
 
-    do_parse(parser, bencher, CharStream::new_with_position(data,<usize>::new()));
+    do_parse(
+        parser,
+        bencher,
+        CharStream::new_with_position(data, <usize>::new()),
+    );
 }
 
 fn basic_a_and_b(bencher: &mut Bencher) {
@@ -74,7 +86,11 @@ fn basic_a_and_b(bencher: &mut Bencher) {
 
     let parser = char('a').and(char('b')).opt_rep().and(eos());
 
-    do_parse(parser, bencher, CharStream::new_with_position(data,<usize>::new()));
+    do_parse(
+        parser,
+        bencher,
+        CharStream::new_with_position(data, <usize>::new()),
+    );
 }
 
 fn basic_delimited_string(bencher: &mut Bencher) {
@@ -87,7 +103,11 @@ fn basic_delimited_string(bencher: &mut Bencher) {
         .opt_rep()
         .and(eos());
 
-    do_parse(parser, bencher, CharStream::new_with_position(data,<usize>::new()));
+    do_parse(
+        parser,
+        bencher,
+        CharStream::new_with_position(data, <usize>::new()),
+    );
 }
 
 // -------------------------------------------------------------------------------------------------

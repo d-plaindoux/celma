@@ -20,7 +20,10 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 
 use crate::meta::syntax::ASTParsec;
-use crate::meta::syntax::ASTParsec::{PBind, PChar, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat, PSequence, PString, PTry, PCheck};
+use crate::meta::syntax::ASTParsec::{
+    PBind, PChar, PCheck, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat, PSequence,
+    PString, PTry,
+};
 use crate::meta::syntax::ASTParsecRule;
 
 pub trait Transpile<E> {
@@ -41,17 +44,19 @@ impl Transpile<TokenStream> for ASTParsecRule {
     fn transpile(&self) -> TokenStream {
         let Self {
             name,
+            input,
             returns,
             body,
         } = self;
 
         let name = syn::Ident::new(name.as_str(), Span::call_site());
+        let input = syn::parse_str::<TokenStream>(input.as_str()).unwrap();
         let returns = syn::parse_str::<TokenStream>(returns.as_str()).unwrap();
         let body = body.transpile_body().1;
 
         quote!(
             pub fn #name<'a,S:'a>() -> impl celma_core::parser::parser::Parse<#returns,S> + celma_core::parser::parser::Combine<#returns> + Clone + 'a
-                where S:celma_core::stream::stream::Stream<Item=char>,
+                where S:celma_core::stream::stream::Stream<Item=#input>,
             {
                 use celma_core::parser::a_try::a_try;
                 use celma_core::parser::and::AndOperation;
@@ -129,7 +134,10 @@ impl TranspileBody<(Option<String>, TokenStream)> for ASTParsec {
                 } else if rp.is_none() {
                     (lp, quote!(#lt.and_left(#rt)))
                 } else {
-                    (Some(format!("({},{})", lp.unwrap(), rp.unwrap())), quote!(#lt.and(#rt)))
+                    (
+                        Some(format!("({},{})", lp.unwrap(), rp.unwrap())),
+                        quote!(#lt.and(#rt)),
+                    )
                 }
             }
             PChoice(l, r) => {

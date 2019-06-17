@@ -17,7 +17,7 @@
 #[macro_use]
 extern crate bencher;
 
-use bencher::{Bencher, black_box};
+use bencher::{black_box, Bencher};
 
 use celma_core::parser::and::AndOperation;
 use celma_core::parser::char::{digit, space};

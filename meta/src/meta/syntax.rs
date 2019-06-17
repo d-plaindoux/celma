@@ -34,6 +34,7 @@ pub enum ASTParsec {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ASTParsecRule {
     pub name: String,
+    pub input: String,
     pub returns: String,
     pub body: Box<ASTParsec>,
 }

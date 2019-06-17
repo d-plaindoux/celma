@@ -102,6 +102,63 @@ parsec_rules!(
 );
 ```
 
+### Pipelined parsers: The expression parser
+
+The previous parser mixes char analysis and high-level term construction. This can be done in a different manner since Celma is a generalized parser combinator implementation.
+
+For instance a first parser dedicated to lexeme recognition can be designed. Then on top of this lexer an expression parser can be easily designed.  
+
+#### Tokenizer
+
+A tokenizer consumes a stream of char and produces tokens.
+
+```rust
+parsec_rules!(
+    let token:{Token}   = S _=(int|keyword) S
+    let int:{Token}     = c=#(('-'|'+')? digit+) -> { Token::Int(mk_i64(c)) }
+    let keyword:{Token} = s=('+'|'*'|'('|')')    -> { Token::Keyword(s)     }
+    let S:{()}          = space*              -> {}
+);
+```
+
+#### Lexemes
+
+The Lexeme parser recognizes simple token keywords. 
+
+```rust
+parsec_rules!(
+    let PLUS{Token}:{()}   = {kwd('+')} -> {}
+    let MULT{Token}:{()}   = {kwd('*')} -> {}
+    let LPAREN{Token}:{()} = {kwd('(')} -> {}
+    let RPAREN{Token}:{()} = {kwd(')')} -> {}
+);
+```
+
+#### Expression parser
+
+The expression parser builds expression consuming tokens. For this purpose the stream type can be specified for each parser. If it's not the case the default one is `char`.
+In the following example the declaration `expr{Token}:{Expr}` denotes a parser consuming a `Token` stream and producing and `Expr`. 
+
+```rust
+parsec_rules!(
+    let expr{Token}:{Expr}   = (s=sexpr e=(_=op _=expr)?) -> {mk_operation(s,e)}
+    let op{Token}:{Operator} = (PLUS                      -> { Operator::Plus })
+                             | (MULT                      -> { Operator::Mult })
+    let sexpr{Token}:{Expr}  = (LPAREN _=expr RPAREN)
+                             | number
+    let number{Token}:{Expr} = i=kint                     -> {Expr::Number(i)}
+);
+```
+
+#### Expression parser in  action
+
+```rust
+let tokenizer = token();
+let stream = ParserStream::new(&tokenizer, CharStream::new("1 + 2"));
+let response = expr().and_left(eos()).parse(stream);
+// ....
+```
+
 ## Bootstrap scenario
 
 ### Stage 1

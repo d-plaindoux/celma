@@ -21,8 +21,8 @@ use crate::parser::parser::Parse;
 use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
-use crate::stream::stream::Stream;
 use crate::stream::position::Position;
+use crate::stream::stream::Stream;
 
 #[derive(Copy, Clone)]
 pub struct Check<L, A>(L, PhantomData<A>)
@@ -34,7 +34,7 @@ impl<L, A, B> Combine<Vec<A>> for Check<L, B> where L: Combine<B> {}
 impl<L, A, B, S> Parse<Vec<A>, S> for Check<L, B>
 where
     L: Parse<B, S> + Combine<B>,
-    S: Stream<Item=A>,
+    S: Stream<Item = A>,
 {
     fn parse(&self, s: S) -> Response<Vec<A>, S> {
         let Self(p, _) = self;
@@ -46,12 +46,12 @@ where
                 let mut v = Vec::new();
                 let mut ns = ns;
                 for _ in start..end {
-                    let (c,nss) = ns.next();
+                    let (c, nss) = ns.next();
                     ns = nss;
                     v.push(c.unwrap());
                 }
                 Success(v, s, c)
-            },
+            }
             Reject(s, c) => Reject(s, c),
         }
     }
@@ -68,7 +68,7 @@ where
 pub fn check<P, A, B, S>(p: P) -> impl Parse<Vec<A>, S> + Combine<Vec<A>> + Clone
 where
     B: Clone,
-    S: Stream<Item=A>,
+    S: Stream<Item = A>,
     P: Parse<B, S> + Combine<B> + Clone,
 {
     Check(p, PhantomData)
