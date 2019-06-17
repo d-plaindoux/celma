@@ -115,8 +115,8 @@ A tokenizer consumes a stream of char and produces tokens.
 ```rust
 parsec_rules!(
     let token:{Token}   = S _=(int|keyword) S
-    let int:{Token}     = c=!(#(('-'|'+')? digit+)) -> { Token::Int(mk_i64(c)) }
-    let keyword:{Token} = s=('+'|'*'|'('|')')       -> { Token::Keyword(s)     }
+    let int:{Token}     = c=!(#(('-'|'+')? digit+)) -> {Token::Int(mk_i64(c))}
+    let keyword:{Token} = s=('+'|'*'|'('|')')       -> {Token::Keyword(s)}
     let S:{()}          = space*                    -> {}
 );
 ```
@@ -142,8 +142,8 @@ In the following example the declaration `expr{Token}:{Expr}` denotes a parser c
 ```rust
 parsec_rules!(
     let expr{Token}:{Expr}   = (s=sexpr e=(_=op _=expr)?) -> {mk_operation(s,e)}
-    let op{Token}:{Operator} = (PLUS                      -> { Operator::Plus })
-                             | (MULT                      -> { Operator::Mult })
+    let op{Token}:{Operator} = (PLUS                      -> {Operator::Plus})
+                             | (MULT                      -> {Operator::Mult})
     let sexpr{Token}:{Expr}  = (LPAREN _=expr RPAREN)
                              | number
     let number{Token}:{Expr} = i=kint                     -> {Expr::Number(i)}
