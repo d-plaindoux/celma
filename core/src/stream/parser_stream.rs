@@ -67,7 +67,7 @@ where
 
     fn next(&self) -> (Option<Self::Item>, Self) {
         match self.0.parse(self.1.clone()) {
-            Success(a, s, _) => (Some(a), ParserStream::new(self.0, s.clone())),
+            Success(a, s, _) => (Some(a), ParserStream::new(self.0, s)),
             Reject(_, _) => (None, ParserStream::new(self.0, self.1.clone())),
         }
     }

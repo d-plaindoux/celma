@@ -81,6 +81,16 @@ mod tests_transpiler {
         Mult(Box<Expr>, Box<Expr>),
     }
 
+    impl Expr {
+        fn eval(&self) -> i64 {
+            match self {
+                Expr::Number(f) => *f,
+                Expr::Plus(l, r) => l.eval() + r.eval(),
+                Expr::Mult(l, r) => l.eval() * r.eval(),
+            }
+        }
+    }
+
     // ---------------------------------------------------------------------------------------------
     // Functions dedicated to parsers
     // ---------------------------------------------------------------------------------------------
@@ -109,8 +119,8 @@ mod tests_transpiler {
 
     parsec_rules!(
         let token{char}:{Token}   = S _=(float|keyword) S
-        let float{char}:{Token}   = f=INT               -> { Token::Int(f)   }
-        let keyword{char}:{Token} = s=('+'|'*'|'('|')') -> { Token::Keyword(s) }
+        let float{char}:{Token}   = f=!(INT)             -> { Token::Int(f)   }
+        let keyword{char}:{Token} = s=('+'|'*'|'('|')')    -> { Token::Keyword(s) }
 
         let INT{char}:{i64}       = c=#(('-'|'+')? NAT)    -> { mk_string(c).parse().unwrap() }
         let NAT{char}:{()}        = digit+                 -> {}
@@ -148,7 +158,7 @@ mod tests_transpiler {
         let response = expr().and_left(eos()).parse(stream);
 
         match response {
-            Success(_, _, _) => assert_eq!(true, true),
+            Success(v, _, _) => assert_eq!(v.eval(), 3),
             _ => assert_eq!(true, false),
         }
     }

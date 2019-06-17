@@ -115,9 +115,9 @@ A tokenizer consumes a stream of char and produces tokens.
 ```rust
 parsec_rules!(
     let token:{Token}   = S _=(int|keyword) S
-    let int:{Token}     = c=#(('-'|'+')? digit+) -> { Token::Int(mk_i64(c)) }
-    let keyword:{Token} = s=('+'|'*'|'('|')')    -> { Token::Keyword(s)     }
-    let S:{()}          = space*              -> {}
+    let int:{Token}     = c=!(#(('-'|'+')? digit+)) -> { Token::Int(mk_i64(c)) }
+    let keyword:{Token} = s=('+'|'*'|'('|')')       -> { Token::Keyword(s)     }
+    let S:{()}          = space*                    -> {}
 );
 ```
 
@@ -156,7 +156,11 @@ parsec_rules!(
 let tokenizer = token();
 let stream = ParserStream::new(&tokenizer, CharStream::new("1 + 2"));
 let response = expr().and_left(eos()).parse(stream);
-// ....
+
+match response {
+    Success(v, _, _) => assert_eq!(v.eval(), 3),
+    _ => assert_eq!(true, false),
+}
 ```
 
 ## Bootstrap scenario
