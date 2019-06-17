@@ -102,13 +102,13 @@ parsec_rules!(
 );
 ```
 
-### Pipelined parsers: The expression parser
+## Pipelined parsers: The expression parser
 
 The previous parser mixes char analysis and high-level term construction. This can be done in a different manner since Celma is a generalized parser combinator implementation.
 
 For instance a first parser dedicated to lexeme recognition can be designed. Then on top of this lexer an expression parser can be easily designed.  
 
-#### Tokenizer
+### Tokenizer
 
 A tokenizer consumes a stream of char and produces tokens.
 
@@ -121,7 +121,7 @@ parsec_rules!(
 );
 ```
 
-#### Lexemes
+### Lexemes
 
 The Lexeme parser recognizes simple token keywords. 
 
@@ -134,7 +134,7 @@ parsec_rules!(
 );
 ```
 
-#### Expression parser
+### Expression parser
 
 The expression parser builds expression consuming tokens. For this purpose the stream type can be specified for each parser. If it's not the case the default one is `char`.
 In the following example the declaration `expr{Token}:{Expr}` denotes a parser consuming a `Token` stream and producing and `Expr`. 
@@ -150,7 +150,7 @@ parsec_rules!(
 );
 ```
 
-#### Expression parser in  action
+### Expression parser in  action
 
 ```rust
 let tokenizer = token();
