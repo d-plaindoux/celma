@@ -1,0 +1,16 @@
+[package]
+name = "celma_extension"
+version = "0.1.0"
+authors = ["d-plaindoux <d.plaindoux@free.fr>"]
+edition = "2018"
+
+[lib]
+
+[dependencies]
+celma_core   = { version = "0.1.0", path = "../core" }
+celma_lang   = { version = "0.1.0", path = "../meta" }
+celma_plugin = { version = "0.1.0", path = "../plugin" }
+
+[profile.release]
+lto = "fat"
+codegen-units = 1

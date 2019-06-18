@@ -52,12 +52,12 @@ where
     }
 }
 
-pub fn lazy<F, P, A, S>(f: F) -> impl Parse<A, S> + Combine<A> + Clone
+pub fn lazy<F, P, A, S>(f: F) -> impl Parse<A, S> + Combine<A>
 where
     A: Clone,
     S: Stream,
-    P: Parse<A, S> + Combine<A> + Clone,
-    F: Fn() -> P + Clone,
+    P: Parse<A, S> + Combine<A>,
+    F: Fn() -> P,
 {
     Lazy(f, PhantomData, PhantomData)
 }

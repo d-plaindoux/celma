@@ -52,11 +52,11 @@ where
     }
 }
 
-pub fn a_try<P, A, S>(p: P) -> impl Parse<A, S> + Combine<A> + Clone
+pub fn a_try<P, A, S>(p: P) -> impl Parse<A, S> + Combine<A>
 where
     A: Clone,
     S: Stream,
-    P: Parse<A, S> + Combine<A> + Clone,
+    P: Parse<A, S> + Combine<A>,
 {
     ATry(p, PhantomData)
 }

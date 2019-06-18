@@ -35,7 +35,7 @@ use crate::meta::syntax::ASTParsec::{
 use crate::meta::syntax::{ASTParsec, ASTParsecRule};
 
 #[inline]
-fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + Clone + 'a
+fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -45,7 +45,7 @@ where
 }
 
 #[inline]
-fn ident<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
+fn ident<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -65,7 +65,7 @@ where
 }
 
 #[inline]
-fn delimited_char<'a, S: 'a>() -> impl Parse<char, S> + Combine<char> + Clone + 'a
+fn delimited_char<'a, S: 'a>() -> impl Parse<char, S> + Combine<char> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -78,7 +78,7 @@ where
 
 #[inline]
 fn parsec_rules<'a, S: 'a>(
-) -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<ASTParsecRule>> + Clone + 'a
+) -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<ASTParsecRule>> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -110,7 +110,7 @@ where
 // -------------------------------------------------------------------------------------------------
 
 #[inline]
-fn parsec<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 'a
+fn parsec<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -165,7 +165,7 @@ where
 }
 
 #[inline]
-fn binding<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
+fn binding<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -173,7 +173,7 @@ where
 }
 
 #[inline]
-fn occurrence<'a, S: 'a>() -> impl Parse<char, S> + Combine<char> + Clone + 'a
+fn occurrence<'a, S: 'a>() -> impl Parse<char, S> + Combine<char> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -181,7 +181,7 @@ where
 }
 
 fn additional<'a, S: 'a>(
-) -> impl Parse<(bool, ASTParsec), S> + Combine<(bool, ASTParsec)> + Clone + 'a
+) -> impl Parse<(bool, ASTParsec), S> + Combine<(bool, ASTParsec)> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -193,7 +193,7 @@ where
 }
 
 #[inline]
-fn atom<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 'a
+fn atom<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -213,7 +213,7 @@ where
 }
 
 #[inline]
-fn atom2<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 'a
+fn atom2<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -229,14 +229,14 @@ where
 }
 
 #[inline]
-fn transform<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
+fn transform<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + 'a
 where
     S: Stream<Item = char>,
 {
     string("->").and(skip()).left().and(lazy(code)).right()
 }
 
-fn code<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + Clone + 'a
+fn code<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -248,7 +248,7 @@ where
 
 // -------------------------------------------------------------------------------------------------
 
-pub fn celma_parsec<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + Clone + 'a
+pub fn celma_parsec<'a, S: 'a>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -256,7 +256,7 @@ where
 }
 
 pub fn celma_parsec_rules<'a, S: 'a>(
-) -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<ASTParsecRule>> + Clone + 'a
+) -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<ASTParsecRule>> + 'a
 where
     S: Stream<Item = char>,
 {

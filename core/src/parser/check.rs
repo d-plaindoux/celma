@@ -65,11 +65,11 @@ where
     }
 }
 
-pub fn check<P, A, B, S>(p: P) -> impl Parse<Vec<A>, S> + Combine<Vec<A>> + Clone
+pub fn check<P, A, B, S>(p: P) -> impl Parse<Vec<A>, S> + Combine<Vec<A>>
 where
     B: Clone,
     S: Stream<Item = A>,
-    P: Parse<B, S> + Combine<B> + Clone,
+    P: Parse<B, S> + Combine<B>,
 {
     Check(p, PhantomData)
 }

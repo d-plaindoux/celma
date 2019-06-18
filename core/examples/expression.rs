@@ -35,7 +35,7 @@ enum Token {
 }
 
 #[inline]
-fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + Clone + 'a
+fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -45,7 +45,7 @@ where
 }
 
 #[inline]
-fn number<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + Clone + 'a
+fn number<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -56,7 +56,7 @@ where
 }
 
 #[inline]
-fn ident<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + Clone + 'a
+fn ident<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -66,7 +66,7 @@ where
 }
 
 #[inline]
-fn string<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + Clone + 'a
+fn string<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -79,7 +79,7 @@ where
 }
 
 #[inline]
-fn item<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + Clone + 'a
+fn item<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -89,14 +89,15 @@ where
 fn sequence<'a, A: 'a, P: 'a, S: 'a>(
     p: P,
     s: char,
-) -> impl Combine<Vec<A>> + Parse<Vec<A>, S> + Clone + 'a
+) -> impl Combine<Vec<A>> + Parse<Vec<A>, S> + 'a
 where
     A: Clone,
-    P: Combine<A> + Parse<A, S> + Clone,
+    P: Combine<A> + Parse<A, S>,
     S: Stream<Item = char>,
 {
-    p.clone()
-        .and(skip())
+    let p = parser(p);
+
+    p.clone().and(skip())
         .left()
         .and(
             (char(s).and(skip()))
@@ -108,11 +109,10 @@ where
 }
 
 #[inline]
-fn record<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + Clone + 'a
+fn record<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
 where
     S: Stream<Item = char>,
 {
-    // '['  v={item().rep(',')} ']' => { Token::Record(v) }
     char('[')
         .and(skip())
         .and(sequence(item(), ','))

@@ -42,7 +42,7 @@ mod tests_transpiler {
     // Basic parsers
     // ---------------------------------------------------------------------------------------------
 
-    fn kint<'a, S: 'a>() -> impl Parse<i64, S> + Combine<i64> + Clone + 'a
+    fn kint<'a, S: 'a>() -> impl Parse<i64, S> + Combine<i64> + 'a
     where
         S: Stream<Item = Token>,
     {
@@ -56,7 +56,7 @@ mod tests_transpiler {
         })
     }
 
-    fn kwd<'a, S: 'a>(k: char) -> impl Parse<char, S> + Combine<char> + Clone + 'a
+    fn kwd<'a, S: 'a>(k: char) -> impl Parse<char, S> + Combine<char> + 'a
     where
         S: Stream<Item = Token>,
     {

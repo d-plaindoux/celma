@@ -27,7 +27,7 @@ use crate::stream::stream::Stream;
 
 // -------------------------------------------------------------------------------------------------
 
-pub fn any<I, S>() -> impl Parse<I, S> + Combine<I> + Clone
+pub fn any<I, S>() -> impl Parse<I, S> + Combine<I>
 where
     S: Stream<Item = I>,
     I: Clone,

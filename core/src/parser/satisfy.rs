@@ -80,7 +80,7 @@ where
 }
 
 #[inline]
-pub fn not<S, E>(c: E) -> impl Parse<E, S> + Combine<E> + Clone
+pub fn not<S, E>(c: E) -> impl Parse<E, S> + Combine<E>
 where
     E: Eq + Copy,
     S: Stream<Item = E>,
@@ -89,7 +89,7 @@ where
 }
 
 #[inline]
-pub fn eq<S, E>(c: E) -> impl Parse<E, S> + Combine<E> + Clone
+pub fn eq<S, E>(c: E) -> impl Parse<E, S> + Combine<E>
 where
     E: Eq + Copy,
     S: Stream<Item = E>,
