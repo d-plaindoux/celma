@@ -28,7 +28,7 @@ alter        = ("^"|"!"|"#")
 ident        = [a..zA..Z]+ - {"let", "try", "check"}
 ```
 
-##  Using the meta language
+##  Using the meta-language
 
 Therefore a parser can be defined using this meta-language.
 
@@ -102,7 +102,7 @@ parsec_rules!(
 );
 ```
 
-## Pipelined parsers: The expression parser
+## The expression parser thanks to pipelined parsers.
 
 The previous parser mixes char analysis and high-level term construction. This can be done in a different manner since Celma is a generalized parser combinator implementation.
 
@@ -137,7 +137,7 @@ parsec_rules!(
 ### Expression parser
 
 The expression parser builds expression consuming tokens. For this purpose the stream type can be specified for each parser. If it's not the case the default one is `char`.
-In the following example the declaration `expr{Token}:{Expr}` denotes a parser consuming a `Token` stream and producing and `Expr`. 
+In the following example the declaration `expr{Token}:{Expr}` denotes a parser consuming a `Token` stream and producing an `Expr`. 
 
 ```rust
 parsec_rules!(
