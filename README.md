@@ -141,8 +141,8 @@ In the following example the declaration `expr{Token}:{Expr}` denotes a parser c
 
 ```rust
 parsec_rules!(
-    let expr{Token}:{Expr}   = (s=sexpr e=(_=op _=expr)?) -> {mk_operation(s,e)}
-    let op{Token}:{Operator} = (PLUS                      -> {Operator::Plus})
+    let expr{Token}:{Expr}   = (s=sexpr e=(_=oper _=expr)?) -> {mk_operation(s,e)}
+    let oper{Token}:{Operator} = (PLUS                      -> {Operator::Plus})
                              | (MULT                      -> {Operator::Mult})
     let sexpr{Token}:{Expr}  = (LPAREN _=expr RPAREN)
                              | number
