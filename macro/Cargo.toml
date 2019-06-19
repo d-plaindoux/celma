@@ -15,10 +15,6 @@ quote = "0.6.12"
 syn="0.15.35"
 bencher = "0.1.5"
 
-[profile.release]
-lto = "fat"
-codegen-units = 1
-
 [[bench]]
 name = "json"
 harness = false
