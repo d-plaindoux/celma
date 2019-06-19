@@ -167,7 +167,7 @@ match response {
 
 ### Stage 1
 
-The [Celma parser v0](https://github.com/d-plaindoux/celma/blob/master/meta/src/meta/parser.rs) is written with parser combinators
+The [Celma parser v0](https://github.com/d-plaindoux/celma/blob/master/lang/src/meta/parser.rs) is written with parser combinators
 
 ### [WIP] Stage 2
 
