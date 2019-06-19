@@ -27,7 +27,7 @@ use celma_core::parser::response::Response::{Reject, Success};
 use celma_core::stream::iterator_stream::IteratorStream;
 use celma_core::stream::position::Position;
 use celma_core::stream::stream::Stream;
-use celma_plugin::parsec_rules;
+use celma_macro::parsec_rules;
 
 #[derive(Clone)]
 pub enum JSON {

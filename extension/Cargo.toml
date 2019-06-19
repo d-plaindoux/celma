@@ -4,12 +4,10 @@ version = "0.1.0"
 authors = ["d-plaindoux <d.plaindoux@free.fr>"]
 edition = "2018"
 
-[lib]
-
 [dependencies]
-celma_core   = { version = "0.1.0", path = "../core" }
-celma_lang   = { version = "0.1.0", path = "../meta" }
-celma_plugin = { version = "0.1.0", path = "../plugin" }
+celma_core  = { version = "0.1.0", path = "../core" }
+celma_lang  = { version = "0.1.0", path = "../lang" }
+celma_macro = { version = "0.1.0", path = "../macro" }
 
 [profile.release]
 lto = "fat"

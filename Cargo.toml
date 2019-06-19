@@ -1,8 +1,8 @@
 [workspace]
 members = [
     "core",
-    "meta",
-    "plugin",
+    "lang",
+    "macro",
     "extension"
 ]
 
