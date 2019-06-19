@@ -25,7 +25,7 @@ additional   = "|"? parser
 transform    = "->" '{' rust_code '}'
 atom         = alter? '(' parser ')' | CHAR | STRING | ident | '{' rust_code '}'
 alter        = ("^"|"!"|"#")
-ident        = [a..zA..Z]+ - {"let", "try", "check"}
+ident        = [a..zA..Z]+ - {"let"}
 ```
 
 ##  Using the meta-language
