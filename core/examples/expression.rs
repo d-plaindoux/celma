@@ -86,10 +86,7 @@ where
     parser(number().or(ident()).or(string()).or(lazy(|| record())))
 }
 
-fn sequence<'a, A: 'a, P: 'a, S: 'a>(
-    p: P,
-    s: char,
-) -> impl Combine<Vec<A>> + Parse<Vec<A>, S> + 'a
+fn sequence<'a, A: 'a, P: 'a, S: 'a>(p: P, s: char) -> impl Combine<Vec<A>> + Parse<Vec<A>, S> + 'a
 where
     A: Clone,
     P: Combine<A> + Parse<A, S>,
@@ -97,7 +94,8 @@ where
 {
     let p = parser(p);
 
-    p.clone().and(skip())
+    p.clone()
+        .and(skip())
         .left()
         .and(
             (char(s).and(skip()))

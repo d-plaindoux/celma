@@ -14,6 +14,18 @@
    limitations under the License.
 */
 
-#![feature(proc_macro_hygiene)]
-
-pub mod lang;
+pub mod a_try;
+pub mod and;
+pub mod bind;
+pub mod check;
+pub mod core;
+pub mod ff;
+pub mod fmap;
+pub mod lazy;
+pub mod literal;
+pub mod location;
+pub mod not;
+pub mod option;
+pub mod or;
+pub mod repeat;
+pub mod satisfy;

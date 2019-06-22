@@ -14,6 +14,20 @@
    limitations under the License.
 */
 
-#![feature(proc_macro_hygiene)]
+use celma_core::parser::bind::Bind;
+use celma_core::parser::parser::{Combine, Parse};
+use celma_core::stream::stream::Stream;
 
-pub mod lang;
+use crate::parser::ff::{First, Token};
+
+impl<P, A, F, R, B, S> First<S> for Bind<P, A, F, R, B>
+where
+    P: Parse<A, S> + Combine<A>,
+    R: Parse<B, S> + Combine<B>,
+    F: Fn(A) -> R,
+    S: Stream,
+{
+    fn first(&self) -> Vec<Token<S::Item>> {
+        unimplemented!()
+    }
+}

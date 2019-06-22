@@ -64,7 +64,7 @@ where
     }
 
     fn next(&self) -> (Option<Self::Item>, Self) {
-        let mut this = self.clone(); // Ugly code preventing mutability / Check efficiency
+        let mut this = self.clone(); // Mutability required by the Iterator::next call (below)
         let option = this.0.next();
 
         if option.is_some() {

@@ -14,6 +14,20 @@
    limitations under the License.
 */
 
-#![feature(proc_macro_hygiene)]
+use celma_core::parser::check::Check;
+use celma_core::parser::parser::{Combine, Parse};
+use celma_core::stream::stream::Stream;
 
-pub mod lang;
+use crate::parser::ff::{First, Token};
+
+impl<L, A, B, S> First<S> for Check<L, B>
+where
+    L: First<S> + Parse<B, S> + Combine<B>,
+    S: Stream<Item = A>,
+{
+    fn first(&self) -> Vec<Token<S::Item>> {
+        let Self(p, _) = self;
+
+        p.first()
+    }
+}

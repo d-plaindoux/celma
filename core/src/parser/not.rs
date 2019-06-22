@@ -32,8 +32,8 @@ impl<L, A> Combine<A> for Not<L, A> where L: Combine<A> {}
 
 impl<L, A, S> Parse<A, S> for Not<L, A>
 where
-    S: Stream<Item = A>,
     L: Parse<A, S> + Combine<A>,
+    S: Stream<Item = A>,
 {
     fn parse(&self, s: S) -> Response<A, S> {
         let Self(p, _) = self;

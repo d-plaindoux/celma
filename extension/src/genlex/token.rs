@@ -14,6 +14,12 @@
    limitations under the License.
 */
 
-#![feature(proc_macro_hygiene)]
-
-pub mod lang;
+#[derive(Clone)]
+pub enum Token {
+    Char(char),
+    Ident(String),
+    String(String),
+    Float(f64),
+    Keyword(String),
+    Operator(String),
+}

@@ -14,6 +14,28 @@
    limitations under the License.
 */
 
-#![feature(proc_macro_hygiene)]
+use celma_core::parser::parser::{Combine, Parse};
+use celma_core::parser::repeat::Repeat;
+use celma_core::stream::stream::Stream;
 
-pub mod lang;
+use crate::parser::ff::{First, Token};
+
+impl<L, A, S> First<S> for Repeat<L, A>
+where
+    L: First<S> + Parse<A, S> + Combine<A>,
+    S: Stream,
+{
+    fn first(&self) -> Vec<Token<S::Item>> {
+        let Self(b, p, _) = self;
+
+        if *b {
+            let mut o = vec![Token::NoAtom];
+
+            o.append(&mut p.first());
+
+            o
+        } else {
+            p.first()
+        }
+    }
+}

@@ -14,6 +14,20 @@
    limitations under the License.
 */
 
-#![feature(proc_macro_hygiene)]
+use crate::parser::ff::{First, Token};
+use celma_core::parser::fmap::FMap;
+use celma_core::parser::parser::{Combine, Parse};
+use celma_core::stream::stream::Stream;
 
-pub mod lang;
+impl<P, A, F, B, S> First<S> for FMap<P, A, F, B>
+where
+    P: First<S> + Parse<A, S> + Combine<A>,
+    F: Fn(A) -> B,
+    S: Stream,
+{
+    fn first(&self) -> Vec<Token<S::Item>> {
+        let Self(p, _, _, _) = self;
+
+        p.first()
+    }
+}

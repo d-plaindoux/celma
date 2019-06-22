@@ -27,7 +27,7 @@ pub fn char<S>(c: char) -> impl Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
-    Satisfy::new(move |&v| v == c)
+    Satisfy::new(c, |&v, &c| v == c)
 }
 
 #[inline]
@@ -35,7 +35,7 @@ pub fn not_char<S>(c: char) -> impl Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
-    Satisfy::new(move |&v| v != c)
+    Satisfy::new(c, |&v, &c| v != c)
 }
 
 #[inline]
@@ -43,7 +43,7 @@ pub fn char_in_range<S>(r: Range<char>) -> impl Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
-    Satisfy::new(move |&v| r.start <= v && v <= r.end)
+    Satisfy::new(r, |&v, r| r.start <= v && v <= r.end)
 }
 
 #[inline]
@@ -51,7 +51,7 @@ pub fn char_in_set<S>(r: Vec<char>) -> impl Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
-    Satisfy::new(move |v| r.contains(v))
+    Satisfy::new(r, |v, r| r.contains(v))
 }
 
 #[inline]

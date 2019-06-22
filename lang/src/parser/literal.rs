@@ -14,6 +14,30 @@
    limitations under the License.
 */
 
-#![feature(proc_macro_hygiene)]
+use crate::parser::ff::{First, Token};
+use celma_core::parser::literal::{Chars, StringDelimited};
+use celma_core::stream::stream::Stream;
 
-pub mod lang;
+impl<'a, 'b, S> First<S> for Chars<'b>
+where
+    S: Stream<Item = char>,
+{
+    fn first(&self) -> Vec<Token<<S as Stream>::Item>> {
+        let Self(v) = self;
+
+        vec![Token::Atom(v.chars().next().unwrap())]
+    }
+}
+
+impl<S> First<S> for StringDelimited
+where
+    S: Stream<Item = char>,
+{
+    fn first(&self) -> Vec<Token<S::Item>> {
+        vec![Token::Atom('"')]
+    }
+}
+
+pub fn delimited_string() -> StringDelimited {
+    StringDelimited
+}

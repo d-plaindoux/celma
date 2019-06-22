@@ -46,14 +46,14 @@ fn u8<S>(v: char) -> impl Parse<u8, S> + Combine<u8>
 where
     S: Stream<Item = u8>,
 {
-    Satisfy::new(move |&u| u as char == v)
+    Satisfy::new(v, |&u, &v| u as char == v)
 }
 
 fn not_u8<S>(v: char) -> impl Parse<u8, S> + Combine<u8>
 where
     S: Stream<Item = u8>,
 {
-    Satisfy::new(move |&u| u as char != v)
+    Satisfy::new(v, |&u, &v| u as char != v)
 }
 
 fn basic_any(bencher: &mut Bencher) {

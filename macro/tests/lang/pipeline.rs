@@ -46,7 +46,7 @@ mod tests_transpiler {
     where
         S: Stream<Item = Token>,
     {
-        Satisfy::new(|v| match v {
+        Satisfy::new((), |v, _| match v {
             Token::Int(_) => true,
             _ => false,
         })
@@ -60,8 +60,8 @@ mod tests_transpiler {
     where
         S: Stream<Item = Token>,
     {
-        Satisfy::new(move |v| match v {
-            Token::Keyword(s) => *s == k,
+        Satisfy::new(k, |v, k| match v {
+            Token::Keyword(s) => *s == *k,
             _ => false,
         })
         .fmap(|v| match v {

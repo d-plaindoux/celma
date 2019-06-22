@@ -65,7 +65,7 @@ pub struct StringDelimited;
 
 impl<'a> Combine<String> for StringDelimited {}
 
-impl<'a, 'b, S> Parse<String, S> for StringDelimited
+impl<S> Parse<String, S> for StringDelimited
 where
     S: Stream<Item = char>,
 {

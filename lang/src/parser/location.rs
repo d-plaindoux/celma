@@ -14,6 +14,21 @@
    limitations under the License.
 */
 
-#![feature(proc_macro_hygiene)]
+use crate::parser::ff::{First, Token};
+use celma_core::parser::location::Located;
+use celma_core::parser::parser::{Combine, Parse};
+use celma_core::stream::position::Position;
+use celma_core::stream::stream::Stream;
 
-pub mod lang;
+impl<P, A, S, L> First<S> for Located<P, A>
+where
+    P: First<S> + Parse<A, S> + Combine<A>,
+    S: Stream<Pos = L>,
+    L: Position,
+{
+    fn first(&self) -> Vec<Token<S::Item>> {
+        let Self(p, _) = self;
+
+        p.first()
+    }
+}

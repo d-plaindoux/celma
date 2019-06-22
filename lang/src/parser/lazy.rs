@@ -14,6 +14,20 @@
    limitations under the License.
 */
 
-#![feature(proc_macro_hygiene)]
+use crate::parser::ff::{First, Token};
+use celma_core::parser::lazy::Lazy;
+use celma_core::parser::parser::{Combine, Parse};
+use celma_core::stream::stream::Stream;
 
-pub mod lang;
+impl<F, P, A, S> First<S> for Lazy<F, P, A>
+where
+    P: First<S> + Parse<A, S> + Combine<A>,
+    F: Fn() -> P,
+    S: Stream,
+{
+    fn first(&self) -> Vec<Token<S::Item>> {
+        let Self(f, _, _) = self;
+
+        f().first() // Memoization for infinite loop detection?
+    }
+}

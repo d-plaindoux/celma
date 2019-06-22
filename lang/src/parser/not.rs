@@ -14,6 +14,20 @@
    limitations under the License.
 */
 
-#![feature(proc_macro_hygiene)]
+use crate::parser::ff::{First, Token};
+use celma_core::parser::not::Not;
+use celma_core::parser::parser::{Combine, Parse};
+use celma_core::stream::stream::Stream;
 
-pub mod lang;
+impl<L, A, S> First<S> for Not<L, A>
+where
+    L: First<S> + Parse<A, S> + Combine<A>,
+    S: Stream<Item = A>,
+    A: Clone,
+{
+    fn first(&self) -> Vec<Token<S::Item>> {
+        let Self(p, _) = self;
+
+        p.first().iter().map(|t| t.negate()).collect::<Vec<_>>()
+    }
+}

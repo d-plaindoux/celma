@@ -14,4 +14,6 @@
    limitations under the License.
 */
 
+#![feature(proc_macro_hygiene)]
+
 pub mod genlex;

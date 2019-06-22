@@ -24,37 +24,36 @@ use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
 
 #[derive(Copy, Clone)]
-pub struct Satisfy<E, I>(E, PhantomData<I>)
+pub struct Satisfy<E, I, C>(C, E, PhantomData<I>, PhantomData<C>)
 where
-    E: Fn(&I) -> bool;
+    E: Fn(&I, &C) -> bool;
 
-impl<E, I> Satisfy<E, I>
+impl<E, I, C> Satisfy<E, I, C>
 where
-    E: Fn(&I) -> bool,
+    E: Fn(&I, &C) -> bool,
 {
-    pub fn new(e: E) -> Satisfy<E, I>
+    pub fn new(c: C, e: E) -> Satisfy<E, I, C>
     where
-        E: Fn(&I) -> bool,
+        E: Fn(&I, &C) -> bool,
     {
-        Satisfy(e, PhantomData)
+        Satisfy(c, e, PhantomData, PhantomData)
     }
 }
 
-impl<E, I> Combine<I> for Satisfy<E, I> where E: Fn(&I) -> bool {}
+impl<E, I, C> Combine<I> for Satisfy<E, I, C> where E: Fn(&I, &C) -> bool {}
 
-impl<A, I, S> Parse<I, S> for Satisfy<A, I>
+impl<A, I, C, S> Parse<I, S> for Satisfy<A, I, C>
 where
-    A: Fn(&I) -> bool,
+    A: Fn(&I, &C) -> bool,
     S: Stream<Item = I>,
-    I: Clone,
 {
     fn parse(&self, s: S) -> Response<I, S> {
-        let Self(predicate, _) = self;
+        let Self(c, predicate, _, _) = self;
 
         match s.next() {
-            (Some(c), p) => {
-                if predicate(&c) {
-                    Success(c, p, true)
+            (Some(i), p) => {
+                if predicate(&i, &c) {
+                    Success(i, p, true)
                 } else {
                     Reject(p, false)
                 }
@@ -64,11 +63,11 @@ where
     }
 
     fn check(&self, s: S) -> Response<(), S> {
-        let Self(predicate, _) = self;
+        let Self(c, predicate, _, _) = self;
 
         match s.next() {
-            (Some(c), p) => {
-                if predicate(&c) {
+            (Some(i), p) => {
+                if predicate(&i, c) {
                     Success((), p, true)
                 } else {
                     Reject(p, false)
@@ -85,7 +84,7 @@ where
     E: Eq + Copy,
     S: Stream<Item = E>,
 {
-    Satisfy::new(move |&v| v != c)
+    Satisfy::new(c, |&v, &c| v != c)
 }
 
 #[inline]
@@ -94,5 +93,5 @@ where
     E: Eq + Copy,
     S: Stream<Item = E>,
 {
-    Satisfy::new(move |&v| v == c)
+    Satisfy::new(c, |&v, &c| v == c)
 }
