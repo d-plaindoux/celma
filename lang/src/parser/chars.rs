@@ -14,19 +14,29 @@
    limitations under the License.
 */
 
-pub mod a_try;
-pub mod and;
-pub mod bind;
-pub mod chars;
-pub mod check;
-pub mod core;
-pub mod ff;
-pub mod fmap;
-pub mod lazy;
-pub mod literal;
-pub mod location;
-pub mod not;
-pub mod option;
-pub mod or;
-pub mod repeat;
-pub mod satisfy;
+use celma_core::stream::stream::Stream;
+use crate::parser::ff::Token;
+
+pub trait Tokenize<I> {
+    fn tokenize(&self) -> Vec<Token<I>>;
+}
+
+impl Tokenize<char> for char {
+    fn tokenize(&self) -> Vec<Token<char>> {
+        vec![Token::Atom(*self)]
+    }
+}
+
+impl Tokenize<char> for Vec<char> {
+    fn tokenize(&self) -> Vec<Token<char>> {
+        self.iter().map(|&c| Token::Atom(c)).collect::<Vec<_>>()
+    }
+}
+
+/*
+impl Tokenize<char> for Range<char> {
+    fn tokenize(&self) -> Vec<Token<char>> {
+        self.collect::<Vec<char>>().tokenize()
+    }
+}
+*/

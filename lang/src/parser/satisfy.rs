@@ -18,7 +18,8 @@ use celma_core::parser::parser::{Combine, Parse};
 use celma_core::parser::satisfy::Satisfy;
 use celma_core::stream::stream::Stream;
 
-use crate::parser::ff::{First, Token, Tokenize};
+use crate::parser::ff::{First, Token};
+use crate::parser::chars::Tokenize;
 
 impl<A, I, S, C> First<S> for Satisfy<A, I, C>
 where

@@ -59,27 +59,3 @@ where
 {
     fn first(&self) -> Vec<Token<S::Item>>;
 }
-
-pub trait Tokenize<I> {
-    fn tokenize(&self) -> Vec<Token<I>>;
-}
-
-impl Tokenize<char> for char {
-    fn tokenize(&self) -> Vec<Token<char>> {
-        vec![Token::Atom(self.clone())]
-    }
-}
-
-impl Tokenize<char> for Vec<char> {
-    fn tokenize(&self) -> Vec<Token<char>> {
-        self.iter().map(|&c| Token::Atom(c)).collect::<Vec<_>>()
-    }
-}
-
-/*
-impl Tokenize<char> for Range<char> {
-    fn tokenize(&self) -> Vec<Token<char>> {
-        self.collect::<Vec<char>>().tokenize()
-    }
-}
-*/
