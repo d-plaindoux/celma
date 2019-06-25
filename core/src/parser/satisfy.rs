@@ -22,6 +22,8 @@ use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
+use crate::parser::ff::{First, Token};
+use crate::parser::char::Tokenize;
 
 #[derive(Copy, Clone)]
 pub struct Satisfy<E, I, C>(C, E, PhantomData<I>, PhantomData<C>)
@@ -75,6 +77,19 @@ where
             }
             (None, p) => Reject(p, false),
         }
+    }
+}
+
+impl<A, I, S, C> First<S> for Satisfy<A, I, C>
+    where
+        A: Fn(&I, &C) -> bool,
+        S: Stream<Item = I>,
+        C: Tokenize<I>,
+{
+    fn first(&self) -> Vec<Token<I>> {
+        let Self(c, _, _, _) = self;
+
+        c.tokenize()
     }
 }
 

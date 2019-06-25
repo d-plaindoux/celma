@@ -22,6 +22,7 @@ use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
+use crate::parser::ff::{First, Token};
 
 #[derive(Copy, Clone)]
 pub struct Optional<L, A>(L, PhantomData<A>)
@@ -79,5 +80,20 @@ where
 {
     fn opt(self) -> Optional<L, A> {
         Optional(self, PhantomData)
+    }
+}
+
+impl<L, A, S> First<S> for Optional<L, A>
+    where
+        L: First<S> + Parse<A, S> + Combine<A>,
+        S: Stream,
+{
+    fn first(&self) -> Vec<Token<S::Item>> {
+        let Self(p, _) = self;
+        let mut o = vec![Token::NoAtom];
+
+        o.append(&mut p.first());
+
+        o
     }
 }

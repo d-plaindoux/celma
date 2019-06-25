@@ -55,7 +55,10 @@ impl Transpile<TokenStream> for ASTParsecRule {
         let body = body.transpile_body().1;
 
         quote!(
-            pub fn #name<'a,S:'a>() -> impl celma_core::parser::parser::Parse<#returns,S> + celma_core::parser::parser::Combine<#returns> + 'a
+            pub fn #name<'a,S:'a>() -> impl celma_core::parser::ff::First<S> +
+                                            celma_core::parser::parser::Parse<#returns,S> +
+                                            celma_core::parser::parser::Combine<#returns> +
+                                            'a
                 where S:celma_core::stream::stream::Stream<Item=#input>,
             {
                 use celma_core::parser::a_try::a_try;

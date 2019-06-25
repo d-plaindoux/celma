@@ -25,6 +25,7 @@ use celma_core::parser::repeat::RepeatOperation;
 use celma_core::parser::response::Response::Success;
 use celma_core::stream::char_stream::CharStream;
 use celma_core::stream::stream::Stream;
+use celma_core::parser::ff::First;
 
 #[derive(Debug, Clone)]
 enum Token {
@@ -35,7 +36,7 @@ enum Token {
 }
 
 #[inline]
-fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + 'a
+fn skip<'a, S: 'a>() -> impl First<S> + Parse<(), S> + Combine<()> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -45,7 +46,7 @@ where
 }
 
 #[inline]
-fn number<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
+fn number<'a, S: 'a>() -> impl First<S> + Parse<Token, S> + Combine<Token> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -56,7 +57,7 @@ where
 }
 
 #[inline]
-fn ident<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
+fn ident<'a, S: 'a>() -> impl First<S> + Parse<Token, S> + Combine<Token> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -66,7 +67,7 @@ where
 }
 
 #[inline]
-fn string<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
+fn string<'a, S: 'a>() -> impl First<S> + Parse<Token, S> + Combine<Token> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -79,17 +80,17 @@ where
 }
 
 #[inline]
-fn item<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
+fn item<'a, S: 'a>() -> impl First<S> + Parse<Token, S> + Combine<Token> + 'a
 where
     S: Stream<Item = char>,
 {
     parser(number().or(ident()).or(string()).or(lazy(|| record())))
 }
 
-fn sequence<'a, A: 'a, P: 'a, S: 'a>(p: P, s: char) -> impl Combine<Vec<A>> + Parse<Vec<A>, S> + 'a
+fn sequence<'a, A: 'a, P: 'a, S: 'a>(p: P, s: char) -> impl First<S> + Parse<Vec<A>, S> + Combine<Vec<A>> + 'a
 where
     A: Clone,
-    P: Combine<A> + Parse<A, S>,
+    P: First<S> + Combine<A> + Parse<A, S>,
     S: Stream<Item = char>,
 {
     let p = parser(p);
@@ -107,7 +108,7 @@ where
 }
 
 #[inline]
-fn record<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
+fn record<'a, S: 'a>() -> impl First<S> + Parse<Token, S> + Combine<Token> + 'a
 where
     S: Stream<Item = char>,
 {

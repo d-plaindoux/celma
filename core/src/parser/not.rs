@@ -22,6 +22,7 @@ use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
+use crate::parser::ff::{First, Token};
 
 #[derive(Copy, Clone)]
 pub struct Not<L, A>(L, PhantomData<A>)
@@ -73,5 +74,18 @@ where
 {
     fn not(self) -> Not<L, A> {
         Not(self, PhantomData)
+    }
+}
+
+impl<L, A, S> First<S> for Not<L, A>
+    where
+        L: First<S> + Parse<A, S> + Combine<A>,
+        S: Stream<Item = A>,
+        A: Clone,
+{
+    fn first(&self) -> Vec<Token<S::Item>> {
+        let Self(p, _) = self;
+
+        p.first().iter().map(|t| t.negate()).collect::<Vec<_>>()
     }
 }

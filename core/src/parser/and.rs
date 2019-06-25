@@ -24,6 +24,7 @@ use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
+use crate::parser::ff::{First, Token, HasLambda};
 
 #[derive(Copy, Clone)]
 pub struct And<L, R, A, B>(L, R, PhantomData<A>, PhantomData<B>)
@@ -121,5 +122,24 @@ where
 
     fn right<'a>(self) -> RightProjection<'a, L, R, A, B> {
         self.fmap(&|(_, r)| r)
+    }
+}
+
+impl<L, R, A, B, S> First<S> for And<L, R, A, B>
+    where
+        L: First<S> + Parse<A, S> + Combine<A>,
+        R: First<S> + Parse<B, S> + Combine<B>,
+        S: Stream,
+{
+    fn first(&self) -> Vec<Token<S::Item>> {
+        let Self(l, r, _, _) = self;
+
+        let mut first = l.first();
+
+        if first.has_lambda() {
+            first.append(&mut r.first())
+        }
+
+        first
     }
 }

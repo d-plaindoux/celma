@@ -23,6 +23,7 @@ use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::position::Position;
 use crate::stream::stream::Stream;
+use crate::parser::ff::{First, Token};
 
 #[derive(Copy, Clone)]
 pub struct Check<L, A>(L, PhantomData<A>)
@@ -65,11 +66,23 @@ where
     }
 }
 
-pub fn check<P, A, B, S>(p: P) -> impl Parse<Vec<A>, S> + Combine<Vec<A>>
+impl<L, A, B, S> First<S> for Check<L, B>
+    where
+        L: First<S> + Parse<B, S> + Combine<B>,
+        S: Stream<Item = A>,
+{
+    fn first(&self) -> Vec<Token<S::Item>> {
+        let Self(p, _) = self;
+
+        p.first()
+    }
+}
+
+pub fn check<P, A, B, S>(p: P) -> impl First<S> + Parse<Vec<A>, S> + Combine<Vec<A>>
 where
     B: Clone,
     S: Stream<Item = A>,
-    P: Parse<B, S> + Combine<B>,
+    P: First<S> + Parse<B, S> + Combine<B>,
 {
     Check(p, PhantomData)
 }

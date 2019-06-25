@@ -20,6 +20,7 @@ use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
+use crate::parser::ff::{Token, First};
 
 #[derive(Copy, Clone)]
 pub struct Chars<'b>(&'b str);
@@ -56,9 +57,22 @@ where
     }
 }
 
+impl<'a, 'b, S> First<S> for Chars<'b>
+    where
+        S: Stream<Item = char>,
+{
+    fn first(&self) -> Vec<Token<<S as Stream>::Item>> {
+        let Self(v) = self;
+
+        vec![Token::Atom(v.chars().next().unwrap())]
+    }
+}
+
 pub fn string(s: &str) -> Chars {
     Chars(s)
 }
+
+// -------------------------------------------------------------------------------------------------
 
 #[derive(Copy, Clone)]
 pub struct StringDelimited;
@@ -121,6 +135,15 @@ where
                 ns = nsp;
             }
         }
+    }
+}
+
+impl<S> First<S> for StringDelimited
+    where
+        S: Stream<Item = char>,
+{
+    fn first(&self) -> Vec<Token<S::Item>> {
+        vec![Token::Atom('"')]
     }
 }
 

@@ -23,6 +23,7 @@ use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::position::Position;
 use crate::stream::stream::Stream;
+use crate::parser::ff::{First, Token};
 
 #[derive(Copy, Clone)]
 pub struct Location<A, L>
@@ -71,6 +72,19 @@ where
         let Self(p, _) = self;
 
         p.check(s)
+    }
+}
+
+impl<P, A, S, L> First<S> for Located<P, A>
+    where
+        P: First<S> + Parse<A, S> + Combine<A>,
+        S: Stream<Pos = L>,
+        L: Position,
+{
+    fn first(&self) -> Vec<Token<S::Item>> {
+        let Self(p, _) = self;
+
+        p.first()
     }
 }
 

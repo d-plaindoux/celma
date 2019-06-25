@@ -22,6 +22,7 @@ use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
+use crate::parser::ff::{First, Token};
 
 #[derive(Copy, Clone)]
 pub struct ATry<L, A>(L, PhantomData<A>)
@@ -52,11 +53,23 @@ where
     }
 }
 
-pub fn a_try<P, A, S>(p: P) -> impl Parse<A, S> + Combine<A>
+impl<L, A, S> First<S> for ATry<L, A>
+    where
+        L: First<S> + Parse<A, S> + Combine<A>,
+        S: Stream,
+{
+    fn first(&self) -> Vec<Token<S::Item>> {
+        let Self(p, _) = self;
+
+        p.first() // Memoization for infinite loop detection?
+    }
+}
+
+pub fn a_try<P, A, S>(p: P) -> impl First<S> + Parse<A, S> + Combine<A>
 where
     A: Clone,
     S: Stream,
-    P: Parse<A, S> + Combine<A>,
+    P: First<S> + Parse<A, S> + Combine<A>,
 {
     ATry(p, PhantomData)
 }

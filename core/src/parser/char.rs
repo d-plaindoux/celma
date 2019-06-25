@@ -21,9 +21,40 @@ use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::satisfy::Satisfy;
 use crate::stream::stream::Stream;
+use crate::parser::ff::{Token, First};
+
+pub trait Tokenize<I> {
+    fn tokenize(&self) -> Vec<Token<I>>;
+}
+
+impl <E> Tokenize<E> for () {
+    fn tokenize(&self) -> Vec<Token<E>> {
+        vec![Token::AllAtom]
+    }
+}
+
+impl Tokenize<char> for char {
+    fn tokenize(&self) -> Vec<Token<char>> {
+        vec![Token::Atom(*self)]
+    }
+}
+
+impl Tokenize<char> for Vec<char> {
+    fn tokenize(&self) -> Vec<Token<char>> {
+        self.iter().map(|&c| Token::Atom(c)).collect::<Vec<_>>()
+    }
+}
+
+impl Tokenize<char> for Range<char> {
+    fn tokenize(&self) -> Vec<Token<char>> {
+        vec![Token::NoAtom] // TODO
+    }
+}
+
+// -------------------------------------------------------------------------------------------------
 
 #[inline]
-pub fn char<S>(c: char) -> impl Parse<char, S> + Combine<char>
+pub fn char<S>(c: char) -> impl First<S> + Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
@@ -31,7 +62,7 @@ where
 }
 
 #[inline]
-pub fn not_char<S>(c: char) -> impl Parse<char, S> + Combine<char>
+pub fn not_char<S>(c: char) -> impl First<S> + Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
@@ -39,7 +70,7 @@ where
 }
 
 #[inline]
-pub fn char_in_range<S>(r: Range<char>) -> impl Parse<char, S> + Combine<char>
+pub fn char_in_range<S>(r: Range<char>) -> impl First<S> + Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
@@ -47,7 +78,7 @@ where
 }
 
 #[inline]
-pub fn char_in_set<S>(r: Vec<char>) -> impl Parse<char, S> + Combine<char>
+pub fn char_in_set<S>(r: Vec<char>) -> impl First<S> + Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
@@ -55,7 +86,7 @@ where
 }
 
 #[inline]
-pub fn digit<S>() -> impl Parse<char, S> + Combine<char>
+pub fn digit<S>() -> impl First<S> + Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
@@ -63,7 +94,7 @@ where
 }
 
 #[inline]
-pub fn alpha_lower<S>() -> impl Parse<char, S> + Combine<char>
+pub fn alpha_lower<S>() -> impl First<S> + Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
@@ -71,7 +102,7 @@ where
 }
 
 #[inline]
-pub fn alpha_upper<S>() -> impl Parse<char, S> + Combine<char>
+pub fn alpha_upper<S>() -> impl First<S> + Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
@@ -79,7 +110,7 @@ where
 }
 
 #[inline]
-pub fn alpha<S>() -> impl Parse<char, S> + Combine<char>
+pub fn alpha<S>() -> impl First<S> + Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
@@ -87,7 +118,7 @@ where
 }
 
 #[inline]
-pub fn space<S>() -> impl Parse<char, S> + Combine<char>
+pub fn space<S>() -> impl First<S> + Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {

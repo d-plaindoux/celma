@@ -14,7 +14,8 @@
    limitations under the License.
 */
 
-use celma_core::stream::stream::Stream;
+
+use crate::stream::stream::Stream;
 
 pub enum Token<E> {
     Atom(E),
