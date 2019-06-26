@@ -17,6 +17,7 @@
 use celma_core::parser::and::{AndOperation, AndProjection};
 use celma_core::parser::char::{alpha, char, char_in_set, digit, not_char};
 use celma_core::parser::core::{eos, parser};
+use celma_core::parser::ff::First;
 use celma_core::parser::fmap::FMapOperation;
 use celma_core::parser::lazy::lazy;
 use celma_core::parser::or::OrOperation;
@@ -25,7 +26,6 @@ use celma_core::parser::repeat::RepeatOperation;
 use celma_core::parser::response::Response::Success;
 use celma_core::stream::char_stream::CharStream;
 use celma_core::stream::stream::Stream;
-use celma_core::parser::ff::First;
 
 #[derive(Debug, Clone)]
 enum Token {
@@ -87,7 +87,10 @@ where
     parser(number().or(ident()).or(string()).or(lazy(|| record())))
 }
 
-fn sequence<'a, A: 'a, P: 'a, S: 'a>(p: P, s: char) -> impl First<S> + Parse<Vec<A>, S> + Combine<Vec<A>> + 'a
+fn sequence<'a, A: 'a, P: 'a, S: 'a>(
+    p: P,
+    s: char,
+) -> impl First<S> + Parse<Vec<A>, S> + Combine<Vec<A>> + 'a
 where
     A: Clone,
     P: First<S> + Combine<A> + Parse<A, S>,

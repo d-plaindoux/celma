@@ -14,13 +14,13 @@
    limitations under the License.
 */
 
+use crate::parser::ff::{First, Token};
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
-use crate::parser::ff::{Token, First};
 
 #[derive(Copy, Clone)]
 pub struct Chars<'b>(&'b str);
@@ -58,8 +58,8 @@ where
 }
 
 impl<'a, 'b, S> First<S> for Chars<'b>
-    where
-        S: Stream<Item = char>,
+where
+    S: Stream<Item = char>,
 {
     fn first(&self) -> Vec<Token<<S as Stream>::Item>> {
         let Self(v) = self;
@@ -139,8 +139,8 @@ where
 }
 
 impl<S> First<S> for StringDelimited
-    where
-        S: Stream<Item = char>,
+where
+    S: Stream<Item = char>,
 {
     fn first(&self) -> Vec<Token<S::Item>> {
         vec![Token::Atom('"')]

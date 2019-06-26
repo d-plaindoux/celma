@@ -16,9 +16,12 @@
 
 #[cfg(test)]
 mod tests_transpiler {
+    use crate::lang::pipeline::tests_transpiler::Token::Keyword;
     use celma_core::parser::and::AndOperation;
     use celma_core::parser::char::{digit, space, Tokenize};
     use celma_core::parser::core::eos;
+    use celma_core::parser::ff::Token::Atom;
+    use celma_core::parser::ff::{First, Token as Tk};
     use celma_core::parser::fmap::FMapOperation;
     use celma_core::parser::parser::{Combine, Parse};
     use celma_core::parser::response::Response::Success;
@@ -27,9 +30,6 @@ mod tests_transpiler {
     use celma_core::stream::parser_stream::ParserStream;
     use celma_core::stream::stream::Stream;
     use celma_macro::parsec_rules;
-    use celma_core::parser::ff::{First, Token as Tk};
-    use celma_core::parser::ff::Token::{Atom};
-    use crate::lang::pipeline::tests_transpiler::Token::Keyword;
 
     // ---------------------------------------------------------------------------------------------
     // Tokens

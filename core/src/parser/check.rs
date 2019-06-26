@@ -16,6 +16,7 @@
 
 use std::marker::PhantomData;
 
+use crate::parser::ff::{First, Token};
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response;
@@ -23,7 +24,6 @@ use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::position::Position;
 use crate::stream::stream::Stream;
-use crate::parser::ff::{First, Token};
 
 #[derive(Copy, Clone)]
 pub struct Check<L, A>(L, PhantomData<A>)
@@ -67,9 +67,9 @@ where
 }
 
 impl<L, A, B, S> First<S> for Check<L, B>
-    where
-        L: First<S> + Parse<B, S> + Combine<B>,
-        S: Stream<Item = A>,
+where
+    L: First<S> + Parse<B, S> + Combine<B>,
+    S: Stream<Item = A>,
 {
     fn first(&self) -> Vec<Token<S::Item>> {
         let Self(p, _) = self;

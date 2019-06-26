@@ -14,7 +14,6 @@
    limitations under the License.
 */
 
-
 use crate::stream::stream::Stream;
 
 pub enum Token<E> {

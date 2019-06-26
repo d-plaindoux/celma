@@ -17,6 +17,7 @@
 use std::marker::PhantomData;
 use std::rc::Rc;
 
+use crate::parser::ff::{First, Token};
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response;
@@ -24,7 +25,6 @@ use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::parser::satisfy::Satisfy;
 use crate::stream::stream::Stream;
-use crate::parser::ff::{First, Token};
 
 // -------------------------------------------------------------------------------------------------
 
@@ -58,9 +58,9 @@ where
 }
 
 impl<A, S> First<S> for Returns<A>
-    where
-        A: Clone,
-        S: Stream,
+where
+    A: Clone,
+    S: Stream,
 {
     fn first(&self) -> Vec<Token<S::Item>> {
         vec![Token::NoAtom]
@@ -90,10 +90,9 @@ where
     }
 }
 
-
 impl<A, S> First<S> for Fail<A>
-    where
-        S: Stream,
+where
+    S: Stream,
 {
     fn first(&self) -> Vec<Token<S::Item>> {
         vec![Token::NoAtom]
@@ -124,8 +123,8 @@ where
 }
 
 impl<S> First<S> for Eos
-    where
-        S: Stream,
+where
+    S: Stream,
 {
     fn first(&self) -> Vec<Token<S::Item>> {
         vec![Token::NoAtom]
@@ -140,14 +139,14 @@ pub fn eos() -> Eos {
 
 #[derive(Clone)]
 pub struct Parser<'a, A, S>(Rc<dyn Parse<A, S> + 'a>, Rc<dyn First<S> + 'a>)
-    where
-        S: Stream;
+where
+    S: Stream;
 
 impl<'a, A, S> Combine<A> for Parser<'a, A, S> where S: Stream {}
 
 impl<'a, A, S> Parse<A, S> for Parser<'a, A, S>
-    where
-        S: Stream,
+where
+    S: Stream,
 {
     fn parse(&self, s: S) -> Response<A, S> {
         let Self(p, _) = self;
@@ -163,8 +162,8 @@ impl<'a, A, S> Parse<A, S> for Parser<'a, A, S>
 }
 
 impl<'a, A, S> First<S> for Parser<'a, A, S>
-    where
-        S: Stream,
+where
+    S: Stream,
 {
     fn first(&self) -> Vec<Token<S::Item>> {
         let Self(_, f) = self;
@@ -174,9 +173,9 @@ impl<'a, A, S> First<S> for Parser<'a, A, S>
 }
 
 pub fn parser<'a, P, A, S>(p: P) -> Parser<'a, A, S>
-    where
-        P: First<S> + Parse<A, S> + 'a,
-        S: Stream,
+where
+    P: First<S> + Parse<A, S> + 'a,
+    S: Stream,
 {
     let rc = Rc::new(p);
     Parser(rc.clone(), rc)

@@ -16,18 +16,18 @@
 
 use std::ops::Range;
 
+use crate::parser::ff::{First, Token};
 use crate::parser::or::OrOperation;
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::satisfy::Satisfy;
 use crate::stream::stream::Stream;
-use crate::parser::ff::{Token, First};
 
 pub trait Tokenize<I> {
     fn tokenize(&self) -> Vec<Token<I>>;
 }
 
-impl <E> Tokenize<E> for () {
+impl<E> Tokenize<E> for () {
     fn tokenize(&self) -> Vec<Token<E>> {
         vec![Token::AllAtom]
     }
