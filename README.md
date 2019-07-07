@@ -89,7 +89,7 @@ parsec_rules!(
     let boolean:{JSON}       = b=("true"|"false")                      -> {JSON::Bool(b=="true")}
     let array:{JSON}         = ('[' S a=(_=json _=(',' _=json)*)? ']') -> {JSON::Array(mk_vec(a))}
     let object:{JSON}        = ('{' S a=(_=attr _=(',' _=attr)*)? '}') -> {JSON::Object(mk_vec(a))}
-    let attr:{(String,JSON)} = (S s=STRING S ":" j=json)               -> {(s,j)}
+    let attr:{(String,JSON)} = (S s=STRING S ":" j=json)
 );
 
 // Basic rules
