@@ -22,7 +22,7 @@ mod tests_transpiler {
     use celma_core::parser::parser::Parse;
     use celma_core::parser::response::Response::Success;
     use celma_core::stream::char_stream::CharStream;
-    use celma_macro::parsec_rules;
+    use celma_macro::{parsec, parsec_rules};
 
     #[derive(Clone)]
     pub enum Expr {
@@ -80,7 +80,7 @@ mod tests_transpiler {
 
     #[test]
     fn it_parse_expr1() {
-        let response = expr().and_left(eos()).parse(CharStream::new("1 + 2"));
+        let response = parsec!(_=expr {eos()}).parse(CharStream::new("1 + 2"));
 
         match response {
             Success(v, _, _) => assert_eq!(v.eval(), 3.0),

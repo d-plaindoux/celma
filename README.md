@@ -146,7 +146,7 @@ parsec_rules!(
                                | (MULT                        -> {Operator::Mult})
     let sexpr{Token}:{Expr}    = (LPAREN _=expr RPAREN)
                                | number
-    let number{Token}:{Expr}   = i=kint                     -> {Expr::Number(i)}
+    let number{Token}:{Expr}   = i=kint                       -> {Expr::Number(i)}
 );
 ```
 
