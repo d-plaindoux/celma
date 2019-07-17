@@ -16,7 +16,6 @@
 
 use std::marker::PhantomData;
 
-use crate::parser::ff::{First, Token};
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response;
@@ -72,19 +71,6 @@ where
         let Self(p, _) = self;
 
         p.check(s)
-    }
-}
-
-impl<P, A, S, L> First<S> for Located<P, A>
-where
-    P: First<S> + Parse<A, S> + Combine<A>,
-    S: Stream<Pos = L>,
-    L: Position,
-{
-    fn first(&self) -> Vec<Token<S::Item>> {
-        let Self(p, _) = self;
-
-        p.first()
     }
 }
 

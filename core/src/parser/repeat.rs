@@ -16,7 +16,6 @@
 
 use std::marker::PhantomData;
 
-use crate::parser::ff::{First, Token};
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response;
@@ -113,25 +112,5 @@ where
 
     fn opt_rep(self) -> Repeat<L, A> {
         Repeat(true, self, PhantomData)
-    }
-}
-
-impl<L, A, S> First<S> for Repeat<L, A>
-where
-    L: First<S> + Parse<A, S> + Combine<A>,
-    S: Stream,
-{
-    fn first(&self) -> Vec<Token<S::Item>> {
-        let Self(b, p, _) = self;
-
-        if *b {
-            let mut o = vec![Token::NoAtom];
-
-            o.append(&mut p.first());
-
-            o
-        } else {
-            p.first()
-        }
     }
 }

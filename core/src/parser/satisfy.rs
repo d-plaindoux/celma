@@ -16,8 +16,6 @@
 
 use std::marker::PhantomData;
 
-use crate::parser::char::Tokenize;
-use crate::parser::ff::{First, Token};
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response;
@@ -77,19 +75,6 @@ where
             }
             (None, p) => Reject(p, false),
         }
-    }
-}
-
-impl<A, I, S, C> First<S> for Satisfy<A, I, C>
-where
-    A: Fn(&I, &C) -> bool,
-    S: Stream<Item = I>,
-    C: Tokenize<I>,
-{
-    fn first(&self) -> Vec<Token<I>> {
-        let Self(c, _, _, _) = self;
-
-        c.tokenize()
     }
 }
 

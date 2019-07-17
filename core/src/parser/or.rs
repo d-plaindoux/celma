@@ -16,7 +16,6 @@
 
 use std::marker::PhantomData;
 
-use crate::parser::ff::{First, Token};
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response;
@@ -77,22 +76,5 @@ where
     #[inline]
     fn or(self, a: R) -> Or<L, R, A> {
         Or(self, a, PhantomData)
-    }
-}
-
-impl<L, R, A, S> First<S> for Or<L, R, A>
-where
-    L: First<S> + Parse<A, S> + Combine<A>,
-    R: First<S> + Parse<A, S> + Combine<A>,
-    S: Stream,
-{
-    fn first(&self) -> Vec<Token<S::Item>> {
-        let Self(l, r, _) = self;
-
-        let mut first = l.first();
-
-        first.append(&mut r.first());
-
-        first
     }
 }

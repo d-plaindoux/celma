@@ -14,7 +14,6 @@
    limitations under the License.
 */
 
-use crate::parser::ff::{First, Token};
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response;
@@ -54,17 +53,6 @@ where
                 }
             }
         }
-    }
-}
-
-impl<'a, 'b, S> First<S> for Chars<'b>
-where
-    S: Stream<Item = char>,
-{
-    fn first(&self) -> Vec<Token<<S as Stream>::Item>> {
-        let Self(v) = self;
-
-        vec![Token::Atom(v.chars().next().unwrap())]
     }
 }
 
@@ -135,15 +123,6 @@ where
                 ns = nsp;
             }
         }
-    }
-}
-
-impl<S> First<S> for StringDelimited
-where
-    S: Stream<Item = char>,
-{
-    fn first(&self) -> Vec<Token<S::Item>> {
-        vec![Token::Atom('"')]
     }
 }
 

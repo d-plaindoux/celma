@@ -16,7 +16,6 @@
 
 use std::marker::PhantomData;
 
-use crate::parser::ff::{First, Token};
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response;
@@ -53,23 +52,11 @@ where
     }
 }
 
-impl<L, A, S> First<S> for ATry<L, A>
-where
-    L: First<S> + Parse<A, S> + Combine<A>,
-    S: Stream,
-{
-    fn first(&self) -> Vec<Token<S::Item>> {
-        let Self(p, _) = self;
-
-        p.first() // Memoization for infinite loop detection?
-    }
-}
-
-pub fn a_try<P, A, S>(p: P) -> impl First<S> + Parse<A, S> + Combine<A>
+pub fn a_try<P, A, S>(p: P) -> impl Parse<A, S> + Combine<A>
 where
     A: Clone,
     S: Stream,
-    P: First<S> + Parse<A, S> + Combine<A>,
+    P: Parse<A, S> + Combine<A>,
 {
     ATry(p, PhantomData)
 }

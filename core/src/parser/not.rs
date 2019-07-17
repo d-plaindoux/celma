@@ -16,7 +16,6 @@
 
 use std::marker::PhantomData;
 
-use crate::parser::ff::{First, Token};
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response;
@@ -74,18 +73,5 @@ where
 {
     fn not(self) -> Not<L, A> {
         Not(self, PhantomData)
-    }
-}
-
-impl<L, A, S> First<S> for Not<L, A>
-where
-    L: First<S> + Parse<A, S> + Combine<A>,
-    S: Stream<Item = A>,
-    A: Clone,
-{
-    fn first(&self) -> Vec<Token<S::Item>> {
-        let Self(p, _) = self;
-
-        p.first().iter().map(|t| t.negate()).collect::<Vec<_>>()
     }
 }

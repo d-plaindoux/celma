@@ -16,7 +16,6 @@
 
 use std::marker::PhantomData;
 
-use crate::parser::ff::{First, Token};
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response;
@@ -66,23 +65,11 @@ where
     }
 }
 
-impl<L, A, B, S> First<S> for Check<L, B>
-where
-    L: First<S> + Parse<B, S> + Combine<B>,
-    S: Stream<Item = A>,
-{
-    fn first(&self) -> Vec<Token<S::Item>> {
-        let Self(p, _) = self;
-
-        p.first()
-    }
-}
-
-pub fn check<P, A, B, S>(p: P) -> impl First<S> + Parse<Vec<A>, S> + Combine<Vec<A>>
+pub fn check<P, A, B, S>(p: P) -> impl Parse<Vec<A>, S> + Combine<Vec<A>>
 where
     B: Clone,
     S: Stream<Item = A>,
-    P: First<S> + Parse<B, S> + Combine<B>,
+    P: Parse<B, S> + Combine<B>,
 {
     Check(p, PhantomData)
 }

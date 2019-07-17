@@ -16,7 +16,6 @@
 
 use std::marker::PhantomData;
 
-use crate::parser::ff::{First, HasLambda, Token};
 use crate::parser::fmap::FMap;
 use crate::parser::fmap::FMapOperation;
 use crate::parser::parser::Combine;
@@ -122,24 +121,5 @@ where
 
     fn right<'a>(self) -> RightProjection<'a, L, R, A, B> {
         self.fmap(&|(_, r)| r)
-    }
-}
-
-impl<L, R, A, B, S> First<S> for And<L, R, A, B>
-where
-    L: First<S> + Parse<A, S> + Combine<A>,
-    R: First<S> + Parse<B, S> + Combine<B>,
-    S: Stream,
-{
-    fn first(&self) -> Vec<Token<S::Item>> {
-        let Self(l, r, _, _) = self;
-
-        let mut first = l.first();
-
-        if first.has_lambda() {
-            first.append(&mut r.first())
-        }
-
-        first
     }
 }

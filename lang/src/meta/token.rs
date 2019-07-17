@@ -14,8 +14,6 @@
    limitations under the License.
 */
 
-use crate::stream::stream::Stream;
-
 pub enum Token<E> {
     Atom(E),
     NotAtom(E),
@@ -53,9 +51,7 @@ impl<E> HasLambda for Vec<Token<E>> {
     }
 }
 
-pub trait First<S>
-where
-    S: Stream,
+pub trait First<I>
 {
-    fn first(&self) -> Vec<Token<S::Item>>;
+    fn first(&self) -> Vec<Token<I>>;
 }

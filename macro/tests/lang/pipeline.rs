@@ -16,20 +16,17 @@
 
 #[cfg(test)]
 mod tests_transpiler {
-    use crate::lang::pipeline::tests_transpiler::Token::Keyword;
     use celma_core::parser::and::AndOperation;
-    use celma_core::parser::char::{digit, space, Tokenize};
+    use celma_core::parser::char::{digit, space};
     use celma_core::parser::core::eos;
-    use celma_core::parser::ff::Token::Atom;
-    use celma_core::parser::ff::{First, Token as Tk};
     use celma_core::parser::fmap::FMapOperation;
     use celma_core::parser::parser::{Combine, Parse};
-    use celma_core::parser::response::Response::Success;
     use celma_core::parser::satisfy::Satisfy;
     use celma_core::stream::char_stream::CharStream;
     use celma_core::stream::parser_stream::ParserStream;
     use celma_core::stream::stream::Stream;
     use celma_macro::parsec_rules;
+    use celma_core::parser::response::Response;
 
     // ---------------------------------------------------------------------------------------------
     // Tokens
@@ -41,17 +38,11 @@ mod tests_transpiler {
         Keyword(char),
     }
 
-    impl Tokenize<Token> for char {
-        fn tokenize(&self) -> Vec<Tk<Token>> {
-            vec![Atom(Keyword(*self))]
-        }
-    }
-
     // ---------------------------------------------------------------------------------------------
     // Basic parsers
     // ---------------------------------------------------------------------------------------------
 
-    fn kint<'a, S: 'a>() -> impl First<S> + Parse<i64, S> + Combine<i64> + 'a
+    fn kint<'a, S: 'a>() -> impl Parse<i64, S> + Combine<i64> + 'a
     where
         S: Stream<Item = Token>,
     {
@@ -65,7 +56,7 @@ mod tests_transpiler {
         })
     }
 
-    fn kwd<'a, S: 'a>(k: char) -> impl First<S> + Parse<char, S> + Combine<char> + 'a
+    fn kwd<'a, S: 'a>(k: char) -> impl Parse<char, S> + Combine<char> + 'a
     where
         S: Stream<Item = Token>,
     {
@@ -167,7 +158,7 @@ mod tests_transpiler {
         let response = expr().and_left(eos()).parse(stream);
 
         match response {
-            Success(v, _, _) => assert_eq!(v.eval(), 3),
+            Response::Success(v, _, _) => assert_eq!(v.eval(), 3),
             _ => assert_eq!(true, false),
         }
     }

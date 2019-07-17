@@ -36,8 +36,7 @@ mod tests_and {
             Success(ast, _, _) => assert_eq!(
                 ast.to_string(),
                 quote!(
-                    pub fn a<'a, S: 'a>() -> impl celma_core::parser::ff::First<S>
-                                                 + celma_core::parser::parser::Parse<Vec<char>, S>
+                    pub fn a<'a, S: 'a>() -> impl celma_core::parser::parser::Parse<Vec<char>, S>
                                                  + celma_core::parser::parser::Combine<Vec<char> >
                                                  + 'a
                     where
@@ -56,8 +55,7 @@ mod tests_and {
                         celma_core::parser::core::parser(celma_core::parser::lazy::lazy(|| b()))
                     }
 
-                    pub fn b<'a, S: 'a>() -> impl celma_core::parser::ff::First<S>
-                                                 + celma_core::parser::parser::Parse<Vec<char>, S>
+                    pub fn b<'a, S: 'a>() -> impl celma_core::parser::parser::Parse<Vec<char>, S>
                                                  + celma_core::parser::parser::Combine<Vec<char> >
                                                  + 'a
                     where

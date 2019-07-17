@@ -16,7 +16,6 @@
 
 use std::marker::PhantomData;
 
-use crate::parser::ff::{First, Token};
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response;
@@ -88,17 +87,5 @@ where
 {
     fn bind(self, f: F) -> Bind<P, A, F, R, B> {
         Bind(self, f, PhantomData, PhantomData)
-    }
-}
-
-impl<P, A, F, R, B, S> First<S> for Bind<P, A, F, R, B>
-where
-    P: Parse<A, S> + Combine<A>,
-    R: Parse<B, S> + Combine<B>,
-    F: Fn(A) -> R,
-    S: Stream,
-{
-    fn first(&self) -> Vec<Token<S::Item>> {
-        unimplemented!()
     }
 }

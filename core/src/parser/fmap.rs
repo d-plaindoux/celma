@@ -16,7 +16,6 @@
 
 use std::marker::PhantomData;
 
-use crate::parser::ff::{First, Token};
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
 use crate::parser::response::Response;
@@ -77,18 +76,5 @@ where
 {
     fn fmap(self, f: F) -> FMap<P, A, F, B> {
         FMap(self, f, PhantomData, PhantomData)
-    }
-}
-
-impl<P, A, F, B, S> First<S> for FMap<P, A, F, B>
-where
-    P: First<S> + Parse<A, S> + Combine<A>,
-    F: Fn(A) -> B,
-    S: Stream,
-{
-    fn first(&self) -> Vec<Token<S::Item>> {
-        let Self(p, _, _, _) = self;
-
-        p.first()
     }
 }

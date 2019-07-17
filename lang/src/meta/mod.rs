@@ -16,4 +16,6 @@
 
 pub mod parser;
 pub mod syntax;
+pub mod token;
+pub mod first;
 pub mod transpiler;

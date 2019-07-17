@@ -16,7 +16,6 @@
 
 use std::marker::PhantomData;
 
-use crate::parser::ff::{First, Token};
 use crate::parser::parser::{Combine, Parse};
 use crate::parser::response::Response;
 use crate::stream::stream::Stream;
@@ -53,24 +52,12 @@ where
     }
 }
 
-impl<F, P, A, S> First<S> for Lazy<F, P, A>
-where
-    P: First<S> + Parse<A, S> + Combine<A>,
-    F: Fn() -> P,
-    S: Stream,
-{
-    fn first(&self) -> Vec<Token<S::Item>> {
-        let Self(f, _, _) = self;
 
-        f().first() // Memoization for infinite loop detection?
-    }
-}
-
-pub fn lazy<F, P, A, S>(f: F) -> impl First<S> + Parse<A, S> + Combine<A>
+pub fn lazy<F, P, A, S>(f: F) -> impl Parse<A, S> + Combine<A>
 where
     A: Clone,
     S: Stream,
-    P: First<S> + Parse<A, S> + Combine<A>,
+    P: Parse<A, S> + Combine<A>,
     F: Fn() -> P,
 {
     Lazy(f, PhantomData, PhantomData)
