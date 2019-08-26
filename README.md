@@ -38,7 +38,7 @@ let parser = parsec!( '"' s=(("\"" -> { '\"' })|^'"')* '"' -> { TkString(s) } );
 
 ## A Full Example: JSON
 
-A [JSon parser](https://github.com/d-plaindoux/celma/blob/master/plugin/benches/json.rs) can be designed thanks to the Celma parser meta language.
+A [JSon parser](https://github.com/d-plaindoux/celma/blob/master/macro/benches/json.rs#L61) can be designed thanks to the Celma parser meta language.
 
 ### JSon abstract data type
 
