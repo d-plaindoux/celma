@@ -14,12 +14,11 @@
    limitations under the License.
 */
 
-use crate::meta::token::{First, Token};
 use crate::meta::syntax::ASTParsec;
 use crate::meta::token::Token::{AllAtom, Atom};
+use crate::meta::token::{First, Token};
 
-impl First<char> for ASTParsec
-{
+impl First<char> for ASTParsec {
     fn first(&self) -> Vec<Token<char>> {
         match self {
             ASTParsec::PIdent(_) => vec![AllAtom],
@@ -43,7 +42,7 @@ impl First<char> for ASTParsec
             ASTParsec::PNot(_) => vec![],
             ASTParsec::PTry(p) => p.first(),
             ASTParsec::PCheck(p) => p.first(),
-            ASTParsec::POptional(p) => p.first(), // TODO
+            ASTParsec::POptional(p) => p.first(),  // TODO
             ASTParsec::PRepeat(_, p) => p.first(), // TODO
         }
     }

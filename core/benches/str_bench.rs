@@ -15,9 +15,9 @@
 */
 
 #[macro_use]
-extern crate bencher;
+extern crate criterion;
 
-use bencher::{black_box, Bencher};
+use criterion::{black_box, Criterion};
 
 use celma_core::parser::and::AndOperation;
 use celma_core::parser::char::char;
@@ -41,59 +41,63 @@ use celma_core::stream::stream::Stream;
 
 const SIZE: usize = 1024;
 
-fn basic_any(bencher: &mut Bencher) {
+fn basic_any(criterion: &mut Criterion) {
     let string = "a".repeat(SIZE);
     let data = string.as_str();
 
     let parser = any().opt_rep().and(eos());
 
     do_parse(
+        "basic_any",
         parser,
-        bencher,
+        criterion,
         CharStream::new_with_position(data, <usize>::new()),
     );
 }
 
-fn basic_a(bencher: &mut Bencher) {
+fn basic_a(criterion: &mut Criterion) {
     let string = "a".repeat(SIZE);
     let data = string.as_str();
 
     let parser = char('a').opt_rep().and(eos());
 
     do_parse(
+        "basic_a",
         parser,
-        bencher,
+        criterion,
         CharStream::new_with_position(data, <usize>::new()),
     );
 }
 
-fn basic_a_or_b(bencher: &mut Bencher) {
+fn basic_a_or_b(criterion: &mut Criterion) {
     let string = "ab".repeat(1024 * 1024);
     let data = string.as_str();
 
     let parser = char('a').or(char('b')).opt_rep().and(eos());
 
     do_parse(
+        "basic_a_or_b",
         parser,
-        bencher,
+        criterion,
         CharStream::new_with_position(data, <usize>::new()),
     );
 }
 
-fn basic_a_and_b(bencher: &mut Bencher) {
+fn basic_a_and_b(criterion: &mut Criterion) {
     let string = "ab".repeat(SIZE);
     let data = string.as_str();
 
     let parser = char('a').and(char('b')).opt_rep().and(eos());
 
     do_parse(
+        "basic_a_and_b",
         parser,
-        bencher,
+        criterion,
         CharStream::new_with_position(data, <usize>::new()),
     );
 }
 
-fn basic_delimited_string(bencher: &mut Bencher) {
+fn basic_delimited_string(criterion: &mut Criterion) {
     let string = "\"hello\"".repeat(SIZE);
     let data = string.as_str();
 
@@ -104,30 +108,32 @@ fn basic_delimited_string(bencher: &mut Bencher) {
         .and(eos());
 
     do_parse(
+        "basic_delimited_string",
         parser,
-        bencher,
+        criterion,
         CharStream::new_with_position(data, <usize>::new()),
     );
 }
 
 // -------------------------------------------------------------------------------------------------
 
-fn do_parse<P, A, S>(parser: P, bencher: &mut Bencher, stream: S)
+fn do_parse<P, A, S>(id: &str, parser: P, criterion: &mut Criterion, stream: S)
 where
     P: Parse<A, S> + Combine<A>,
     S: Stream + Len,
 {
-    bencher.bytes = stream.len() as u64;
-
-    bencher.iter(|| match parser.check(black_box(stream.clone())) {
-        Success(_, _, _) => (),
-        Reject(_, _) => panic!("Cannot parse stream"),
+    // criterion.bytes = stream.len() as u64;
+    criterion.bench_function(id, |b| {
+        b.iter(|| match parser.check(black_box(stream.clone())) {
+            Success(_, _, _) => (),
+            Reject(_, _) => panic!("Cannot parse stream"),
+        })
     });
 }
 
 // -------------------------------------------------------------------------------------------------
 
-benchmark_group!(
+criterion_group!(
     benches,
     basic_any,
     basic_a,
@@ -135,4 +141,4 @@ benchmark_group!(
     basic_a_and_b,
     basic_delimited_string
 );
-benchmark_main!(benches);
+criterion_main!(benches);

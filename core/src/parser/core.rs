@@ -120,7 +120,7 @@ where
     S: Stream,
 {
     fn parse(&self, s: S) -> Response<A, S> {
-        let Self(p,) = self;
+        let Self(p) = self;
 
         p.parse(s)
     }

@@ -51,7 +51,6 @@ impl<E> HasLambda for Vec<Token<E>> {
     }
 }
 
-pub trait First<I>
-{
+pub trait First<I> {
     fn first(&self) -> Vec<Token<I>>;
 }

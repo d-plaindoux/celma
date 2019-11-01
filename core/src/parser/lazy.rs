@@ -52,7 +52,6 @@ where
     }
 }
 
-
 pub fn lazy<F, P, A, S>(f: F) -> impl Parse<A, S> + Combine<A>
 where
     A: Clone,

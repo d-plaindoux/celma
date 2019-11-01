@@ -15,9 +15,9 @@
 */
 
 #[macro_use]
-extern crate bencher;
+extern crate criterion;
 
-use bencher::{black_box, Bencher};
+use criterion::{black_box, Criterion};
 
 use celma_core::parser::and::AndOperation;
 use celma_core::parser::char::{digit, space};
@@ -81,52 +81,52 @@ parsec_rules!(
 // JSon benchmarks
 // -------------------------------------------------------------------------------------------------
 
-fn json_data(b: &mut Bencher) {
+fn json_data(b: &mut Criterion) {
     let data = include_str!("data/data.json");
-    b.bytes = data.len() as u64;
-    parse(b, data)
+    parse("json_data", b, data)
 }
 
 // -------------------------------------------------------------------------------------------------
 
-fn json_canada_pest(b: &mut Bencher) {
+fn json_canada_pest(b: &mut Criterion) {
     let data = include_str!("data/canada_pest.json");
-    b.bytes = data.len() as u64;
-    parse(b, data)
+    parse("json_canada_pest", b, data)
 }
 
 // -------------------------------------------------------------------------------------------------
 
-fn json_canada_nom(b: &mut Bencher) {
+fn json_canada_nom(b: &mut Criterion) {
     let data = include_str!("data/canada_nom.json");
-    b.bytes = data.len() as u64;
-    parse(b, data)
+    parse("json_canada_nom", b, data)
 }
 
 // -------------------------------------------------------------------------------------------------
 
-fn json_apache(b: &mut Bencher) {
+fn json_apache(b: &mut Criterion) {
     let data = include_str!("data/apache_builds.json");
-    b.bytes = data.len() as u64;
-    parse(b, data)
+    parse("json_apache", b, data)
 }
 
 // -------------------------------------------------------------------------------------------------
 
-fn parse(b: &mut Bencher, buffer: &str) {
+fn parse(id: &str, criterion: &mut Criterion, buffer: &str) {
     let stream = IteratorStream::new_with_position(buffer.chars(), <usize>::new());
+    let parser = json().and_left(eos());
 
-    b.iter(|| {
-        let response = json().and_left(eos()).parse(black_box(stream.clone()));
+    // criterion.bytes = stream.len() as u64;
+    criterion.bench_function(id, |b| {
+        b.iter(|| {
+            let response = parser.parse(black_box(stream.clone()));
 
-        match response {
-            Success(_, _, _) => (),
-            Reject(s, _) => panic!("parse error at {:?}", s.position()),
-        }
+            match response {
+                Success(_, _, _) => (),
+                Reject(s, _) => panic!("parse error at {:?}", s.position()),
+            }
+        });
     });
 }
 
-benchmark_group!(
+criterion_group!(
     benches,
     json_data,
     json_canada_pest,
@@ -134,4 +134,4 @@ benchmark_group!(
     json_apache
 );
 
-benchmark_main!(benches);
+criterion_main!(benches);

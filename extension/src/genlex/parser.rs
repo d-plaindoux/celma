@@ -18,7 +18,10 @@ use crate::genlex::token::Token;
 use celma_core::parser::parser::{Combine, Parse};
 use celma_core::stream::stream::Stream;
 
-fn tokenizer<'a, S: 'a>(operators: Vec<String>) -> impl Parse<Token, S> + Combine<Token> + 'a
+fn tokenizer<'a, S: 'a>(
+    operators: Vec<String>,
+    keywords: Vec<String>,
+) -> impl Parse<Token, S> + Combine<Token> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -38,14 +41,15 @@ where
     }
 
     parsec_rules!(
-        let token:{Token}  = SPACES _=(STRING|IDENT|NUMBER) SPACES
+        let token:{Token}    = SPACES _=(STRING|IDENT|NUMBER) SPACES
         // let CHAR:{Token}   = ("'" c=(("\'"  -> {"\'"})|^"'")  "'")   -> { Token::Char(mk_char(c)) }
-        let STRING:{Token} = ('"' c=#((("\"" -> {'\"'})|^'"')*) '"') -> { Token::String(mk_string(c)) }
-        let IDENT:{Token}  = i=#(alpha (alpha|digit|'_')*)           -> { Token::Ident(mk_string(i)) }
-        let NUMBER:{Token} = c=#(INT ('.' NAT)? (('E'|'e') INT)?)    -> { Token::Float(mk_f64(c)) }
-        let INT:{()}       = ('-'|'+')? NAT                          -> {}
-        let NAT:{()}       = digit+                                  -> {}
-        let SPACES:{()}    = space*                                  -> {}
+        let STRING:{Token}   = ('"' c=#((("\"" -> {'\"'})|^'"')*) '"') -> { Token::String(mk_string(c)) }
+        let IDENT:{Token}    = i=#(alpha (alpha|digit|'_')*)           -> { Token::Ident(mk_string(i)) }
+        let NUMBER:{Token}   = c=#(INT ('.' NAT)? (('E'|'e') INT)?)    -> { Token::Float(mk_f64(c)) }
+        // let OPERATOR:{Token} = TODO
+        let INT:{()}         = ('-'|'+')? NAT                          -> {}
+        let NAT:{()}         = digit+                                  -> {}
+        let SPACES:{()}      = space*                                  -> {}
     );
 
     token()

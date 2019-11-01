@@ -13,6 +13,9 @@ celma_lang = { version = "0.1.0", path = "../lang" }
 proc-macro2 = "0.4.30"
 quote = "0.6.12"
 syn="0.15.35"
+
+[dev-dependencies]
+criterion = "0.3.0"
 bencher = "0.1.5"
 
 [[bench]]

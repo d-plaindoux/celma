@@ -77,8 +77,7 @@ where
 // -------------------------------------------------------------------------------------------------
 
 #[inline]
-fn parsec_rules<'a, S: 'a>(
-) -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<ASTParsecRule>> + 'a
+fn parsec_rules<'a, S: 'a>() -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<ASTParsecRule>> + 'a
 where
     S: Stream<Item = char>,
 {
@@ -180,8 +179,7 @@ where
     char_in_set(vec!['+', '?', '*'])
 }
 
-fn additional<'a, S: 'a>(
-) -> impl Parse<(bool, ASTParsec), S> + Combine<(bool, ASTParsec)> + 'a
+fn additional<'a, S: 'a>() -> impl Parse<(bool, ASTParsec), S> + Combine<(bool, ASTParsec)> + 'a
 where
     S: Stream<Item = char>,
 {
