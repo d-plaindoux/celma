@@ -14,11 +14,14 @@ Generalization is the capability to design a parser based on pipelined parsers a
 # Celma parser meta language
 
 ## Grammar
-In order to have a seamless parser definition two dedicated `proc_macro` are designed.
+In order to have a seamless parser definition two dedicated `proc_macro` are designed:
 
 ```rust
 parsec_rules = ("let" ident ':' '{' rust_code '}' "=" parser)+
 parser       = binding? atom occurrence? additional? transform?
+```
+
+```rust
 binding      = ident '='
 occurrence   = ("*" | "+" | "?")
 additional   = "|"? parser
