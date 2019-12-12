@@ -82,7 +82,7 @@ fn mk_f64(a: Vec<char>) -> f64 {
 
 ### The JSon parser
 
-The JSon parser is define by seven rules dedicated to `number`, `string`, `null`, `boolean`, `array` 
+The JSon parser is define by six rules dedicated to `number`, `string`, `null`, `boolean`, `array` 
 and `object`.
 
 #### JSON Rules
