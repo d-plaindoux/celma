@@ -14,11 +14,14 @@ Generalization is the capability to design a parser based on pipelined parsers a
 # Celma parser meta language
 
 ## Grammar
-In order to have a seamless parser definition two dedicated `proc_macro` are designed.
+In order to have a seamless parser definition two dedicated `proc_macro` are designed:
 
 ```rust
 parsec_rules = ("let" ident ':' '{' rust_code '}' "=" parser)+
 parser       = binding? atom occurrence? additional? transform?
+```
+
+```rust
 binding      = ident '='
 occurrence   = ("*" | "+" | "?")
 additional   = "|"? parser
@@ -79,8 +82,12 @@ fn mk_f64(a: Vec<char>) -> f64 {
 
 ### The JSon parser
 
+The JSon parser is define by six rules dedicated to `number`, `string`, `null`, `boolean`, `array` 
+and `object`.
+
+#### JSON Rules
+
 ```rust
-//  JSON Rules
 parsec_rules!(
     let json:{JSON}          = S _=(string | null | boolean  | array | object | number) S
     let number:{JSON}        = f=NUMBER                                -> {JSON::Number(f)}
@@ -89,11 +96,14 @@ parsec_rules!(
     let boolean:{JSON}       = b=("true"|"false")                      -> {JSON::Bool(b=="true")}
     let array:{JSON}         = ('[' S a=(_=json _=(',' _=json)*)? ']') -> {JSON::Array(mk_vec(a))}
     let object:{JSON}        = ('{' S a=(_=attr _=(',' _=attr)*)? '}') -> {JSON::Object(mk_vec(a))}
-    let attr:{(String,JSON)} = (S s=STRING S ":" j=json)
 );
+```
 
-// Basic rules
+#### Basic rules and terminals
+
+```rust
 parsec_rules!(
+    let attr:{(String,JSON)} = (S s=STRING S ":" j=json)
     let STRING:{String}      = ('"' c=#((("\"" -> {'\"'})|^'"')*) '"') -> {mk_string(c)}
     let NUMBER:{f64}         = c=#(INT ('.' NAT)? (('E'|'e') INT)?)    -> {mk_f64(c)}
     let INT:{()}             = ('-'|'+')? NAT                          -> {}
