@@ -15,7 +15,6 @@ quote = "0.6.12"
 syn="0.15.35"
 
 [dev-dependencies]
-criterion = "0.3.0"
 bencher = "0.1.5"
 
 [[bench]]

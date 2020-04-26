@@ -5,7 +5,7 @@ authors = ["dplaindoux <d.plaindoux@fungus.fr>"]
 edition = "2018"
 
 [dev-dependencies]
-criterion = "0.3"
+bencher = "0.1.5"
 
 [[bench]]
 name = "str_bench"

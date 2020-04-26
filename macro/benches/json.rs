@@ -1,5 +1,5 @@
 /*
-   Copyright 2019 Didier Plaindoux
+   Copyright 2019-2020 Didier Plaindoux
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
 */
 
 #[macro_use]
-extern crate criterion;
+extern crate bencher;
 
-use criterion::{black_box, Criterion};
+use bencher::{black_box, Bencher};
 
 use celma_core::parser::and::AndOperation;
 use celma_core::parser::char::{digit, space};
@@ -81,52 +81,52 @@ parsec_rules!(
 // JSon benchmarks
 // -------------------------------------------------------------------------------------------------
 
-fn json_data(b: &mut Criterion) {
+fn json_data(b: &mut Bencher) {
     let data = include_str!("data/data.json");
-    parse("json_data", b, data)
+    b.bytes = data.len() as u64;
+    parse(b, data)
 }
 
 // -------------------------------------------------------------------------------------------------
 
-fn json_canada_pest(b: &mut Criterion) {
+fn json_canada_pest(b: &mut Bencher) {
     let data = include_str!("data/canada_pest.json");
-    parse("json_canada_pest", b, data)
+    b.bytes = data.len() as u64;
+    parse(b, data)
 }
 
 // -------------------------------------------------------------------------------------------------
 
-fn json_canada_nom(b: &mut Criterion) {
+fn json_canada_nom(b: &mut Bencher) {
     let data = include_str!("data/canada_nom.json");
-    parse("json_canada_nom", b, data)
+    b.bytes = data.len() as u64;
+    parse(b, data)
 }
 
 // -------------------------------------------------------------------------------------------------
 
-fn json_apache(b: &mut Criterion) {
+fn json_apache(b: &mut Bencher) {
     let data = include_str!("data/apache_builds.json");
-    parse("json_apache", b, data)
+    b.bytes = data.len() as u64;
+    parse(b, data)
 }
 
 // -------------------------------------------------------------------------------------------------
 
-fn parse(id: &str, criterion: &mut Criterion, buffer: &str) {
+fn parse(b: &mut Bencher, buffer: &str) {
     let stream = IteratorStream::new_with_position(buffer.chars(), <usize>::new());
-    let parser = json().and_left(eos());
 
-    // criterion.bytes = stream.len() as u64;
-    criterion.bench_function(id, |b| {
-        b.iter(|| {
-            let response = parser.parse(black_box(stream.clone()));
+    b.iter(|| {
+        let response = json().and_left(eos()).parse(black_box(stream.clone()));
 
-            match response {
-                Success(_, _, _) => (),
-                Reject(s, _) => panic!("parse error at {:?}", s.position()),
-            }
-        });
+        match response {
+            Success(_, _, _) => (),
+            Reject(s, _) => panic!("parse error at {:?}", s.position()),
+        }
     });
 }
 
-criterion_group!(
+benchmark_group!(
     benches,
     json_data,
     json_canada_pest,
@@ -134,4 +134,4 @@ criterion_group!(
     json_apache
 );
 
-criterion_main!(benches);
+benchmark_main!(benches);

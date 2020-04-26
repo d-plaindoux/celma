@@ -1,5 +1,5 @@
 /*
-   Copyright 2019 Didier Plaindoux
+   Copyright 2019-2020 Didier Plaindoux
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
 */
 
 #[macro_use]
-extern crate criterion;
+extern crate bencher;
 
-use criterion::{black_box, Criterion};
+use bencher::{black_box, Bencher};
 
 use celma_core::parser::and::AndOperation;
 use celma_core::parser::char::char;
@@ -41,63 +41,59 @@ use celma_core::stream::stream::Stream;
 
 const SIZE: usize = 1024;
 
-fn basic_any(criterion: &mut Criterion) {
+fn basic_any(bencher: &mut Bencher) {
     let string = "a".repeat(SIZE);
     let data = string.as_str();
 
     let parser = any().opt_rep().and(eos());
 
     do_parse(
-        "basic_any",
         parser,
-        criterion,
+        bencher,
         IteratorStream::new_with_position(data.chars(), <usize>::new()),
     );
 }
 
-fn basic_a(criterion: &mut Criterion) {
+fn basic_a(bencher: &mut Bencher) {
     let string = "a".repeat(SIZE);
     let data = string.as_str();
 
     let parser = char('a').opt_rep().and(eos());
 
     do_parse(
-        "basic_a",
         parser,
-        criterion,
+        bencher,
         IteratorStream::new_with_position(data.chars(), <usize>::new()),
     );
 }
 
-fn basic_a_or_b(criterion: &mut Criterion) {
+fn basic_a_or_b(bencher: &mut Bencher) {
     let string = "ab".repeat(1024 * 1024);
     let data = string.as_str();
 
     let parser = char('a').or(char('b')).opt_rep().and(eos());
 
     do_parse(
-        "basic_a_or_b",
         parser,
-        criterion,
+        bencher,
         IteratorStream::new_with_position(data.chars(), <usize>::new()),
     );
 }
 
-fn basic_a_and_b(criterion: &mut Criterion) {
+fn basic_a_and_b(bencher: &mut Bencher) {
     let string = "ab".repeat(SIZE);
     let data = string.as_str();
 
     let parser = char('a').and(char('b')).opt_rep().and(eos());
 
     do_parse(
-        "basic_a_and_b",
         parser,
-        criterion,
+        bencher,
         IteratorStream::new_with_position(data.chars(), <usize>::new()),
     );
 }
 
-fn basic_delimited_string(criterion: &mut Criterion) {
+fn basic_delimited_string(bencher: &mut Bencher) {
     let string = "\"hello\"".repeat(SIZE);
     let data = string.as_str();
 
@@ -108,32 +104,30 @@ fn basic_delimited_string(criterion: &mut Criterion) {
         .and(eos());
 
     do_parse(
-        "basic_delimited_string",
         parser,
-        criterion,
+        bencher,
         IteratorStream::new_with_position(data.chars(), <usize>::new()),
     );
 }
 
 // -------------------------------------------------------------------------------------------------
 
-fn do_parse<P, A, S>(id: &str, parser: P, criterion: &mut Criterion, stream: S)
+fn do_parse<P, A, S>(parser: P, bencher: &mut Bencher, stream: S)
 where
     P: Parse<A, S> + Combine<A>,
     S: Stream + Len,
 {
-    // criterion.bytes = stream.len() as u64;
-    criterion.bench_function(id, |b| {
-        b.iter(|| match parser.check(black_box(stream.clone())) {
-            Success(_, _, _) => (),
-            Reject(_, _) => panic!("Cannot parse stream"),
-        })
+    bencher.bytes = stream.len() as u64;
+
+    bencher.iter(|| match parser.check(black_box(stream.clone())) {
+        Success(_, _, _) => (),
+        Reject(_, _) => panic!("Cannot parse stream"),
     });
 }
 
 // -------------------------------------------------------------------------------------------------
 
-criterion_group!(
+benchmark_group!(
     benches,
     basic_any,
     basic_a,
@@ -141,5 +135,4 @@ criterion_group!(
     basic_a_and_b,
     basic_delimited_string
 );
-
-criterion_main!(benches);
+benchmark_main!(benches);
