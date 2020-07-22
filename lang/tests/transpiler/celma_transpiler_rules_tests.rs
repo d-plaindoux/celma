@@ -37,8 +37,8 @@ mod tests_and {
                 ast.to_string(),
                 quote!(
                     pub fn a<'a, S: 'a>() -> impl celma_core::parser::parser::Parse<Vec<char>, S>
-                                                 + celma_core::parser::parser::Combine<Vec<char> >
-                                                 + 'a
+                           + celma_core::parser::parser::Combine<Vec<char>>
+                           + 'a
                     where
                         S: celma_core::stream::stream::Stream<Item = char>,
                     {
@@ -56,8 +56,8 @@ mod tests_and {
                     }
 
                     pub fn b<'a, S: 'a>() -> impl celma_core::parser::parser::Parse<Vec<char>, S>
-                                                 + celma_core::parser::parser::Combine<Vec<char> >
-                                                 + 'a
+                           + celma_core::parser::parser::Combine<Vec<char>>
+                           + 'a
                     where
                         S: celma_core::stream::stream::Stream<Item = char>,
                     {
