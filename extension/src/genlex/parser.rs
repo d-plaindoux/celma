@@ -28,8 +28,8 @@ where
     use celma_core::parser::char::{alpha, digit, space};
     use celma_macro::parsec_rules;
 
-    fn mk_char(a: &str) -> char {
-        String::from(a).chars().next().unwrap()
+    fn mk_char(a: Vec<char>) -> char {
+        a.first().unwrap().clone()
     }
 
     fn mk_string(a: Vec<char>) -> String {
@@ -41,15 +41,18 @@ where
     }
 
     parsec_rules!(
+        let INT:{()}    = ('-'|'+')? NAT -> {}
+        let NAT:{()}    = digit+         -> {}
+        let SPACES:{()} = space*         -> {}
+    );
+
+    parsec_rules!(
         let token:{Token}    = SPACES _=(STRING|IDENT|NUMBER) SPACES
-        // let CHAR:{Token}   = ("'" c=(("\'"  -> {"\'"})|^"'")  "'")   -> { Token::Char(mk_char(c)) }
+        let CHAR:{Token}     = ('"' c=#(("'" -> {'\''})|^'\'') '"')    -> { Token::Char(mk_char(c)) }
         let STRING:{Token}   = ('"' c=#((("\"" -> {'\"'})|^'"')*) '"') -> { Token::String(mk_string(c)) }
         let IDENT:{Token}    = i=#(alpha (alpha|digit|'_')*)           -> { Token::Ident(mk_string(i)) }
         let NUMBER:{Token}   = c=#(INT ('.' NAT)? (('E'|'e') INT)?)    -> { Token::Float(mk_f64(c)) }
         // let OPERATOR:{Token} = TODO
-        let INT:{()}         = ('-'|'+')? NAT                          -> {}
-        let NAT:{()}         = digit+                                  -> {}
-        let SPACES:{()}      = space*                                  -> {}
     );
 
     token()

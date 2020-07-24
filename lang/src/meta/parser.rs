@@ -70,7 +70,7 @@ fn delimited_char<'a, S: 'a>() -> impl Parse<char, S> + Combine<char> + 'a
         S: Stream<Item=char>,
 {
     char('\'')
-        .and_right(string("\'").fmap(|_| '\'').or(not_char('\'')))
+        .and_right(string("\\\'").fmap(|_| '\'').or(not_char('\'')))
         .and_left(char('\''))
 }
 
