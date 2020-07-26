@@ -36,8 +36,8 @@ enum Token {
 
 #[inline]
 fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     char_in_set(vec!['\n', '\r', '\t', ' '])
         .opt_rep()
@@ -46,8 +46,8 @@ fn skip<'a, S: 'a>() -> impl Parse<(), S> + Combine<()> + 'a
 
 #[inline]
 fn number<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     digit()
         .rep()
@@ -57,8 +57,8 @@ fn number<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
 
 #[inline]
 fn ident<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     alpha()
         .rep()
@@ -67,8 +67,8 @@ fn ident<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
 
 #[inline]
 fn string<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     char('"')
         .and(not_char('"').opt_rep())
@@ -80,17 +80,17 @@ fn string<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
 
 #[inline]
 fn item<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     parser(number().or(ident()).or(string()).or(lazy(|| record())))
 }
 
 fn sequence<'a, A: 'a, P: 'a, S: 'a>(p: P, s: char) -> impl Parse<Vec<A>, S> + Combine<Vec<A>> + 'a
-    where
-        A: Clone,
-        P: Combine<A> + Parse<A, S>,
-        S: Stream<Item=char>,
+where
+    A: Clone,
+    P: Combine<A> + Parse<A, S>,
+    S: Stream<Item = char>,
 {
     let p = parser(p);
 
@@ -108,8 +108,8 @@ fn sequence<'a, A: 'a, P: 'a, S: 'a>(p: P, s: char) -> impl Parse<Vec<A>, S> + C
 
 #[inline]
 fn record<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     char('[')
         .and(skip())

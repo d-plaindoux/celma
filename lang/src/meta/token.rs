@@ -14,6 +14,7 @@
    limitations under the License.
 */
 
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Token<E> {
     Atom(E),
     NotAtom(E),

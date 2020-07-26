@@ -59,7 +59,7 @@ fn mk_f64(a: Vec<char>) -> f64 {
 }
 
 parsec_rules!(
-    let json:{JSON}          = S _=(string | null | boolean  | array | object | number) S
+    let json:{JSON}          = S _=(array | object | string | null | boolean | number) S
     let number:{JSON}        = f=NUMBER                                -> {JSON::Number(f)}
     let string:{JSON}        = s=STRING                                -> {JSON::String(s)}
     let null:{JSON}          = "null"                                  -> {JSON::Null}

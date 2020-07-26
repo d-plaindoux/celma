@@ -24,6 +24,7 @@ use celma_core::parser::char::char;
 use celma_core::parser::char::not_char;
 use celma_core::parser::core::any;
 use celma_core::parser::core::eos;
+use celma_core::parser::literal::delimited_string;
 use celma_core::parser::or::OrOperation;
 use celma_core::parser::parser::Combine;
 use celma_core::parser::parser::Parse;
@@ -39,7 +40,7 @@ use celma_core::stream::stream::Stream;
 // Basic benchmarks
 // -------------------------------------------------------------------------------------------------
 
-const SIZE: usize = 1024;
+const SIZE: usize = 1024 * 32;
 
 fn basic_any(bencher: &mut Bencher) {
     let string = "a".repeat(SIZE);
@@ -97,11 +98,7 @@ fn basic_delimited_string(bencher: &mut Bencher) {
     let string = "\"hello\"".repeat(SIZE);
     let data = string.as_str();
 
-    let parser = char('"')
-        .and(not_char('"').opt_rep())
-        .and(char('"'))
-        .opt_rep()
-        .and(eos());
+    let parser = delimited_string().opt_rep().and(eos());
 
     do_parse(
         parser,

@@ -24,9 +24,9 @@ impl First<char> for ASTParsec {
             ASTParsec::PIdent(_) => vec![AllAtom],
             ASTParsec::PChar(c) => vec![Atom(c.clone())],
             ASTParsec::PString(s) => s.chars().next().map(|c| vec![Atom(c)]).unwrap_or(vec![]),
-            ASTParsec::PBind(_, p) => p.first(), // TODO
+            ASTParsec::PBind(_, p) => p.first(),
             ASTParsec::PCode(_) => vec![AllAtom],
-            ASTParsec::PMap(p, _) => p.first(), // TODO
+            ASTParsec::PMap(p, _) => p.first(),
             ASTParsec::PSequence(p, q) => {
                 let p = p.first();
                 if p.len() > 0 {
@@ -42,8 +42,9 @@ impl First<char> for ASTParsec {
             ASTParsec::PNot(_) => vec![],
             ASTParsec::PTry(p) => p.first(),
             ASTParsec::PCheck(p) => p.first(),
-            ASTParsec::POptional(p) => p.first(),  // TODO
-            ASTParsec::PRepeat(_, p) => p.first(), // TODO
+            ASTParsec::POptional(p) => p.first(),     // TODO
+            ASTParsec::PRepeat(true, p) => p.first(), // TODO
+            ASTParsec::PRepeat(false, p) => p.first(),
         }
     }
 }

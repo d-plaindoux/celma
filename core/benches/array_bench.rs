@@ -40,7 +40,7 @@ use celma_core::stream::stream::Stream;
 // Basic benchmarks
 // -------------------------------------------------------------------------------------------------
 
-const SIZE: usize = 1024;
+const SIZE: usize = 1024 * 32;
 
 fn u8<S>(v: char) -> impl Parse<u8, S> + Combine<u8>
 where
