@@ -21,12 +21,12 @@ mod tests {
     use celma_lang::meta::token::Token::{AllAtom, Atom};
 
     #[test]
-    fn it_computer_first_for_ident() {
+    fn it_compute_first_for_ident() {
         assert_eq!(vec![AllAtom], PIdent(String::from("test")).first());
     }
 
     #[test]
-    fn it_computer_first_for_char() {
+    fn it_compute_first_for_char() {
         assert_eq!(vec![Atom('a')], PChar('a').first());
     }
 }

@@ -31,6 +31,13 @@ alter        = ("^"|"!"|"#")
 ident        = [a..zA..Z]+ - {"let"}
 ```
 
+The `alter` is a special annotation are:
+- `^` allowing the capability to recognize negation,
+- `!` allowing the capability to backtrack on failure and 
+- `#` allowing the capability to capture all chars.
+
+The `#` alteration is important because it prevents massive list construction in memory. 
+
 ##  Using the meta-language
 
 Therefore a parser can be defined using this meta-language.
