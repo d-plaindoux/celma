@@ -26,3 +26,4 @@ pub mod literal;
 pub mod option;
 pub mod or;
 pub mod repeat;
+pub mod lookahead;

@@ -45,6 +45,7 @@ impl First<char> for ASTParsec {
             ASTParsec::POptional(p) => p.first(),     // TODO
             ASTParsec::PRepeat(true, p) => p.first(), // TODO
             ASTParsec::PRepeat(false, p) => p.first(),
+            ASTParsec::PLookahead(p) => p.first(),
         }
     }
 }

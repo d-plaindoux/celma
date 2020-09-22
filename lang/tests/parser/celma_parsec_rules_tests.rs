@@ -25,7 +25,7 @@ mod tests_and {
 
     #[test]
     fn it_parse_one_char_rule() {
-        let response = celma_parsec_rules().parse(CharStream::new("let a:{char} = {char('a')}"));
+        let response = celma_parsec_rules().parse(CharStream::new("let a:{char} = 'a'"));
 
         match response {
             Success(ast, _, _) => assert_eq!(
@@ -34,7 +34,7 @@ mod tests_and {
                     name: String::from("a"),
                     input: String::from("char"),
                     returns: String::from("char"),
-                    body: Box::new(PCode(String::from("char(\'a\')"))),
+                    body: Box::new(PChar('a')),
                 })
             ),
             _ => assert_eq!(true, false),
