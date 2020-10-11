@@ -14,8 +14,6 @@
    limitations under the License.
 */
 
-#![feature(repeat_generic_slice)]
-
 #[macro_use]
 extern crate bencher;
 
