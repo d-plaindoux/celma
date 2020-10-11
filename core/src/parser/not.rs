@@ -28,11 +28,11 @@ pub struct Not<L, A>(L, PhantomData<A>)
 where
     L: Combine<A>;
 
-impl<L, A> Combine<A> for Not<L, A> where L: Combine<A> {}
+impl<L, A, B> Combine<A> for Not<L, B> where L: Combine<B> {}
 
-impl<L, A, S> Parse<A, S> for Not<L, A>
+impl<L, A, B, S> Parse<A, S> for Not<L, B>
 where
-    L: Parse<A, S> + Combine<A>,
+    L: Parse<B, S> + Combine<B>,
     S: Stream<Item = A>,
 {
     fn parse(&self, s: S) -> Response<A, S> {

@@ -35,9 +35,9 @@ mod tests_transpiler {
     }
 
     parsec_rules!(
-        let bash:{Expr} = s=(text | var)*       -> {Expr::Seq(s)}
-        let text:{Expr} = t=^('$' '{')+         -> {Expr::Text(mk_string(t))}
-        let var:{Expr}  = ('$' '{' v=^'}'* '}') -> {Expr::Var(mk_string(v))}
+        let bash:{Expr} = s=(text | var)*    -> {Expr::Seq(s)}
+        let text:{Expr} = t=^"${"+           -> {Expr::Text(mk_string(t))}
+        let var:{Expr}  = ("${" v=^'}'* '}') -> {Expr::Var(mk_string(v))}
     );
 
     #[test]
