@@ -50,8 +50,8 @@ impl<P, A, S> Parse<A, S> for Lookahead<P, A>
     fn check(&self, s: S) -> Response<(), S> {
         let Self(p, _) = self;
 
-        match p.parse(s.clone()) {
-            Success(a, _, ba) => Success((), s, ba),
+        match p.check(s.clone()) {
+            Success(a, _, ba) => Success(a, s, ba),
             Reject(s, ba) => Reject(s, ba),
         }
     }

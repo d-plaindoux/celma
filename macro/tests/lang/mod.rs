@@ -15,6 +15,7 @@
 */
 
 pub mod expression;
+pub mod basic;
 pub mod pipeline;
 pub mod transpiler;
 pub mod transpiler_rules;
