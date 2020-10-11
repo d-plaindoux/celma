@@ -31,3 +31,4 @@ pub mod parser;
 pub mod repeat;
 pub mod response;
 pub mod satisfy;
+pub mod lookahead;
