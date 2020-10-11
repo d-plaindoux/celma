@@ -20,10 +20,7 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 
 use crate::meta::syntax::ASTParsec;
-use crate::meta::syntax::ASTParsec::{
-    PBind, PChar, PCheck, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat, PSequence,
-    PString, PTry,
-};
+use crate::meta::syntax::ASTParsec::{PBind, PChar, PCheck, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat, PSequence, PString, PTry, PLookahead};
 use crate::meta::syntax::ASTParsecRule;
 
 pub trait Transpile<E> {
@@ -63,6 +60,7 @@ impl Transpile<TokenStream> for ASTParsecRule {
                 use celma_core::parser::a_try::a_try;
                 use celma_core::parser::and::AndOperation;
                 use celma_core::parser::check::check;
+                use celma_core::parser::lookahead::lookahead;
                 use celma_core::parser::fmap::FMapOperation;
                 use celma_core::parser::not::NotOperation;
                 use celma_core::parser::option::OptionalOperation;
@@ -171,6 +169,10 @@ impl TranspileBody<(Option<String>, TokenStream)> for ASTParsec {
                 } else {
                     (None, quote!(#pt.rep()))
                 }
+            }
+            PLookahead(p) => {
+                let (_, pt) = p.transpile_body();
+                (None, quote!(lookahead(#pt)))
             }
         }
     }

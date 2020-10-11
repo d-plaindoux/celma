@@ -27,7 +27,7 @@ occurrence   = ("*" | "+" | "?")
 additional   = "|"? parser
 transform    = "->" '{' rust_code '}'
 atom         = alter? '(' parser ')' | CHAR | STRING | ident | '{' rust_code '}'
-alter        = ("^"|"!"|"#")
+alter        = ("^"|"!"|"#"|"/")
 ident        = [a..zA..Z]+ - {"let"}
 ```
 
@@ -35,6 +35,7 @@ The `alter` is a special annotation are:
 - `^` allowing the capability to recognize negation,
 - `!` allowing the capability to backtrack on failure and 
 - `#` allowing the capability to capture all chars.
+- `/` allowing the capability to lookahead without consuming scanned elements.
 
 The `#` alteration is important because it prevents massive list construction in memory. 
 

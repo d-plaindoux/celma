@@ -28,10 +28,7 @@ use celma_core::parser::parser::{Combine, Parse};
 use celma_core::parser::repeat::RepeatOperation;
 use celma_core::stream::stream::Stream;
 
-use crate::meta::syntax::ASTParsec::{
-    PBind, PChar, PCheck, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat, PSequence,
-    PString, PTry,
-};
+use crate::meta::syntax::ASTParsec::{PBind, PChar, PCheck, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat, PSequence, PString, PTry, PLookahead};
 use crate::meta::syntax::{ASTParsec, ASTParsecRule};
 
 #[inline]
@@ -207,6 +204,10 @@ where
             .and_left(skip())
             .and_right(atom2())
             .fmap(|p| PCheck(Box::new(p))))
+        .or(char('/')
+            .and_left(skip())
+            .and_right(atom2())
+            .fmap(|p| PLookahead(Box::new(p))))
         .or(atom2())
 }
 
