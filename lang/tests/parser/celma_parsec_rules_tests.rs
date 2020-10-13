@@ -105,14 +105,19 @@ mod tests_and {
         let response = celma_parsec_rules().parse(CharStream::new(
             r#"
         let parsec_rules:{Vec<ASTParserRule>} = _=parsec_rule+
-        let parsec_rule:{ASTParserRule}       = "let" n=ident ':' '{' t=rust_code '}' "=" p=parsec -> { ASTParserRule(n,c,p) }
+        let parsec_rule:{ASTParserRule}       = "let" n=ident t=token_type? ':' t=returned_type "=" p=parsec -> { ASTParserRule(n,c,p) }
         let parsec:{ASTParser}                = binding? atom occurrence? additional? transform?
         let binding:{String}                  = _=ident '='
-        let occurrence:{char}                 = ('*' | '+' | '?')
+        let occurrence:{char}                 = ('*' | '+' | '?' | '/')
         let additional:{(bool,ASTParser)}     = (c=("|"?) -> { c.is_empty() }) _=parser
-        let transform:{String}                = "->" '{' _=rust_code '}'
-        let atom:{ASTParser}                  = ('(' _=parser ')') | CHAR | STRING | ident | ('{' _=rust_code '}')
-            "#
+        let transform:{String}                = "->" _=code_block
+        let atom:{ASTParser}                  = '(' parser ')' | CHAR | STRING | ident | code_block
+        let returned_type:{String}            = _=single_block
+        let token_type:{String}               = _=single_block
+        let code_block:{String}               = _=single_block
+        let single_block:{String}             = '{' _=(single_text | single_block)* '}'
+        let single_text:{String}              = _=^('}'|'{')+
+        "#
         ));
 
         match response {

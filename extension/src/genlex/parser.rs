@@ -19,12 +19,12 @@ use celma_core::stream::stream::Stream;
 
 use crate::genlex::token::Token;
 
-fn tokenizer<'a, S: 'a>(
-    operators: Vec<String>,
-    keywords: Vec<String>,
+fn _tokenizer<'a, S: 'a>(
+    _operators: Vec<String>,
+    _keywords: Vec<String>,
 ) -> impl Parse<Token, S> + Combine<Token> + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char>,
 {
     use celma_core::parser::char::{alpha, digit, space};
     use celma_macro::parsec_rules;

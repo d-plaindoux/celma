@@ -66,7 +66,7 @@ mod tests_and {
                 ast.to_string(),
                 quote!(celma_core::parser::char::char('a')
                     .and_right(a_try(celma_core::parser::char::char('b'))))
-                    .to_string()
+                .to_string()
             ),
             _ => assert_eq!(true, false),
         };
@@ -83,7 +83,7 @@ mod tests_and {
                 ast.to_string(),
                 quote!(celma_core::parser::char::char('a')
                     .and_right(lookahead(celma_core::parser::char::char('b'))))
-                    .to_string()
+                .to_string()
             ),
             _ => assert_eq!(true, false),
         };

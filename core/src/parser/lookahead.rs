@@ -25,18 +25,15 @@ use crate::stream::stream::Stream;
 
 #[derive(Copy, Clone)]
 pub struct Lookahead<P, A>(P, PhantomData<A>)
-    where
-        P: Combine<A>;
+where
+    P: Combine<A>;
 
-impl<P, A> Combine<A> for Lookahead<P, A>
-    where
-        P: Combine<A>,
-{}
+impl<P, A> Combine<A> for Lookahead<P, A> where P: Combine<A> {}
 
 impl<P, A, S> Parse<A, S> for Lookahead<P, A>
-    where
-        P: Parse<A, S> + Combine<A>,
-        S: Stream,
+where
+    P: Parse<A, S> + Combine<A>,
+    S: Stream,
 {
     fn parse(&self, s: S) -> Response<A, S> {
         let Self(p, _) = self;
@@ -58,10 +55,10 @@ impl<P, A, S> Parse<A, S> for Lookahead<P, A>
 }
 
 pub fn lookahead<P, A, S>(p: P) -> impl Parse<A, S> + Combine<A>
-    where
-        A: Clone,
-        S: Stream,
-        P: Parse<A, S> + Combine<A>,
+where
+    A: Clone,
+    S: Stream,
+    P: Parse<A, S> + Combine<A>,
 {
     Lookahead(p, PhantomData)
 }
