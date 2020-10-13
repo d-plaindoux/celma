@@ -14,8 +14,8 @@
    limitations under the License.
 */
 
-pub mod expression;
 pub mod basic;
+pub mod expression;
 pub mod pipeline;
 pub mod transpiler;
 pub mod transpiler_rules;
