@@ -22,6 +22,7 @@ use bencher::{black_box, Bencher};
 use celma_core::parser::and::AndOperation;
 use celma_core::parser::char::{digit, space};
 use celma_core::parser::core::eos;
+use celma_core::parser::literal::delimited_string;
 use celma_core::parser::parser::Parse;
 use celma_core::parser::response::Response::{Reject, Success};
 use celma_core::stream::iterator_stream::IteratorStream;
@@ -70,7 +71,7 @@ parsec_rules!(
 );
 
 parsec_rules!(
-    let STRING:{String}      = ('"' c=#((("\"" -> {'\"'})|^'"')*) '"') -> {mk_string(c)}
+    let STRING:{String}      = {delimited_string()}
     let NUMBER:{f64}         = c=#(INT ('.' NAT)? (('E'|'e') INT)?)    -> {mk_f64(c)}
     let INT:{()}             = ('-'|'+')? NAT                          -> {}
     let NAT:{()}             = digit+                                  -> {}
