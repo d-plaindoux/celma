@@ -19,10 +19,8 @@ mod tests_literal {
     use celma_core::parser::char::char;
     use celma_core::parser::literal::string;
     use celma_core::parser::not::NotOperation;
-    use celma_core::parser::or::OrOperation;
     use celma_core::parser::parser::Parse;
     use celma_core::parser::repeat::RepeatOperation;
-    use celma_core::parser::satisfy::not;
     use celma_core::stream::char_stream::CharStream;
     use celma_core::parser::fmap::FMapOperation;
 

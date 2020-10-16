@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-use crate::stream::endline::EndLine;
+use crate::stream::end_line::EndLine;
 use crate::stream::position::Position;
 use crate::stream::stream::Len;
 use crate::stream::stream::Stream;
