@@ -27,8 +27,8 @@ pub struct Chars<'b>(&'b str);
 impl<'a> Combine<&'a str> for Chars<'a> {}
 
 impl<'a, 'b, S> Parse<&'b str, S> for Chars<'b>
-where
-    S: Stream<Item = char>,
+    where
+        S: Stream<Item=char>,
 {
     fn parse(&self, s: S) -> Response<&'b str, S> {
         let Self(v) = self;
@@ -62,14 +62,30 @@ pub fn string(s: &str) -> Chars {
 
 // -------------------------------------------------------------------------------------------------
 
+// See https://doc.rust-lang.org/stable/reference/tokens.html
+fn escape(c: char) -> Option<char> {
+    match c {
+        '"' => Some('\"'),
+        '\'' => Some('\''),
+        '\\' => Some('\\'),
+        'n' => Some('\n'),
+        'r' => Some('\r'),
+        't' => Some('\t'),
+        '0' => Some('\0'),
+        _ => None // TODO(didier) \x, \u patterns here
+    }
+}
+
+// -------------------------------------------------------------------------------------------------
+
 #[derive(Copy, Clone)]
 pub struct StringDelimited;
 
 impl<'a> Combine<String> for StringDelimited {}
 
 impl<S> Parse<String, S> for StringDelimited
-where
-    S: Stream<Item = char>,
+    where
+        S: Stream<Item=char>,
 {
     fn parse(&self, s: S) -> Response<String, S> {
         let (c, nsp) = s.next();
@@ -91,8 +107,13 @@ where
                 return Success(r, nsp, true);
             } else if c.unwrap() == '\\' {
                 let (c, nsp) = nsp.next();
-                rs.push('\\');
-                rs.push(c.unwrap());
+                let escaped = c.and_then(|c| escape(c));
+
+                if escaped.is_none() {
+                    return Reject(ns, true);
+                }
+
+                rs.push(escaped.unwrap());
                 ns = nsp;
             } else {
                 rs.push(c.unwrap());
@@ -118,6 +139,12 @@ where
             } else if c.unwrap() == '"' {
                 return Success((), nsp, true);
             } else if c.unwrap() == '\\' {
+                let escaped = c.and_then(|c| escape(c));
+
+                if escaped.is_none() {
+                    return Reject(ns, true);
+                }
+
                 ns = nsp.next().1;
             } else {
                 ns = nsp;

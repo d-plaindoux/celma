@@ -128,9 +128,9 @@ mod tests_transpiler {
     }
 
     #[test]
-    fn it_parse_a_special_string_elem() {
+    fn it_parse_a_string_with_string_escaped_double_quote() {
         parsec_rules!(
-            let a:{char} = '"' (("\"" -> { '"' }) | ^'"')* '"'
+            let a:{char} = '"' (("\\\"" -> { '"' }) | ^'"')* '"'
         );
 
         let response = a().and_left(eos()).parse(CharStream::new(r#""\"""#));
