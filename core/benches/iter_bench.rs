@@ -21,7 +21,6 @@ use bencher::{black_box, Bencher};
 
 use celma_core::parser::and::AndOperation;
 use celma_core::parser::char::char;
-use celma_core::parser::char::not_char;
 use celma_core::parser::core::any;
 use celma_core::parser::core::eos;
 use celma_core::parser::literal::delimited_string;

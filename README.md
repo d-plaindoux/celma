@@ -41,10 +41,12 @@ The `#` alteration is important because it prevents massive list construction in
 
 ##  Using the meta-language
 
-Therefore a parser can be defined using this meta-language.
+Therefore, a parser can be defined using this meta-language.
 
 ```rust
-let parser = parsec!( '"' s=(("\"" -> { '\"' })|^'"')* '"' -> { TkString(s) } );
+let parser = parsec!( 
+    '{' v=^'}'* '}' -> { v.into_iter().collect::<String>() }
+);
 ```
 
 ## A Full Example: JSON
@@ -104,6 +106,7 @@ parsec_rules!(
     let boolean:{JSON}       = b=("true"|"false")                      -> {JSON::Bool(b=="true")}
     let array:{JSON}         = ('[' S a=(_=json _=(',' _=json)*)? ']') -> {JSON::Array(mk_vec(a))}
     let object:{JSON}        = ('{' S a=(_=attr _=(',' _=attr)*)? '}') -> {JSON::Object(mk_vec(a))}
+    let attr:{(String,JSON)} = (S s=STRING S ":" j=json)
 );
 ```
 
@@ -111,8 +114,7 @@ parsec_rules!(
 
 ```rust
 parsec_rules!(
-    let attr:{(String,JSON)} = (S s=STRING S ":" j=json)
-    let STRING:{String}      = ('"' c=#((("\"" -> {'\"'})|^'"')*) '"') -> {mk_string(c)}
+    let STRING:{String}      = delimited_string
     let NUMBER:{f64}         = c=#(INT ('.' NAT)? (('E'|'e') INT)?)    -> {mk_f64(c)}
     let INT:{()}             = ('-'|'+')? NAT                          -> {}
     let NAT:{()}             = digit+                                  -> {}

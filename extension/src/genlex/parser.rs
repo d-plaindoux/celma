@@ -15,6 +15,8 @@
 */
 
 use celma_core::parser::parser::{Combine, Parse};
+use celma_core::parser::literal::{delimited_string, delimited_char};
+
 use celma_core::stream::stream::Stream;
 
 use crate::genlex::token::Token;
@@ -49,10 +51,10 @@ fn tokenizer<'a, S: 'a>(
 
     parsec_rules!(
         let token:{Token}    = SPACES _=(STRING|IDENT|NUMBER) SPACES
-        let CHAR:{Token}     = ('"' c=#(("'" -> {'\''})|^'\'') '"')    -> { Token::Char(mk_char(c)) }
-        let STRING:{Token}   = ('"' c=#((("\"" -> {'\"'})|^'"')*) '"') -> { Token::String(mk_string(c)) }
-        let IDENT:{Token}    = i=#(alpha (alpha|digit|'_')*)           -> { Token::Ident(mk_string(i)) }
-        let NUMBER:{Token}   = c=#(INT ('.' NAT)? (('E'|'e') INT)?)    -> { Token::Float(mk_f64(c)) }
+        let CHAR:{Token}     = c={delimited_char()}                 -> { Token::Char(c) }
+        let STRING:{Token}   = c={delimited_string()}               -> { Token::String(c) }
+        let IDENT:{Token}    = i=#(alpha (alpha|digit|'_')*)        -> { Token::Ident(mk_string(i)) }
+        let NUMBER:{Token}   = c=#(INT ('.' NAT)? (('E'|'e') INT)?) -> { Token::Float(mk_f64(c)) }
         // let OPERATOR:{Token} = TODO
     );
 

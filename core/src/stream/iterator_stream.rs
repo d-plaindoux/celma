@@ -17,7 +17,7 @@
 use std::iter::Iterator;
 use std::marker::PhantomData;
 
-use crate::stream::endline::EndLine;
+use crate::stream::end_line::EndLine;
 use crate::stream::position::Position;
 use crate::stream::stream::Len;
 use crate::stream::stream::Stream;

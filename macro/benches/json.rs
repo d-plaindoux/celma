@@ -17,17 +17,18 @@
 #[macro_use]
 extern crate bencher;
 
-use bencher::{black_box, Bencher};
+use bencher::{Bencher, black_box};
 
 use celma_core::parser::and::AndOperation;
 use celma_core::parser::char::{digit, space};
 use celma_core::parser::core::eos;
+use celma_core::parser::literal::delimited_string;
 use celma_core::parser::parser::Parse;
 use celma_core::parser::response::Response::{Reject, Success};
-use celma_core::stream::iterator_stream::IteratorStream;
 use celma_core::stream::position::Position;
 use celma_core::stream::stream::Stream;
 use celma_macro::parsec_rules;
+use celma_core::stream::char_stream::CharStream;
 
 #[derive(Clone)]
 pub enum JSON {
@@ -70,7 +71,7 @@ parsec_rules!(
 );
 
 parsec_rules!(
-    let STRING:{String}      = ('"' c=#((("\"" -> {'\"'})|^'"')*) '"') -> {mk_string(c)}
+    let STRING:{String}      = delimited_string
     let NUMBER:{f64}         = c=#(INT ('.' NAT)? (('E'|'e') INT)?)    -> {mk_f64(c)}
     let INT:{()}             = ('-'|'+')? NAT                          -> {}
     let NAT:{()}             = digit+                                  -> {}
@@ -114,7 +115,7 @@ fn json_apache(b: &mut Bencher) {
 // -------------------------------------------------------------------------------------------------
 
 fn parse(b: &mut Bencher, buffer: &str) {
-    let stream = IteratorStream::new_with_position(buffer.chars(), <usize>::new());
+    let stream = CharStream::new_with_position(buffer, <usize>::new());
 
     b.iter(|| {
         let response = json().and_left(eos()).parse(black_box(stream.clone()));
