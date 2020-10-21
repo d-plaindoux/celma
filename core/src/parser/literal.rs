@@ -14,12 +14,19 @@
    limitations under the License.
 */
 
+use crate::parser::and::AndOperation;
+use crate::parser::char::{char, not_char};
+use crate::parser::fmap::FMapOperation;
+use crate::parser::or::OrOperation;
 use crate::parser::parser::Combine;
 use crate::parser::parser::Parse;
+use crate::parser::repeat::RepeatOperation;
 use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::stream::Stream;
+
+// -------------------------------------------------------------------------------------------------
 
 #[derive(Copy, Clone)]
 pub struct Chars<'b>(&'b str);
@@ -33,7 +40,7 @@ impl<'a, 'b, S> Parse<&'b str, S> for Chars<'b>
     fn parse(&self, s: S) -> Response<&'b str, S> {
         let Self(v) = self;
         let mut index = 0;
-        let mut ns = s;
+        let mut ns = s.clone();
 
         loop {
             if index == v.len() {
@@ -49,7 +56,7 @@ impl<'a, 'b, S> Parse<&'b str, S> for Chars<'b>
                     ns = next;
                 }
                 _ => {
-                    return Reject(ns, false);
+                    return Reject(s, false);
                 }
             }
         }
@@ -62,97 +69,41 @@ pub fn string(s: &str) -> Chars {
 
 // -------------------------------------------------------------------------------------------------
 
-// See https://doc.rust-lang.org/stable/reference/tokens.html
-fn escape(c: char) -> Option<char> {
-    match c {
-        '"' => Some('\"'),
-        '\'' => Some('\''),
-        '\\' => Some('\\'),
-        'n' => Some('\n'),
-        'r' => Some('\r'),
-        't' => Some('\t'),
-        '0' => Some('\0'),
-        _ => None // TODO(didier) \x, \u patterns here
-    }
+pub fn escaped<'a, S: 'a>() -> impl Parse<char, S> + Combine<char> + 'a
+    where
+        S: Stream<Item=char>,
+{
+    string(r#"\'"#).fmap(|_| '\'')
+        .or(string(r#"\""#).fmap(|_| '\"'))
+        .or(string(r#"\\"#).fmap(|_| '\\'))
+        .or(string(r#"\n"#).fmap(|_| '\n'))
+        .or(string(r#"\r"#).fmap(|_| '\r'))
+        .or(string(r#"\t"#).fmap(|_| '\t'))
+        .or(string(r#"\0"#).fmap(|_| '\0'))
+    // etc. TODO
 }
 
 // -------------------------------------------------------------------------------------------------
 
-#[derive(Copy, Clone)]
-pub struct StringDelimited;
-
-impl<'a> Combine<String> for StringDelimited {}
-
-impl<S> Parse<String, S> for StringDelimited
+pub fn delimited_string<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + 'a
     where
         S: Stream<Item=char>,
 {
-    fn parse(&self, s: S) -> Response<String, S> {
-        let (c, nsp) = s.next();
-
-        if c.is_none() || c.unwrap() != '"' {
-            return Reject(s, false);
-        }
-
-        let mut ns = nsp;
-        let mut rs = Vec::<char>::new();
-
-        loop {
-            let (c, nsp) = ns.next();
-
-            if c.is_none() {
-                return Reject(ns, true);
-            } else if c.unwrap() == '"' {
-                let r: String = rs.into_iter().collect();
-                return Success(r, nsp, true);
-            } else if c.unwrap() == '\\' {
-                let (c, nsp) = nsp.next();
-                let escaped = c.and_then(|c| escape(c));
-
-                if escaped.is_none() {
-                    return Reject(ns, true);
-                }
-
-                rs.push(escaped.unwrap());
-                ns = nsp;
-            } else {
-                rs.push(c.unwrap());
-                ns = nsp;
-            }
-        }
-    }
-
-    fn check(&self, s: S) -> Response<(), S> {
-        let (c, nsp) = s.next();
-
-        if c.is_none() || c.unwrap() != '"' {
-            return Reject(s, false);
-        }
-
-        let mut ns = nsp;
-
-        loop {
-            let (c, nsp) = ns.next();
-
-            if c.is_none() {
-                return Reject(ns, true);
-            } else if c.unwrap() == '"' {
-                return Success((), nsp, true);
-            } else if c.unwrap() == '\\' {
-                let escaped = c.and_then(|c| escape(c));
-
-                if escaped.is_none() {
-                    return Reject(ns, true);
-                }
-
-                ns = nsp.next().1;
-            } else {
-                ns = nsp;
-            }
-        }
-    }
+    char('"')
+        .and_right(escaped().or(not_char('"')).opt_rep())
+        .and_left(char('"'))
+        .fmap(|v| v.into_iter().collect::<String>())
 }
 
-pub fn delimited_string() -> StringDelimited {
-    StringDelimited
+// -------------------------------------------------------------------------------------------------
+
+#[inline]
+pub fn delimited_char<'a, S: 'a>() -> impl Parse<char, S> + Combine<char> + 'a
+    where
+        S: Stream<Item=char>,
+{
+    char('\'')
+        .and_right(escaped().or(not_char('\''))
+        )
+        .and_left(char('\''))
 }
