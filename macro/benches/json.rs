@@ -25,7 +25,6 @@ use celma_core::parser::core::eos;
 use celma_core::parser::literal::delimited_string;
 use celma_core::parser::parser::Parse;
 use celma_core::parser::response::Response::{Reject, Success};
-use celma_core::stream::array_stream::ArrayStream;
 use celma_core::stream::position::Position;
 use celma_core::stream::stream::Stream;
 use celma_macro::parsec_rules;
@@ -72,7 +71,7 @@ parsec_rules!(
 );
 
 parsec_rules!(
-    let STRING:{String}      = {delimited_string()}
+    let STRING:{String}      = delimited_string
     let NUMBER:{f64}         = c=#(INT ('.' NAT)? (('E'|'e') INT)?)    -> {mk_f64(c)}
     let INT:{()}             = ('-'|'+')? NAT                          -> {}
     let NAT:{()}             = digit+                                  -> {}
