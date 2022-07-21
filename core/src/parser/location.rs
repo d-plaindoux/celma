@@ -29,9 +29,9 @@ pub struct Location<A, L>
 where
     L: Position,
 {
-    start: L,
-    end: L,
-    value: A,
+    pub start: L,
+    pub end: L,
+    pub value: A,
 }
 
 #[derive(Copy, Clone)]

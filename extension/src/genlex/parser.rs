@@ -21,9 +21,10 @@ use celma_core::stream::stream::Stream;
 
 use crate::genlex::token::Token;
 
+#[allow(dead_code)]
 fn tokenizer<'a, S: 'a>(
-    operators: Vec<String>,
-    keywords: Vec<String>,
+    _operators: Vec<String>,
+    _keywords: Vec<String>,
 ) -> impl Parse<Token, S> + Combine<Token> + 'a
     where
         S: Stream<Item=char>,

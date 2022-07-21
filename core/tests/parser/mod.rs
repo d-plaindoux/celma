@@ -28,3 +28,4 @@ pub mod or;
 pub mod repeat;
 pub mod lookahead;
 pub mod not;
+pub mod location;

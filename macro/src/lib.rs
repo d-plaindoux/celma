@@ -34,7 +34,7 @@ pub fn parsec(input: TokenStream) -> TokenStream {
 
     match result {
         Success(code, _, _) => code.into(),
-        Reject(s, _) => panic!(format!("Error at {:?}", s.position())),
+        Reject(s, _) => panic!("Error at {:?}", s.position()),
     }
 }
 
@@ -47,6 +47,6 @@ pub fn parsec_rules(input: TokenStream) -> TokenStream {
 
     match result {
         Success(code, _, _) => code.into(),
-        Reject(s, _) => panic!(format!("Error at {:?}", s.position())),
+        Reject(s, _) => panic!("Error at {:?}", s.position()),
     }
 }
