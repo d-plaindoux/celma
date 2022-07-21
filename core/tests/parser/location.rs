@@ -15,31 +15,33 @@
 */
 
 #[cfg(test)]
-mod tests_and {
-    use celma_core::parser::and::AndOperation;
+mod tests_location {
     use celma_core::parser::char::char;
-    use celma_core::parser::lookahead::lookahead;
+    use celma_core::parser::location::locate;
     use celma_core::parser::parser::Parse;
     use celma_core::stream::char_stream::CharStream;
 
     #[test]
     fn it_parse_one_character() {
-        let response = lookahead(char('a')).parse(CharStream::new("ab"));
+        let response = locate(char('a'))
+            .parse(CharStream::new("a"));
 
-        assert_eq!(response.fold(|v, _, _| v == 'a', |_, _| false), true);
+        assert_eq!(response.fold(|v, _, _| v.value == ('a'), |_, _| false), true);
     }
 
     #[test]
-    fn it_parse_one_character_but_not_consume_it() {
-        let response = lookahead(char('a')).and_right(char('b')).parse(CharStream::new("ab"));
+    fn it_parse_one_character_with_right_start_location() {
+        let response = locate(char('a'))
+            .parse(CharStream::new("a"));
 
-        assert_eq!(response.fold(|_, _, _| false, |_, _| true), true);
+        assert_eq!(response.fold(|v, _, _| v.start , |_, _| (0,0,0)), (0,1,0));
     }
 
     #[test]
-    fn it_parse_one_character_and_consume_it_again() {
-        let response = lookahead(char('a')).and_right(char('a')).parse(CharStream::new("ab"));
+    fn it_parse_one_character_with_right_end_location() {
+        let response = locate(char('a'))
+            .parse(CharStream::new("a"));
 
-        assert_eq!(response.fold(|v, _, _| v == 'a', |_, _| false), true);
+        assert_eq!(response.fold(|v, _, _| v.end, |_, _| (0,0,0)), (1,1,1));
     }
 }

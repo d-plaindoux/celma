@@ -1,5 +1,5 @@
 /*
-   Copyright 2019-2020 Didier Plaindoux
+   Copyright 2019-2021 Didier Plaindoux
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -21,9 +21,10 @@ use celma_core::stream::stream::Stream;
 
 use crate::genlex::token::Token;
 
+#[allow(dead_code)]
 fn tokenizer<'a, S: 'a>(
-    operators: Vec<String>,
-    keywords: Vec<String>,
+    _operators: Vec<String>,
+    _keywords: Vec<String>,
 ) -> impl Parse<Token, S> + Combine<Token> + 'a
     where
         S: Stream<Item=char>,

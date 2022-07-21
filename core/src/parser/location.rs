@@ -1,5 +1,5 @@
 /*
-   Copyright 2019-2020 Didier Plaindoux
+   Copyright 2019-2021 Didier Plaindoux
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ pub struct Location<A, L>
 where
     L: Position,
 {
-    start: L,
-    end: L,
-    value: A,
+    pub start: L,
+    pub end: L,
+    pub value: A,
 }
 
 #[derive(Copy, Clone)]
