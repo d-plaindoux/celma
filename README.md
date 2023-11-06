@@ -196,9 +196,6 @@ The Celma parser V1 is written using the Celma parser V0.
 # License
 
 Copyright 2019-2023 Didier Plaindoux.
-=======
-Copyright 2019-2021 Didier Plaindoux.
->>>>>>> 45ec19c (Manage compiler warnings and change License header)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
