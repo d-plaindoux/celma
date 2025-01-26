@@ -14,26 +14,26 @@
    limitations under the License.
 */
 
+use celma_core::parser::literal::{delimited_char, delimited_string};
 use celma_core::parser::parser::{Combine, Parse};
-use celma_core::parser::literal::{delimited_string, delimited_char};
 
 use celma_core::stream::stream::Stream;
 
 use crate::genlex::token::Token;
 
 #[allow(dead_code)]
-fn tokenizer<'a, S: 'a>(
+fn tokenizer<'a, S>(
     _operators: Vec<String>,
     _keywords: Vec<String>,
 ) -> impl Parse<Token, S> + Combine<Token> + 'a
-    where
-        S: Stream<Item=char>,
+where
+    S: Stream<Item = char> + 'a,
 {
     use celma_core::parser::char::{alpha, digit, space};
     use celma_macro::parsec_rules;
 
     fn mk_char(a: Vec<char>) -> char {
-        a.first().unwrap().clone()
+        *a.first().unwrap()
     }
 
     fn mk_string(a: Vec<char>) -> String {

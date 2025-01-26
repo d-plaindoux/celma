@@ -113,9 +113,9 @@ pub struct Parser<'a, A, S>(Rc<dyn Parse<A, S> + 'a>)
 where
     S: Stream;
 
-impl<'a, A, S> Combine<A> for Parser<'a, A, S> where S: Stream {}
+impl<A, S> Combine<A> for Parser<'_, A, S> where S: Stream {}
 
-impl<'a, A, S> Parse<A, S> for Parser<'a, A, S>
+impl<A, S> Parse<A, S> for Parser<'_, A, S>
 where
     S: Stream,
 {

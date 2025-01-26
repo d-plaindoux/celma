@@ -6,6 +6,6 @@ edition = "2018"
 
 [dependencies]
 celma_core = { version = "0.1.0", path = "../core" }
-proc-macro2 = "0.4.30"
-quote = "0.6.12"
-syn="0.15.35"
+proc-macro2 = "1.0.93"
+quote = "1.0.38"
+syn= "2.0.96"

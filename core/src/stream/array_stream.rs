@@ -44,7 +44,7 @@ where
     }
 }
 
-impl<'a, A, P> Stream for ArrayStream<'a, A, P>
+impl<A, P> Stream for ArrayStream<'_, A, P>
 where
     A: EndLine + Clone,
     P: Position + Clone,
@@ -59,10 +59,10 @@ where
     fn next(&self) -> (Option<Self::Item>, Self) {
         let option = self.0.get(self.1.offset());
 
-        if option.is_some() {
+        if let Some(value) = option {
             (
                 option.cloned(),
-                ArrayStream(self.0, self.1.step(option.unwrap().is_end_line())),
+                ArrayStream(self.0, self.1.step(value.is_end_line())),
             )
         } else {
             (option.cloned(), ArrayStream(self.0, self.1.clone()))
@@ -70,7 +70,7 @@ where
     }
 }
 
-impl<'a, A, P> Len for ArrayStream<'a, A, P>
+impl<A, P> Len for ArrayStream<'_, A, P>
 where
     A: EndLine,
     P: Position,

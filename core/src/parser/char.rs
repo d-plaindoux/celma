@@ -59,7 +59,10 @@ pub fn digit<S>() -> impl Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
-    char_in_range('0'..'9')
+    char_in_range(Range {
+        start: '0',
+        end: '9',
+    })
 }
 
 #[inline]
@@ -67,7 +70,10 @@ pub fn alpha_lower<S>() -> impl Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
-    char_in_range('a'..'z')
+    char_in_range(Range {
+        start: 'a',
+        end: 'z',
+    })
 }
 
 #[inline]
@@ -75,7 +81,10 @@ pub fn alpha_upper<S>() -> impl Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
-    char_in_range('A'..'Z')
+    char_in_range(Range {
+        start: 'A',
+        end: 'Z',
+    })
 }
 
 #[inline]

@@ -22,14 +22,14 @@ impl First<char> for ASTParsec {
     fn first(&self) -> Vec<Token<char>> {
         match self {
             ASTParsec::PIdent(_) => vec![AllAtom],
-            ASTParsec::PChar(c) => vec![Atom(c.clone())],
+            ASTParsec::PChar(c) => vec![Atom(*c)],
             ASTParsec::PString(s) => s.chars().next().map(|c| vec![Atom(c)]).unwrap_or(vec![]),
             ASTParsec::PBind(_, p) => p.first(),
             ASTParsec::PCode(_) => vec![AllAtom],
             ASTParsec::PMap(p, _) => p.first(),
             ASTParsec::PSequence(p, q) => {
                 let p = p.first();
-                if p.len() > 0 {
+                if !p.is_empty() {
                     return p;
                 }
                 q.first()

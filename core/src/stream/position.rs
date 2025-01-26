@@ -41,7 +41,7 @@ impl Position for usize {
     }
 
     fn offset(&self) -> usize {
-        self.clone()
+        *self
     }
 }
 

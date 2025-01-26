@@ -52,7 +52,7 @@ where
 
         match s.next() {
             (Some(i), p) => {
-                if predicate(&i, &c) {
+                if predicate(&i, c) {
                     Success(i, p, true)
                 } else {
                     Reject(p, false)

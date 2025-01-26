@@ -20,7 +20,7 @@ pub trait EndLine {
 
 impl EndLine for u8 {
     fn is_end_line(&self) -> bool {
-        *self == '\n' as u8
+        *self == b'\n'
     }
 }
 

@@ -33,9 +33,9 @@ pub struct Chars<'b>(&'b str);
 
 impl<'a> Combine<&'a str> for Chars<'a> {}
 
-impl<'a, 'b, S> Parse<&'b str, S> for Chars<'b>
-    where
-        S: Stream<Item=char>,
+impl<'b, S> Parse<&'b str, S> for Chars<'b>
+where
+    S: Stream<Item = char>,
 {
     fn parse(&self, s: S) -> Response<&'b str, S> {
         let Self(v) = self;
@@ -69,11 +69,12 @@ pub fn string(s: &str) -> Chars {
 
 // -------------------------------------------------------------------------------------------------
 
-pub fn escaped<'a, S: 'a>() -> impl Parse<char, S> + Combine<char> + 'a
-    where
-        S: Stream<Item=char>,
+pub fn escaped<'a, S>() -> impl Parse<char, S> + Combine<char> + 'a
+where
+    S: Stream<Item = char> + 'a,
 {
-    string(r#"\'"#).fmap(|_| '\'')
+    string(r#"\'"#)
+        .fmap(|_| '\'')
         .or(string(r#"\""#).fmap(|_| '\"'))
         .or(string(r#"\\"#).fmap(|_| '\\'))
         .or(string(r#"\n"#).fmap(|_| '\n'))
@@ -85,9 +86,9 @@ pub fn escaped<'a, S: 'a>() -> impl Parse<char, S> + Combine<char> + 'a
 
 // -------------------------------------------------------------------------------------------------
 
-pub fn delimited_string<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> + 'a
-    where
-        S: Stream<Item=char>,
+pub fn delimited_string<'a, S>() -> impl Parse<String, S> + Combine<String> + 'a
+where
+    S: Stream<Item = char> + 'a,
 {
     char('"')
         .and_right(escaped().or(not_char('"')).opt_rep())
@@ -98,12 +99,11 @@ pub fn delimited_string<'a, S: 'a>() -> impl Parse<String, S> + Combine<String> 
 // -------------------------------------------------------------------------------------------------
 
 #[inline]
-pub fn delimited_char<'a, S: 'a>() -> impl Parse<char, S> + Combine<char> + 'a
-    where
-        S: Stream<Item=char>,
+pub fn delimited_char<'a, S>() -> impl Parse<char, S> + Combine<char> + 'a
+where
+    S: Stream<Item = char> + 'a,
 {
     char('\'')
-        .and_right(escaped().or(not_char('\''))
-        )
+        .and_right(escaped().or(not_char('\'')))
         .and_left(char('\''))
 }

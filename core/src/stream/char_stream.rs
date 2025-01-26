@@ -38,7 +38,7 @@ where
     }
 }
 
-impl<'a, P> Stream for CharStream<'a, P>
+impl<P> Stream for CharStream<'_, P>
 where
     P: Position + Clone,
 {
@@ -65,7 +65,7 @@ where
     }
 }
 
-impl<'a, P> Len for CharStream<'a, P>
+impl<P> Len for CharStream<'_, P>
 where
     P: Position,
 {

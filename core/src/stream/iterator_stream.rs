@@ -29,7 +29,7 @@ where
     E: EndLine,
     P: Position;
 
-impl<'a, E, I> IteratorStream<E, I, (usize, usize, usize)>
+impl<E, I> IteratorStream<E, I, (usize, usize, usize)>
 where
     I: Iterator<Item = E>,
     E: EndLine,
@@ -39,7 +39,7 @@ where
     }
 }
 
-impl<'a, E, I, P> IteratorStream<E, I, P>
+impl<E, I, P> IteratorStream<E, I, P>
 where
     I: Iterator<Item = E>,
     E: EndLine,
@@ -67,14 +67,10 @@ where
         let mut this = self.clone(); // Mutability required by the Iterator::next call (below)
         let option = this.0.next();
 
-        if option.is_some() {
+        if let Some(value) = option.clone() {
             (
-                option.clone(),
-                IteratorStream(
-                    this.0,
-                    this.1.step(option.unwrap().is_end_line()),
-                    PhantomData,
-                ),
+                option,
+                IteratorStream(this.0, this.1.step(value.is_end_line()), PhantomData),
             )
         } else {
             (option, IteratorStream(this.0, this.1, PhantomData))

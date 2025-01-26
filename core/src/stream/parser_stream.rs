@@ -41,7 +41,7 @@ where
     }
 }
 
-impl<'a, P, A, S, L> Clone for ParserStream<'a, P, A, S, L>
+impl<P, A, S, L> Clone for ParserStream<'_, P, A, S, L>
 where
     P: Combine<A> + Parse<A, S>,
     S: Stream<Pos = L>,
@@ -52,7 +52,7 @@ where
     }
 }
 
-impl<'a, P, A, S, L> Stream for ParserStream<'a, P, A, S, L>
+impl<P, A, S, L> Stream for ParserStream<'_, P, A, S, L>
 where
     P: Combine<A> + Parse<A, S>,
     S: Stream<Pos = L>,
