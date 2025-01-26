@@ -18,7 +18,7 @@
 mod tests_lazy {
     use celma_core::parser::char::a_char;
     use celma_core::parser::lazy::lazy;
-    use celma_core::parser::parser::Parse;
+    use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
 
     #[test]

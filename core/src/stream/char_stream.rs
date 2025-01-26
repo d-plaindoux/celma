@@ -15,8 +15,8 @@
 */
 
 use crate::stream::position::Position;
-use crate::stream::stream::Len;
-use crate::stream::stream::Stream;
+use crate::stream::specs::Len;
+use crate::stream::specs::Stream;
 
 #[derive(Clone)]
 pub struct CharStream<'a, P>(&'a str, P)

@@ -20,7 +20,7 @@ mod tests_core {
     use celma_core::parser::core::eos;
     use celma_core::parser::core::fail;
     use celma_core::parser::core::returns;
-    use celma_core::parser::parser::Parse;
+    use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
 
     #[test]

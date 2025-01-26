@@ -17,7 +17,7 @@
 #[cfg(test)]
 mod tests_repeat {
     use celma_core::parser::char::a_char;
-    use celma_core::parser::parser::Parse;
+    use celma_core::parser::specs::Parse;
     use celma_core::parser::repeat::RepeatOperation;
     use celma_core::stream::char_stream::CharStream;
 

@@ -20,5 +20,5 @@ pub mod end_line;
 pub mod iterator_stream;
 pub mod parser_stream;
 pub mod position;
-pub mod stream;
+pub mod specs;
 // TODO(didier) pub mod chained_stream;

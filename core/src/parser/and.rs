@@ -18,12 +18,12 @@ use std::marker::PhantomData;
 
 use crate::parser::fmap::FMap;
 use crate::parser::fmap::FMapOperation;
-use crate::parser::parser::Combine;
-use crate::parser::parser::Parse;
+use crate::parser::specs::Combine;
+use crate::parser::specs::Parse;
 use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
-use crate::stream::stream::Stream;
+use crate::stream::specs::Stream;
 
 #[derive(Copy, Clone)]
 pub struct And<L, R, A, B>(L, R, PhantomData<A>, PhantomData<B>)

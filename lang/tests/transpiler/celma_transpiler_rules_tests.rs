@@ -18,7 +18,7 @@
 mod tests_and {
     use quote::quote;
 
-    use celma_core::parser::parser::Parse;
+    use celma_core::parser::specs::Parse;
     use celma_core::parser::response::Response::Success;
     use celma_core::stream::char_stream::CharStream;
     use celma_lang::meta::parser::celma_parsec_rules;
@@ -36,11 +36,11 @@ mod tests_and {
             Success(ast, _, _) => assert_eq!(
                 ast.to_string(),
                 quote!(
-                    pub fn a<'a, S: 'a>() -> impl celma_core::parser::parser::Parse<Vec<char>, S>
-                           + celma_core::parser::parser::Combine<Vec<char> >
+                    pub fn a<'a, S: 'a>() -> impl celma_core::parser::specs::Parse<Vec<char>, S>
+                           + celma_core::parser::specs::Combine<Vec<char> >
                            + 'a
                     where
-                        S: celma_core::stream::stream::Stream<Item = char>,
+                        S: celma_core::stream::specs::Stream<Item = char>,
                     {
                         use celma_core::parser::a_try::a_try;
                         use celma_core::parser::and::AndOperation;
@@ -50,17 +50,17 @@ mod tests_and {
                         use celma_core::parser::not::NotOperation;
                         use celma_core::parser::option::OptionalOperation;
                         use celma_core::parser::or::OrOperation;
-                        use celma_core::parser::parser::Parse;
                         use celma_core::parser::repeat::RepeatOperation;
+                        use celma_core::parser::specs::Parse;
 
                         celma_core::parser::core::parser(celma_core::parser::lazy::lazy(|| b()))
                     }
 
-                    pub fn b<'a, S: 'a>() -> impl celma_core::parser::parser::Parse<Vec<char>, S>
-                           + celma_core::parser::parser::Combine<Vec<char> >
+                    pub fn b<'a, S: 'a>() -> impl celma_core::parser::specs::Parse<Vec<char>, S>
+                           + celma_core::parser::specs::Combine<Vec<char> >
                            + 'a
                     where
-                        S: celma_core::stream::stream::Stream<Item = char>,
+                        S: celma_core::stream::specs::Stream<Item = char>,
                     {
                         use celma_core::parser::a_try::a_try;
                         use celma_core::parser::and::AndOperation;
@@ -70,8 +70,8 @@ mod tests_and {
                         use celma_core::parser::not::NotOperation;
                         use celma_core::parser::option::OptionalOperation;
                         use celma_core::parser::or::OrOperation;
-                        use celma_core::parser::parser::Parse;
                         use celma_core::parser::repeat::RepeatOperation;
+                        use celma_core::parser::specs::Parse;
 
                         celma_core::parser::core::parser(celma_core::parser::char::a_char('b').rep())
                     }

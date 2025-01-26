@@ -18,7 +18,7 @@
 mod tests_option {
     use celma_core::parser::char::a_char;
     use celma_core::parser::option::OptionalOperation;
-    use celma_core::parser::parser::Parse;
+    use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
 
     #[test]

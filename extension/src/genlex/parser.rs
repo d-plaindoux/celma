@@ -15,9 +15,9 @@
 */
 
 use celma_core::parser::literal::{delimited_char, delimited_string};
-use celma_core::parser::parser::{Combine, Parse};
+use celma_core::parser::specs::{Combine, Parse};
 
-use celma_core::stream::stream::Stream;
+use celma_core::stream::specs::Stream;
 
 use crate::genlex::token::Token;
 

@@ -19,8 +19,8 @@ use std::marker::PhantomData;
 
 use crate::stream::end_line::EndLine;
 use crate::stream::position::Position;
-use crate::stream::stream::Len;
-use crate::stream::stream::Stream;
+use crate::stream::specs::Len;
+use crate::stream::specs::Stream;
 
 #[derive(Clone)]
 pub struct IteratorStream<E, I, P>(I, P, PhantomData<E>)

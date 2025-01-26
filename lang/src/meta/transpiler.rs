@@ -52,10 +52,10 @@ impl Transpile<TokenStream> for ASTParsecRule {
         let body = body.transpile_body().1;
 
         quote!(
-            pub fn #name<'a,S:'a>() -> impl celma_core::parser::parser::Parse<#returns,S> +
-                                            celma_core::parser::parser::Combine<#returns> +
+            pub fn #name<'a,S:'a>() -> impl celma_core::parser::specs::Parse<#returns,S> +
+                                            celma_core::parser::specs::Combine<#returns> +
                                             'a
-                where S:celma_core::stream::stream::Stream<Item=#input>,
+                where S:celma_core::stream::specs::Stream<Item=#input>,
             {
                 use celma_core::parser::a_try::a_try;
                 use celma_core::parser::and::AndOperation;
@@ -65,8 +65,8 @@ impl Transpile<TokenStream> for ASTParsecRule {
                 use celma_core::parser::not::NotOperation;
                 use celma_core::parser::option::OptionalOperation;
                 use celma_core::parser::or::OrOperation;
-                use celma_core::parser::parser::Parse;
                 use celma_core::parser::repeat::RepeatOperation;
+                use celma_core::parser::specs::Parse;
 
                 celma_core::parser::core::parser(#body)
             }
@@ -87,8 +87,8 @@ impl Transpile<TokenStream> for ASTParsec {
                 use celma_core::parser::not::NotOperation;
                 use celma_core::parser::option::OptionalOperation;
                 use celma_core::parser::or::OrOperation;
-                use celma_core::parser::parser::Parse;
                 use celma_core::parser::repeat::RepeatOperation;
+                use celma_core::parser::specs::Parse;
 
                 celma_core::parser::core::parser(#body)
             }

@@ -16,11 +16,11 @@
 
 use std::marker::PhantomData;
 
-use crate::parser::parser::Combine;
-use crate::parser::parser::Parse;
+use crate::parser::specs::Combine;
+use crate::parser::specs::Parse;
 use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
-use crate::stream::stream::Stream;
+use crate::stream::specs::Stream;
 
 #[derive(Copy, Clone)]
 pub struct Or<L, R, A>(L, R, PhantomData<A>)

@@ -18,7 +18,7 @@
 mod tests_transpiler {
     use celma_core::parser::and::AndOperation;
     use celma_core::parser::core::eos;
-    use celma_core::parser::parser::Parse;
+    use celma_core::parser::specs::Parse;
     use celma_core::parser::response::Response::Success;
     use celma_core::stream::char_stream::CharStream;
     use celma_macro::parsec_rules;

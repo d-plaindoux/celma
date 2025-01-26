@@ -20,11 +20,11 @@ use celma_core::parser::core::{eos, parser};
 use celma_core::parser::fmap::FMapOperation;
 use celma_core::parser::lazy::lazy;
 use celma_core::parser::or::OrOperation;
-use celma_core::parser::parser::{Combine, Parse};
+use celma_core::parser::specs::{Combine, Parse};
 use celma_core::parser::repeat::RepeatOperation;
 use celma_core::parser::response::Response::Success;
 use celma_core::stream::char_stream::CharStream;
-use celma_core::stream::stream::Stream;
+use celma_core::stream::specs::Stream;
 
 #[derive(Debug, Clone)]
 enum Token {

@@ -16,12 +16,12 @@
 
 use std::marker::PhantomData;
 
-use crate::parser::parser::Combine;
-use crate::parser::parser::Parse;
+use crate::parser::specs::Combine;
+use crate::parser::specs::Parse;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::stream::position::Position;
-use crate::stream::stream::Stream;
+use crate::stream::specs::Stream;
 
 pub struct ChainedStream<E, S, L>(Vec<S>, PhantomData<L>, PhantomData<E>)
     where

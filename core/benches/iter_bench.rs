@@ -25,15 +25,15 @@ use celma_core::parser::core::any;
 use celma_core::parser::core::eos;
 use celma_core::parser::literal::delimited_string;
 use celma_core::parser::or::OrOperation;
-use celma_core::parser::parser::Combine;
-use celma_core::parser::parser::Parse;
+use celma_core::parser::specs::Combine;
+use celma_core::parser::specs::Parse;
 use celma_core::parser::repeat::RepeatOperation;
 use celma_core::parser::response::Response::Reject;
 use celma_core::parser::response::Response::Success;
 use celma_core::stream::iterator_stream::IteratorStream;
 use celma_core::stream::position::Position;
-use celma_core::stream::stream::Len;
-use celma_core::stream::stream::Stream;
+use celma_core::stream::specs::Len;
+use celma_core::stream::specs::Stream;
 
 // -------------------------------------------------------------------------------------------------
 // Basic benchmarks

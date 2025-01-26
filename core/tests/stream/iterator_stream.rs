@@ -17,7 +17,7 @@
 #[cfg(test)]
 mod tests_parser_stream {
     use celma_core::parser::core::any;
-    use celma_core::parser::parser::Parse;
+    use celma_core::parser::specs::Parse;
     use celma_core::parser::repeat::RepeatOperation;
     use celma_core::stream::iterator_stream::IteratorStream;
 

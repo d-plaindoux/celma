@@ -27,7 +27,7 @@ pub mod location;
 pub mod not;
 pub mod option;
 pub mod or;
-pub mod parser;
+pub mod specs;
 pub mod repeat;
 pub mod response;
 pub mod satisfy;

@@ -17,10 +17,10 @@
 use std::ops::Range;
 
 use crate::parser::or::OrOperation;
-use crate::parser::parser::Combine;
-use crate::parser::parser::Parse;
+use crate::parser::specs::Combine;
+use crate::parser::specs::Parse;
 use crate::parser::satisfy::Satisfy;
-use crate::stream::stream::Stream;
+use crate::stream::specs::Stream;
 
 #[inline]
 pub fn a_char<S>(c: char) -> impl Parse<char, S> + Combine<char>

@@ -16,9 +16,9 @@
 
 use std::marker::PhantomData;
 
-use crate::parser::parser::{Combine, Parse};
+use crate::parser::specs::{Combine, Parse};
 use crate::parser::response::Response;
-use crate::stream::stream::Stream;
+use crate::stream::specs::Stream;
 
 #[derive(Copy, Clone)]
 pub struct Lazy<F, P, A>(F, PhantomData<P>, PhantomData<A>)

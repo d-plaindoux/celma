@@ -20,7 +20,7 @@ mod tests_or {
     use celma_core::parser::and::AndProjection;
     use celma_core::parser::char::a_char;
     use celma_core::parser::or::OrOperation;
-    use celma_core::parser::parser::Parse;
+    use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
 
     #[test]

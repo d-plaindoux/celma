@@ -18,7 +18,7 @@
 mod tests_literal {
     use celma_core::parser::literal::{delimited_string, string, delimited_char};
     use celma_core::parser::or::OrOperation;
-    use celma_core::parser::parser::Parse;
+    use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
 
     #[test]

@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-use crate::stream::stream::Stream;
+use crate::stream::specs::Stream;
 
 #[derive(Debug)]
 pub enum Response<A, S>
