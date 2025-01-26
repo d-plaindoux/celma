@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 Didier Plaindoux
+ * Copyright 2019-2025 Didier Plaindoux
 =======
  * Copyright 2019-2021 Didier Plaindoux
 >>>>>>> 45ec19c (Manage compiler warnings and change License header)

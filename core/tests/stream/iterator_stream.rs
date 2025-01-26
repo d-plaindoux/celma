@@ -1,5 +1,5 @@
 /*
-   Copyright 2019-2023 Didier Plaindoux
+   Copyright 2019-2025 Didier Plaindoux
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -20,9 +20,6 @@ mod tests_parser_stream {
     use celma_core::parser::parser::Parse;
     use celma_core::parser::repeat::RepeatOperation;
     use celma_core::stream::iterator_stream::IteratorStream;
-
-    #[derive(Clone, Eq, PartialEq)]
-    struct Item(char);
 
     #[test]
     fn it_parse_two_character() {
