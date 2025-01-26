@@ -15,7 +15,7 @@
 */
 
 use crate::parser::and::AndOperation;
-use crate::parser::char::{char, not_char};
+use crate::parser::char::{a_char, not_char};
 use crate::parser::fmap::FMapOperation;
 use crate::parser::or::OrOperation;
 use crate::parser::parser::Combine;
@@ -90,9 +90,9 @@ pub fn delimited_string<'a, S>() -> impl Parse<String, S> + Combine<String> + 'a
 where
     S: Stream<Item = char> + 'a,
 {
-    char('"')
+    a_char('"')
         .and_right(escaped().or(not_char('"')).opt_rep())
-        .and_left(char('"'))
+        .and_left(a_char('"'))
         .fmap(|v| v.into_iter().collect::<String>())
 }
 
@@ -103,7 +103,7 @@ pub fn delimited_char<'a, S>() -> impl Parse<char, S> + Combine<char> + 'a
 where
     S: Stream<Item = char> + 'a,
 {
-    char('\'')
+    a_char('\'')
         .and_right(escaped().or(not_char('\'')))
-        .and_left(char('\''))
+        .and_left(a_char('\''))
 }

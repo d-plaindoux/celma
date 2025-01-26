@@ -18,15 +18,15 @@
 mod tests_try {
     use celma_core::parser::a_try::a_try;
     use celma_core::parser::and::AndOperation;
-    use celma_core::parser::char::char;
+    use celma_core::parser::char::a_char;
     use celma_core::parser::or::OrOperation;
     use celma_core::parser::parser::Parse;
     use celma_core::stream::char_stream::CharStream;
 
     #[test]
     fn it_parse_two_character() {
-        let response = a_try(char('a').and_right(char('b')))
-            .or(char('a'))
+        let response = a_try(a_char('a').and_right(a_char('b')))
+            .or(a_char('a'))
             .parse(CharStream::new("ab"));
 
         assert_eq!(response.fold(|v, _, _| v == ('b'), |_, _| false), true);
@@ -34,8 +34,8 @@ mod tests_try {
 
     #[test]
     fn it_parse_one_character() {
-        let response = a_try(char('a').and_right(char('b')))
-            .or(char('a'))
+        let response = a_try(a_char('a').and_right(a_char('b')))
+            .or(a_char('a'))
             .parse(CharStream::new("ac"));
 
         assert_eq!(response.fold(|v, _, _| v == ('a'), |_, _| false), true);

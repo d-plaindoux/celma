@@ -16,7 +16,7 @@
 use celma_core::parser::a_try::a_try;
 use celma_core::parser::and::{AndOperation, AndProjection};
 use celma_core::parser::bind::BindOperation;
-use celma_core::parser::char::{char, char_in_range, char_in_set, not_char};
+use celma_core::parser::char::{a_char, char_in_range, char_in_set, not_char};
 use celma_core::parser::core::{eos, fail, parser, returns};
 use celma_core::parser::fmap::FMapOperation;
 use celma_core::parser::lazy::lazy;
@@ -61,7 +61,7 @@ where
         start: '0',
         end: '9',
     }))
-    .or(char('_')))
+    .or(a_char('_')))
     .rep()
     .fmap(|v| v.into_iter().collect())
     .bind(|s| {
@@ -86,7 +86,7 @@ where
         .and_left(skip())
         .and(kind().opt())
         .and_left(skip())
-        .and_left(char(':'))
+        .and_left(a_char(':'))
         .and_left(skip())
         .and(kind())
         .and_left(skip())
@@ -165,7 +165,7 @@ fn binding<'a, S>() -> impl Parse<String, S> + Combine<String> + 'a
 where
     S: Stream<Item = char> + 'a,
 {
-    ident().and_left(skip()).and_left(char('='))
+    ident().and_left(skip()).and_left(a_char('='))
 }
 
 #[inline]
@@ -180,7 +180,7 @@ fn additional<'a, S>() -> impl Parse<(bool, ASTParsec), S> + Combine<(bool, ASTP
 where
     S: Stream<Item = char> + 'a,
 {
-    char('|')
+    a_char('|')
         .opt()
         .fmap(|o| o.is_some())
         .and_left(skip())
@@ -192,19 +192,19 @@ fn atom<'a, S>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + 'a
 where
     S: Stream<Item = char> + 'a,
 {
-    char('^')
+    a_char('^')
         .and_left(skip())
         .and_right(atom2())
         .fmap(|p| PNot(Box::new(p)))
-        .or(char('!')
+        .or(a_char('!')
             .and_left(skip())
             .and_right(atom2())
             .fmap(|p| PTry(Box::new(p))))
-        .or(char('#')
+        .or(a_char('#')
             .and_left(skip())
             .and_right(atom2())
             .fmap(|p| PCheck(Box::new(p))))
-        .or(char('/')
+        .or(a_char('/')
             .and_left(skip())
             .and_right(atom2())
             .fmap(|p| PLookahead(Box::new(p))))
@@ -216,11 +216,11 @@ fn atom2<'a, S>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + 'a
 where
     S: Stream<Item = char> + 'a,
 {
-    (char('(')
+    (a_char('(')
         .and_left(skip())
         .and_right(lazy(|| parser(parsec())))
         .and_left(skip())
-        .and_left(char(')')))
+        .and_left(a_char(')')))
     .or(code().fmap(PCode))
     .or(delimited_char().fmap(PChar))
     .or(delimited_string().fmap(PString))
@@ -239,9 +239,9 @@ fn kind<'a, S>() -> impl Parse<String, S> + Combine<String> + 'a
 where
     S: Stream<Item = char> + 'a,
 {
-    char('{')
+    a_char('{')
         .and_right(not_char('}').opt_rep())
-        .and_left(char('}'))
+        .and_left(a_char('}'))
         .fmap(|v| v.into_iter().collect())
 }
 
@@ -249,9 +249,9 @@ fn code<'a, S>() -> impl Parse<String, S> + Combine<String> + 'a
 where
     S: Stream<Item = char> + 'a,
 {
-    char('{')
+    a_char('{')
         .and_right(not_char('}').opt_rep())
-        .and_left(char('}'))
+        .and_left(a_char('}'))
         .fmap(|v| v.into_iter().collect())
 }
 

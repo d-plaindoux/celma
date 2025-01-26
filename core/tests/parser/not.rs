@@ -16,7 +16,7 @@
 
 #[cfg(test)]
 mod tests_literal {
-    use celma_core::parser::char::char;
+    use celma_core::parser::char::a_char;
     use celma_core::parser::literal::string;
     use celma_core::parser::not::NotOperation;
     use celma_core::parser::parser::Parse;
@@ -26,7 +26,7 @@ mod tests_literal {
 
     #[test]
     fn it_parse_any_char_else_char_b() {
-        let response = char('b').not().parse(CharStream::new("a"));
+        let response = a_char('b').not().parse(CharStream::new("a"));
 
         assert_eq!(response.fold(|v, _, _| v == 'a', |_, _| false), true);
     }

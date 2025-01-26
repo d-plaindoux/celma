@@ -20,7 +20,7 @@ extern crate bencher;
 use bencher::{black_box, Bencher};
 
 use celma_core::parser::and::AndOperation;
-use celma_core::parser::char::char;
+use celma_core::parser::char::a_char;
 use celma_core::parser::core::any;
 use celma_core::parser::core::eos;
 use celma_core::parser::literal::delimited_string;
@@ -58,7 +58,7 @@ fn basic_a(bencher: &mut Bencher) {
     let string = "a".repeat(SIZE);
     let data = string.as_str();
 
-    let parser = char('a').opt_rep().and(eos());
+    let parser = a_char('a').opt_rep().and(eos());
 
     do_parse(
         parser,
@@ -71,7 +71,7 @@ fn basic_a_or_b(bencher: &mut Bencher) {
     let string = "ab".repeat(1024 * 1024);
     let data = string.as_str();
 
-    let parser = char('a').or(char('b')).opt_rep().and(eos());
+    let parser = a_char('a').or(a_char('b')).opt_rep().and(eos());
 
     do_parse(
         parser,
@@ -84,7 +84,7 @@ fn basic_a_and_b(bencher: &mut Bencher) {
     let string = "ab".repeat(SIZE);
     let data = string.as_str();
 
-    let parser = char('a').and(char('b')).opt_rep().and(eos());
+    let parser = a_char('a').and(a_char('b')).opt_rep().and(eos());
 
     do_parse(
         parser,

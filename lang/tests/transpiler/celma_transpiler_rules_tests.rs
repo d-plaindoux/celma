@@ -73,7 +73,7 @@ mod tests_and {
                         use celma_core::parser::parser::Parse;
                         use celma_core::parser::repeat::RepeatOperation;
 
-                        celma_core::parser::core::parser(celma_core::parser::char::char('b').rep())
+                        celma_core::parser::core::parser(celma_core::parser::char::a_char('b').rep())
                     }
                 )
                 .to_string()

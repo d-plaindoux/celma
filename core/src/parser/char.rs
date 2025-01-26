@@ -23,7 +23,7 @@ use crate::parser::satisfy::Satisfy;
 use crate::stream::stream::Stream;
 
 #[inline]
-pub fn char<S>(c: char) -> impl Parse<char, S> + Combine<char>
+pub fn a_char<S>(c: char) -> impl Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {

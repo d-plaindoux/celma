@@ -19,7 +19,7 @@ mod tests_char {
     use celma_core::parser::char::alpha;
     use celma_core::parser::char::alpha_lower;
     use celma_core::parser::char::alpha_upper;
-    use celma_core::parser::char::char;
+    use celma_core::parser::char::a_char;
     use celma_core::parser::char::digit;
     use celma_core::parser::char::not_char;
     use celma_core::parser::parser::Parse;
@@ -27,14 +27,14 @@ mod tests_char {
 
     #[test]
     fn it_parse_a_specific_character() {
-        let response = char('a').parse(CharStream::new("a"));
+        let response = a_char('a').parse(CharStream::new("a"));
 
         assert_eq!(response.fold(|v, _, _| v == 'a', |_, _| false), true);
     }
 
     #[test]
     fn it_cannot_parse_a_specific_character() {
-        let response = char('a').parse(CharStream::new("b"));
+        let response = a_char('a').parse(CharStream::new("b"));
 
         assert_eq!(response.fold(|_, _, _| false, |_, _| true), true);
     }

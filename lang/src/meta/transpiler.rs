@@ -108,7 +108,7 @@ impl TranspileBody<(Option<String>, TokenStream)> for ASTParsec {
                 let n = syn::Ident::new(n, Span::call_site());
                 (None, quote!(celma_core::parser::lazy::lazy(|| #n())))
             }
-            PChar(c) => (None, quote!(celma_core::parser::char::char(#c))),
+            PChar(c) => (None, quote!(celma_core::parser::char::a_char(#c))),
             PString(s) => (None, quote!(celma_core::parser::literal::string(#s))),
             PCode(c) => {
                 let c = syn::parse_str::<TokenStream>(c.as_str()).unwrap();

@@ -15,7 +15,7 @@
 */
 
 use celma_core::parser::and::{AndOperation, AndProjection};
-use celma_core::parser::char::{alpha, char, char_in_set, digit, not_char};
+use celma_core::parser::char::{alpha, a_char, char_in_set, digit, not_char};
 use celma_core::parser::core::{eos, parser};
 use celma_core::parser::fmap::FMapOperation;
 use celma_core::parser::lazy::lazy;
@@ -70,10 +70,10 @@ fn string<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
 where
     S: Stream<Item = char>,
 {
-    char('"')
+    a_char('"')
         .and(not_char('"').opt_rep())
         .right()
-        .and(char('"'))
+        .and(a_char('"'))
         .left()
         .fmap(|v| Token::String(v.into_iter().collect::<String>()))
 }
@@ -98,7 +98,7 @@ where
         .and(skip())
         .left()
         .and(
-            (char(s).and(skip()))
+            (a_char(s).and(skip()))
                 .and(p.and(skip()).left())
                 .right()
                 .opt_rep(),
@@ -111,11 +111,11 @@ fn record<'a, S: 'a>() -> impl Parse<Token, S> + Combine<Token> + 'a
 where
     S: Stream<Item = char>,
 {
-    char('[')
+    a_char('[')
         .and(skip())
         .and(sequence(item(), ','))
         .right()
-        .and(char(']').and(skip()))
+        .and(a_char(']').and(skip()))
         .left()
         .fmap(|v| Token::Record(v))
 }
