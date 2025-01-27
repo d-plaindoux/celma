@@ -17,9 +17,9 @@
 use std::ops::Range;
 
 use crate::parser::or::OrOperation;
+use crate::parser::satisfy::Satisfy;
 use crate::parser::specs::Combine;
 use crate::parser::specs::Parse;
-use crate::parser::satisfy::Satisfy;
 use crate::stream::specs::Stream;
 
 #[inline]

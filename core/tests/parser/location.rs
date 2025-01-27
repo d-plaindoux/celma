@@ -23,25 +23,28 @@ mod tests_location {
 
     #[test]
     fn it_parse_one_character() {
-        let response = locate(a_char('a'))
-            .parse(CharStream::new("a"));
+        let response = locate(a_char('a')).parse(CharStream::new("a"));
 
-        assert_eq!(response.fold(|v, _, _| v.value == ('a'), |_, _| false), true);
+        assert_eq!(
+            response.fold(|v, _, _| v.value == ('a'), |_, _| false),
+            true
+        );
     }
 
     #[test]
     fn it_parse_one_character_with_right_start_location() {
-        let response = locate(a_char('a'))
-            .parse(CharStream::new("a"));
+        let response = locate(a_char('a')).parse(CharStream::new("a"));
 
-        assert_eq!(response.fold(|v, _, _| v.start , |_, _| (0,0,0)), (0,1,0));
+        assert_eq!(
+            response.fold(|v, _, _| v.start, |_, _| (0, 0, 0)),
+            (0, 1, 0)
+        );
     }
 
     #[test]
     fn it_parse_one_character_with_right_end_location() {
-        let response = locate(a_char('a'))
-            .parse(CharStream::new("a"));
+        let response = locate(a_char('a')).parse(CharStream::new("a"));
 
-        assert_eq!(response.fold(|v, _, _| v.end, |_, _| (0,0,0)), (1,1,1));
+        assert_eq!(response.fold(|v, _, _| v.end, |_, _| (0, 0, 0)), (1, 1, 1));
     }
 }

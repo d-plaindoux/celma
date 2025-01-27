@@ -19,8 +19,8 @@ mod tests_parser_stream {
     use celma_core::parser::char::char_in_range;
     use celma_core::parser::core::any;
     use celma_core::parser::fmap::FMapOperation;
-    use celma_core::parser::specs::Parse;
     use celma_core::parser::repeat::RepeatOperation;
+    use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
     use celma_core::stream::parser_stream::ParserStream;
 

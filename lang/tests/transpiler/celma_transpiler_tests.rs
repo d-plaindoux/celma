@@ -16,8 +16,8 @@
 
 #[cfg(test)]
 mod tests_and {
-    use celma_core::parser::specs::Parse;
     use celma_core::parser::response::Response::Success;
+    use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
     use celma_lang::meta::parser::celma_parsec;
     use celma_lang::meta::transpiler::TranspileBody;
@@ -66,7 +66,7 @@ mod tests_and {
                 ast.to_string(),
                 quote!(celma_core::parser::char::a_char('a')
                     .and_right(a_try(celma_core::parser::char::a_char('b'))))
-                    .to_string()
+                .to_string()
             ),
             _ => assert_eq!(true, false),
         };
@@ -83,7 +83,7 @@ mod tests_and {
                 ast.to_string(),
                 quote!(celma_core::parser::char::a_char('a')
                     .and_right(lookahead(celma_core::parser::char::a_char('b'))))
-                    .to_string()
+                .to_string()
             ),
             _ => assert_eq!(true, false),
         };
@@ -174,8 +174,10 @@ mod tests_and {
         match response {
             Success((_, ast), _, _) => assert_eq!(
                 ast.to_string(),
-                quote!(celma_core::parser::char::a_char('a').or(celma_core::parser::char::a_char('b')))
-                    .to_string()
+                quote!(
+                    celma_core::parser::char::a_char('a').or(celma_core::parser::char::a_char('b'))
+                )
+                .to_string()
             ),
             _ => assert_eq!(true, false),
         };

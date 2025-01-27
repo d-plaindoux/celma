@@ -17,12 +17,12 @@
 use std::marker::PhantomData;
 use std::rc::Rc;
 
-use crate::parser::specs::Combine;
-use crate::parser::specs::Parse;
 use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
 use crate::parser::satisfy::Satisfy;
+use crate::parser::specs::Combine;
+use crate::parser::specs::Parse;
 use crate::stream::specs::Stream;
 
 // -------------------------------------------------------------------------------------------------

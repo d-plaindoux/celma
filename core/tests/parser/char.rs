@@ -16,10 +16,10 @@
 
 #[cfg(test)]
 mod tests_char {
+    use celma_core::parser::char::a_char;
     use celma_core::parser::char::alpha;
     use celma_core::parser::char::alpha_lower;
     use celma_core::parser::char::alpha_upper;
-    use celma_core::parser::char::a_char;
     use celma_core::parser::char::digit;
     use celma_core::parser::char::not_char;
     use celma_core::parser::specs::Parse;

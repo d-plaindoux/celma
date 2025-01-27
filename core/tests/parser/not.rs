@@ -17,12 +17,12 @@
 #[cfg(test)]
 mod tests_literal {
     use celma_core::parser::char::a_char;
+    use celma_core::parser::fmap::FMapOperation;
     use celma_core::parser::literal::string;
     use celma_core::parser::not::NotOperation;
-    use celma_core::parser::specs::Parse;
     use celma_core::parser::repeat::RepeatOperation;
+    use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
-    use celma_core::parser::fmap::FMapOperation;
 
     #[test]
     fn it_parse_any_char_else_char_b() {
@@ -40,11 +40,15 @@ mod tests_literal {
 
     #[test]
     fn it_parse_any_chars_else_string_b() {
-        let response =
-            string("de").not().rep()
-                .fmap(|v| v.iter().collect::<String>())
-                .parse(CharStream::new("abcdcde"));
+        let response = string("de")
+            .not()
+            .rep()
+            .fmap(|v| v.iter().collect::<String>())
+            .parse(CharStream::new("abcdcde"));
 
-        assert_eq!(response.fold(|v, _, _| v == "abcdc".to_owned(), |_, _| false), true);
+        assert_eq!(
+            response.fold(|v, _, _| v == "abcdc".to_owned(), |_, _| false),
+            true
+        );
     }
 }

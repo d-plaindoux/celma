@@ -23,8 +23,8 @@ use celma_core::parser::lazy::lazy;
 use celma_core::parser::literal::{delimited_char, delimited_string, string};
 use celma_core::parser::option::OptionalOperation;
 use celma_core::parser::or::OrOperation;
-use celma_core::parser::specs::{Combine, Parse};
 use celma_core::parser::repeat::RepeatOperation;
+use celma_core::parser::specs::{Combine, Parse};
 use celma_core::stream::specs::Stream;
 use std::ops::Range;
 

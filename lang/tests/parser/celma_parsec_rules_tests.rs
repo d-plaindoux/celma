@@ -16,8 +16,8 @@
 
 #[cfg(test)]
 mod tests_and {
-    use celma_core::parser::specs::Parse;
     use celma_core::parser::response::Response::{Reject, Success};
+    use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
     use celma_lang::meta::parser::celma_parsec_rules;
     use celma_lang::meta::syntax::ASTParsec::{PChar, PChoice, PCode};

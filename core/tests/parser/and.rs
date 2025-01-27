@@ -31,7 +31,10 @@ mod tests_and {
 
     #[test]
     fn it_parse_two_character_and_drop_right() {
-        let response = a_char('a').and(a_char('b')).left().parse(CharStream::new("ab"));
+        let response = a_char('a')
+            .and(a_char('b'))
+            .left()
+            .parse(CharStream::new("ab"));
 
         assert_eq!(response.fold(|v, _, _| v == 'a', |_, _| false), true);
     }

@@ -18,12 +18,12 @@ use crate::parser::and::AndOperation;
 use crate::parser::char::{a_char, not_char};
 use crate::parser::fmap::FMapOperation;
 use crate::parser::or::OrOperation;
-use crate::parser::specs::Combine;
-use crate::parser::specs::Parse;
 use crate::parser::repeat::RepeatOperation;
 use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
+use crate::parser::specs::Combine;
+use crate::parser::specs::Parse;
 use crate::stream::specs::Stream;
 
 // -------------------------------------------------------------------------------------------------

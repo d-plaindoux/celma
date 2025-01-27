@@ -21,8 +21,8 @@
 mod tests_transpiler {
     use celma_core::parser::and::AndOperation;
     use celma_core::parser::core::eos;
-    use celma_core::parser::specs::Parse;
     use celma_core::parser::response::Response::Success;
+    use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
     use celma_macro::parsec_rules;
 
@@ -30,7 +30,7 @@ mod tests_transpiler {
     pub enum Expr {
         Text(String),
         Var(String),
-        Seq(Vec<Expr>)
+        Seq(Vec<Expr>),
     }
 
     fn mk_string(a: Vec<char>) -> String {
@@ -45,8 +45,7 @@ mod tests_transpiler {
 
     #[test]
     fn it_parse_a_text() {
-        let response = bash().and_left(eos())
-            .parse(CharStream::new("Hello"));
+        let response = bash().and_left(eos()).parse(CharStream::new("Hello"));
 
         match response {
             Success(v, _, _) => assert_eq!(v, Expr::Seq(vec!(Expr::Text("Hello".to_owned())))),
@@ -56,8 +55,7 @@ mod tests_transpiler {
 
     #[test]
     fn it_parse_a_var() {
-        let response = bash().and_left(eos())
-            .parse(CharStream::new("${world}"));
+        let response = bash().and_left(eos()).parse(CharStream::new("${world}"));
 
         match response {
             Success(v, _, _) => assert_eq!(v, Expr::Seq(vec!(Expr::Var("world".to_owned())))),
@@ -67,11 +65,18 @@ mod tests_transpiler {
 
     #[test]
     fn it_parse_a_seq() {
-        let response = bash().and_left(eos())
+        let response = bash()
+            .and_left(eos())
             .parse(CharStream::new("Hello ${world}"));
 
         match response {
-            Success(v, _, _) => assert_eq!(v, Expr::Seq(vec!(Expr::Text("Hello ".to_owned()), Expr::Var("world".to_owned())))),
+            Success(v, _, _) => assert_eq!(
+                v,
+                Expr::Seq(vec!(
+                    Expr::Text("Hello ".to_owned()),
+                    Expr::Var("world".to_owned())
+                ))
+            ),
             _ => assert_eq!(true, false),
         }
     }

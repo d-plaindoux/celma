@@ -16,8 +16,8 @@
 
 use std::marker::PhantomData;
 
-use crate::parser::specs::{Combine, Parse};
 use crate::parser::response::Response;
+use crate::parser::specs::{Combine, Parse};
 use crate::stream::specs::Stream;
 
 #[derive(Copy, Clone)]

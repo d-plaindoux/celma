@@ -20,9 +20,9 @@ mod tests_transpiler {
     use celma_core::parser::char::{digit, space};
     use celma_core::parser::core::eos;
     use celma_core::parser::fmap::FMapOperation;
-    use celma_core::parser::specs::{Combine, Parse};
     use celma_core::parser::response::Response;
     use celma_core::parser::satisfy::Satisfy;
+    use celma_core::parser::specs::{Combine, Parse};
     use celma_core::stream::char_stream::CharStream;
     use celma_core::stream::parser_stream::ParserStream;
     use celma_core::stream::specs::Stream;

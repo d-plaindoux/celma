@@ -42,8 +42,7 @@ pub trait HasLambda {
 
 impl<E> HasLambda for Vec<Token<E>> {
     fn has_lambda(&self) -> bool {
-        self.iter()
-            .any(|t| matches!(t,Token::NoAtom))
+        self.iter().any(|t| matches!(t, Token::NoAtom))
     }
 }
 

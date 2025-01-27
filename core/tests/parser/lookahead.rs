@@ -31,14 +31,18 @@ mod tests_and {
 
     #[test]
     fn it_parse_one_character_but_not_consume_it() {
-        let response = lookahead(a_char('a')).and_right(a_char('b')).parse(CharStream::new("ab"));
+        let response = lookahead(a_char('a'))
+            .and_right(a_char('b'))
+            .parse(CharStream::new("ab"));
 
         assert_eq!(response.fold(|_, _, _| false, |_, _| true), true);
     }
 
     #[test]
     fn it_parse_one_character_and_consume_it_again() {
-        let response = lookahead(a_char('a')).and_right(a_char('a')).parse(CharStream::new("ab"));
+        let response = lookahead(a_char('a'))
+            .and_right(a_char('a'))
+            .parse(CharStream::new("ab"));
 
         assert_eq!(response.fold(|v, _, _| v == 'a', |_, _| false), true);
     }

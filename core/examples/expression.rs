@@ -15,14 +15,14 @@
 */
 
 use celma_core::parser::and::{AndOperation, AndProjection};
-use celma_core::parser::char::{alpha, a_char, char_in_set, digit, not_char};
+use celma_core::parser::char::{a_char, alpha, char_in_set, digit, not_char};
 use celma_core::parser::core::{eos, parser};
 use celma_core::parser::fmap::FMapOperation;
 use celma_core::parser::lazy::lazy;
 use celma_core::parser::or::OrOperation;
-use celma_core::parser::specs::{Combine, Parse};
 use celma_core::parser::repeat::RepeatOperation;
 use celma_core::parser::response::Response::Success;
+use celma_core::parser::specs::{Combine, Parse};
 use celma_core::stream::char_stream::CharStream;
 use celma_core::stream::specs::Stream;
 

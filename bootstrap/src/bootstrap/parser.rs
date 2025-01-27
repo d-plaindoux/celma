@@ -87,16 +87,17 @@ parsec_rules!(
     let skip:{()} = space* -> {}
     let ident:{String} = (skip i=#(alpha (alpha|digit|'_')*) skip) -> { i.into_iter().collect() }
 
+    let kind:{String} = ('{' v=^'}'* '}') -> { v.into_iter().collect() }
+    let code:{String} = ('{' c=^'}'* '}') -> { c.into_iter().collect() }
+
     let rules:{Vec<ASTParsecRule>} = rule*
-    let rule:{ASTParsecRule} = (skip "let" n=ident i=kind? ':' r=kind '=' b=parsec skip) -> {
-        mk_rule(n, i, r, b)
-    }
+    let rule:{ASTParsecRule} = (
+        skip "let" n=ident i=kind? ':' r=kind '=' b=parsec skip
+    ) -> { mk_rule(n, i, r, b) }
 
     let parsec:{ASTParsec} = (
-        skip bind=!(binding)? atom=atom occ=('?'|'*'|'+')? add=additional? trans=transform? skip
-    ) -> {
-        mk_ast_parsec(bind, atom, occ, add, trans)
-    }
+        skip b=!(binding)? a=atom o=('?'|'*'|'+')? d=additional? t=transform? skip
+    ) -> { mk_ast_parsec(b, a, o, d, t) }
 
     let binding:{String} = (skip _=ident '=' skip)
 
@@ -113,9 +114,6 @@ parsec_rules!(
     let atom_ident:{ASTParsec} = c=ident -> { PIdent(c) }
 
     let transform:{String} = (skip "->" skip _=code)
-
-    let kind:{String} = ('{' v=^'}'* '}') -> { v.into_iter().collect() }
-    let code:{String} = ('{' c=^'}'* '}') -> { c.into_iter().collect() }
 
     // Main entries
     let celma_parsec:{ASTParsec} = (_=parsec eos)

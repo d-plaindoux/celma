@@ -17,18 +17,18 @@
 #[macro_use]
 extern crate bencher;
 
-use bencher::{Bencher, black_box};
+use bencher::{black_box, Bencher};
 
 use celma_core::parser::and::AndOperation;
 use celma_core::parser::char::{digit, space};
 use celma_core::parser::core::eos;
 use celma_core::parser::literal::delimited_string;
-use celma_core::parser::specs::Parse;
 use celma_core::parser::response::Response::{Reject, Success};
+use celma_core::parser::specs::Parse;
+use celma_core::stream::char_stream::CharStream;
 use celma_core::stream::position::Position;
 use celma_core::stream::specs::Stream;
 use celma_macro::parsec_rules;
-use celma_core::stream::char_stream::CharStream;
 
 #[derive(Clone)]
 pub enum JSON {
