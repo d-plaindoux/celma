@@ -100,15 +100,12 @@ parsec_rules!(
 
     let binding:{String} = (skip _=ident '=' skip)
 
-    let additional:{(bool,ASTParsec)} = ( skip choice='|'? skip parser=parsec) -> {
-        (choice.is_some(), parser)
-    }
+    let additional:{(bool,ASTParsec)} = ( skip c='|'? skip p=parsec) -> { (c.is_some(), p) }
 
     let atom:{ASTParsec} = (
-        skip operation=('^'|'!'|'#'|'/')? skip parsec=(atom_block|atom_char|atom_string|atom_code) skip
-    ) -> {
-        mk_atom(operation, parsec)
-    }
+        skip o=('^'|'!'|'#'|'/')? skip p=(atom_block|atom_char|atom_string|atom_code) skip
+    ) -> { mk_atom(o, p) }
+
     let atom_block:{ASTParsec} = ('(' _=parsec ')')
     let atom_char:{ASTParsec} = (c=delimited_char) -> { PChar(c) }
     let atom_string:{ASTParsec} = (c=delimited_string)-> { PString(c) }
