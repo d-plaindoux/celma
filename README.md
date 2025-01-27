@@ -28,7 +28,7 @@ additional   = "|"? parser
 transform    = "->" '{' rust_code '}'
 atom         = alter? '(' parser ')' | CHAR | STRING | ident | '{' rust_code '}'
 alter        = ("^"|"!"|"#"|"/")
-ident        = [a..zA..Z]+ - {"let"}
+ident        = [a..zA..Z][a..zA..Z0..9_]* - {"let"}
 ```
 
 The `alter` is a special annotation are:
@@ -45,7 +45,7 @@ Therefore, a parser can be defined using this meta-language.
 
 ```rust
 let parser = parsec!( 
-    '{' v=^'}'* '}' -> { v.into_iter().collect::<String>() }
+    ('{' v=^'}'* '}') -> { v.into_iter().collect::<String>() }
 );
 ```
 
