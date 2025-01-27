@@ -189,9 +189,9 @@ match response {
 
 The [Celma parser v0](https://github.com/d-plaindoux/celma/blob/master/lang/src/meta/parser.rs) is written with parser combinators
 
-### [WIP] Stage 2
+### Stage 2
 
-The Celma parser V1 is written using the Celma parser V0.
+The [Celma parser V1](https://github.com/d-plaindoux/celma/blob/master/bootstrap/src/bootstrap/parser.rs) is written using the Celma parser V0.
 
 # License
 
