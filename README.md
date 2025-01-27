@@ -31,11 +31,11 @@ alter        = ("^"|"!"|"#"|"/")
 ident        = [a..zA..Z][a..zA..Z0..9_]* - {"let"}
 ```
 
-The `alter` is a special annotation are:
-- `^` allowing the capability to recognize negation,
-- `!` allowing the capability to backtrack on failure and 
-- `#` allowing the capability to capture all chars.
-- `/` allowing the capability to lookahead without consuming scanned elements.
+The `alter` is an annotation where:
+- `^` allows the capability to recognize negation,
+- `!` allows the capability to backtrack on failure and 
+- `#` allows the capability to capture all chars.
+- `/` allows the capability to lookahead without consuming scanned elements.
 
 The `#` alteration is important because it prevents massive list construction in memory. 
 
