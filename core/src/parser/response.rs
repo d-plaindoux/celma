@@ -39,7 +39,7 @@ where
             Response::Reject(s, b) => reject(s, b),
         }
     }
-    pub fn fmap<F, B>(self, f: F) -> Response<B, S>
+    pub fn map<F, B>(self, f: F) -> Response<B, S>
     where
         F: Fn(A) -> B,
     {

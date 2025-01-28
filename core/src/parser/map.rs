@@ -61,20 +61,20 @@ where
     }
 }
 
-pub trait FMapOperation<P, A, F, B>
+pub trait MapOperation<P, A, F, B>
 where
     P: Combine<A>,
     F: Fn(A) -> B,
 {
-    fn fmap(self, f: F) -> FMap<P, A, F, B>;
+    fn map(self, f: F) -> FMap<P, A, F, B>;
 }
 
-impl<P, A, F, B> FMapOperation<P, A, F, B> for P
+impl<P, A, F, B> MapOperation<P, A, F, B> for P
 where
     P: Combine<A>,
     F: Fn(A) -> B,
 {
-    fn fmap(self, f: F) -> FMap<P, A, F, B> {
+    fn map(self, f: F) -> FMap<P, A, F, B> {
         FMap(self, f, PhantomData, PhantomData)
     }
 }

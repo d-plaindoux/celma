@@ -30,7 +30,7 @@ pub fn parsec(input: TokenStream) -> TokenStream {
     let source = input.to_string();
     let result = celma_parsec()
         .parse(CharStream::new(source.as_str()))
-        .fmap(|ast| ast.transpile());
+        .map(|ast| ast.transpile());
 
     match result {
         Success(code, _, _) => code.into(),
@@ -43,7 +43,7 @@ pub fn parsec_rules(input: TokenStream) -> TokenStream {
     let source = input.to_string();
     let result = celma_parsec_rules()
         .parse(CharStream::new(source.as_str()))
-        .fmap(|ast| ast.transpile());
+        .map(|ast| ast.transpile());
 
     match result {
         Success(code, _, _) => code.into(),

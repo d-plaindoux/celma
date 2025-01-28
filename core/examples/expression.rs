@@ -17,7 +17,7 @@
 use celma_core::parser::and::{AndOperation, AndProjection};
 use celma_core::parser::char::{a_char, alpha, char_in_set, digit, not_char};
 use celma_core::parser::core::{eos, parser};
-use celma_core::parser::fmap::FMapOperation;
+use celma_core::parser::map::MapOperation;
 use celma_core::parser::lazy::lazy;
 use celma_core::parser::or::OrOperation;
 use celma_core::parser::repeat::RepeatOperation;
@@ -41,7 +41,7 @@ where
 {
     char_in_set(vec!['\n', '\r', '\t', ' '])
         .opt_rep()
-        .fmap(|_| ())
+        .map(|_| ())
 }
 
 #[inline]
@@ -51,8 +51,8 @@ where
 {
     digit()
         .rep()
-        .fmap(|v| v.into_iter().collect::<String>())
-        .fmap(|s| Token::Number(s.parse::<i32>().unwrap()))
+        .map(|v| v.into_iter().collect::<String>())
+        .map(|s| Token::Number(s.parse::<i32>().unwrap()))
 }
 
 #[inline]
@@ -62,7 +62,7 @@ where
 {
     alpha()
         .rep()
-        .fmap(|v| Token::Ident(v.into_iter().collect::<String>()))
+        .map(|v| Token::Ident(v.into_iter().collect::<String>()))
 }
 
 #[inline]
@@ -75,7 +75,7 @@ where
         .right()
         .and(a_char('"'))
         .left()
-        .fmap(|v| Token::String(v.into_iter().collect::<String>()))
+        .map(|v| Token::String(v.into_iter().collect::<String>()))
 }
 
 #[inline]
@@ -103,7 +103,7 @@ where
                 .right()
                 .opt_rep(),
         )
-        .fmap(|(e, v)| [vec![e], v].concat())
+        .map(|(e, v)| [vec![e], v].concat())
 }
 
 #[inline]
@@ -117,7 +117,7 @@ where
         .right()
         .and(a_char(']').and(skip()))
         .left()
-        .fmap(|v| Token::Record(v))
+        .map(|v| Token::Record(v))
 }
 
 fn main() {

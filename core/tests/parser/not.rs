@@ -17,7 +17,7 @@
 #[cfg(test)]
 mod tests_literal {
     use celma_core::parser::char::a_char;
-    use celma_core::parser::fmap::FMapOperation;
+    use celma_core::parser::map::MapOperation;
     use celma_core::parser::literal::string;
     use celma_core::parser::not::NotOperation;
     use celma_core::parser::repeat::RepeatOperation;
@@ -43,7 +43,7 @@ mod tests_literal {
         let response = string("de")
             .not()
             .rep()
-            .fmap(|v| v.iter().collect::<String>())
+            .map(|v| v.iter().collect::<String>())
             .parse(CharStream::new("abcdcde"));
 
         assert_eq!(

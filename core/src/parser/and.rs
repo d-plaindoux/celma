@@ -16,8 +16,8 @@
 
 use std::marker::PhantomData;
 
-use crate::parser::fmap::FMap;
-use crate::parser::fmap::FMapOperation;
+use crate::parser::map::FMap;
+use crate::parser::map::MapOperation;
 use crate::parser::response::Response;
 use crate::parser::response::Response::Reject;
 use crate::parser::response::Response::Success;
@@ -90,11 +90,11 @@ where
     }
 
     fn and_left<'a>(self, a: R) -> LeftProjection<'a, L, R, A, B> {
-        self.and(a).fmap(&|(l, _)| l)
+        self.and(a).map(&|(l, _)| l)
     }
 
     fn and_right<'a>(self, a: R) -> RightProjection<'a, L, R, A, B> {
-        self.and(a).fmap(&|(_, r)| r)
+        self.and(a).map(&|(_, r)| r)
     }
 }
 
@@ -116,10 +116,10 @@ where
     R: Combine<B>,
 {
     fn left<'a>(self) -> LeftProjection<'a, L, R, A, B> {
-        self.fmap(&|(l, _)| l)
+        self.map(&|(l, _)| l)
     }
 
     fn right<'a>(self) -> RightProjection<'a, L, R, A, B> {
-        self.fmap(&|(_, r)| r)
+        self.map(&|(_, r)| r)
     }
 }

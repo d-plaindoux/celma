@@ -18,7 +18,7 @@
 mod tests_parser_stream {
     use celma_core::parser::char::char_in_range;
     use celma_core::parser::core::any;
-    use celma_core::parser::fmap::FMapOperation;
+    use celma_core::parser::map::MapOperation;
     use celma_core::parser::repeat::RepeatOperation;
     use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
@@ -29,7 +29,7 @@ mod tests_parser_stream {
 
     #[test]
     fn it_parse_two_character() {
-        let parser = char_in_range('a'..'z').fmap(|v| Item(v));
+        let parser = char_in_range('a'..'z').map(|v| Item(v));
         let stream = ParserStream::new(&parser, CharStream::new("ab"));
         let response = any().rep().parse(stream);
 

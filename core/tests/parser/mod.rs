@@ -20,7 +20,7 @@ pub mod bind;
 pub mod char;
 pub mod check;
 pub mod core;
-pub mod fmap;
+pub mod map;
 pub mod lazy;
 pub mod literal;
 pub mod location;

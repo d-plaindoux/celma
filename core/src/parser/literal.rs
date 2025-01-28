@@ -16,7 +16,7 @@
 
 use crate::parser::and::AndOperation;
 use crate::parser::char::{a_char, not_char};
-use crate::parser::fmap::FMapOperation;
+use crate::parser::map::MapOperation;
 use crate::parser::or::OrOperation;
 use crate::parser::repeat::RepeatOperation;
 use crate::parser::response::Response;
@@ -74,13 +74,13 @@ where
     S: Stream<Item = char> + 'a,
 {
     string(r#"\'"#)
-        .fmap(|_| '\'')
-        .or(string(r#"\""#).fmap(|_| '\"'))
-        .or(string(r#"\\"#).fmap(|_| '\\'))
-        .or(string(r#"\n"#).fmap(|_| '\n'))
-        .or(string(r#"\r"#).fmap(|_| '\r'))
-        .or(string(r#"\t"#).fmap(|_| '\t'))
-        .or(string(r#"\0"#).fmap(|_| '\0'))
+        .map(|_| '\'')
+        .or(string(r#"\""#).map(|_| '\"'))
+        .or(string(r#"\\"#).map(|_| '\\'))
+        .or(string(r#"\n"#).map(|_| '\n'))
+        .or(string(r#"\r"#).map(|_| '\r'))
+        .or(string(r#"\t"#).map(|_| '\t'))
+        .or(string(r#"\0"#).map(|_| '\0'))
     // etc. TODO
 }
 
@@ -93,7 +93,7 @@ where
     a_char('"')
         .and_right(escaped().or(not_char('"')).opt_rep())
         .and_left(a_char('"'))
-        .fmap(|v| v.into_iter().collect::<String>())
+        .map(|v| v.into_iter().collect::<String>())
 }
 
 // -------------------------------------------------------------------------------------------------

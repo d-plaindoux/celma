@@ -27,7 +27,7 @@ mod tests_and {
     fn it_transpile_one_character() {
         let response = celma_parsec()
             .parse(CharStream::new("'a'"))
-            .fmap(|ast| ast.transpile_body());
+            .map(|ast| ast.transpile_body());
 
         match response {
             Success((_, ast), _, _) => assert_eq!(
@@ -42,7 +42,7 @@ mod tests_and {
     fn it_transpile_two_characters() {
         let response = celma_parsec()
             .parse(CharStream::new("'a' 'b'"))
-            .fmap(|ast| ast.transpile_body());
+            .map(|ast| ast.transpile_body());
 
         match response {
             Success((_, ast), _, _) => assert_eq!(
@@ -59,7 +59,7 @@ mod tests_and {
     fn it_transpile_two_characters_with_try_on_the_second_one() {
         let response = celma_parsec()
             .parse(CharStream::new("'a' !'b'"))
-            .fmap(|ast| ast.transpile_body());
+            .map(|ast| ast.transpile_body());
 
         match response {
             Success((_, ast), _, _) => assert_eq!(
@@ -76,7 +76,7 @@ mod tests_and {
     fn it_transpile_two_characters_with_lookahead_on_the_second_one() {
         let response = celma_parsec()
             .parse(CharStream::new("'a' /'b'"))
-            .fmap(|ast| ast.transpile_body());
+            .map(|ast| ast.transpile_body());
 
         match response {
             Success((_, ast), _, _) => assert_eq!(
@@ -93,7 +93,7 @@ mod tests_and {
     fn it_transpile_two_characters_bind_left() {
         let response = celma_parsec()
             .parse(CharStream::new("a='a' 'b'"))
-            .fmap(|ast| ast.transpile_body());
+            .map(|ast| ast.transpile_body());
 
         match response {
             Success((params, ast), _, _) => {
@@ -113,7 +113,7 @@ mod tests_and {
     fn it_transpile_two_bound_characters() {
         let response = celma_parsec()
             .parse(CharStream::new("a='a' b='b'"))
-            .fmap(|ast| ast.transpile_body());
+            .map(|ast| ast.transpile_body());
 
         match response {
             Success((params, _), _, _) => assert_eq!(params, Some(String::from("(a,b)"))),
@@ -125,7 +125,7 @@ mod tests_and {
     fn it_transpile_three_characters_with_two_binds() {
         let response = celma_parsec()
             .parse(CharStream::new("a='a' 'b' c='c'"))
-            .fmap(|ast| ast.transpile_body());
+            .map(|ast| ast.transpile_body());
 
         match response {
             Success((params, ast), _, _) => {
@@ -147,7 +147,7 @@ mod tests_and {
     fn it_transpile_three_bound_characters() {
         let response = celma_parsec()
             .parse(CharStream::new("a='a' b='b' c='c'"))
-            .fmap(|ast| ast.transpile_body());
+            .map(|ast| ast.transpile_body());
 
         match response {
             Success((params, ast), _, _) => {
@@ -169,7 +169,7 @@ mod tests_and {
     fn it_transpile_one_choice_characters() {
         let response = celma_parsec()
             .parse(CharStream::new("'a' | 'b'"))
-            .fmap(|ast| ast.transpile_body());
+            .map(|ast| ast.transpile_body());
 
         match response {
             Success((_, ast), _, _) => assert_eq!(

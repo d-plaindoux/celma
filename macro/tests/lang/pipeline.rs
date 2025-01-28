@@ -19,7 +19,7 @@ mod tests_transpiler {
     use celma_core::parser::and::AndOperation;
     use celma_core::parser::char::{digit, space};
     use celma_core::parser::core::eos;
-    use celma_core::parser::fmap::FMapOperation;
+    use celma_core::parser::map::MapOperation;
     use celma_core::parser::response::Response;
     use celma_core::parser::satisfy::Satisfy;
     use celma_core::parser::specs::{Combine, Parse};
@@ -50,7 +50,7 @@ mod tests_transpiler {
             Token::Int(_) => true,
             _ => false,
         })
-        .fmap(|v| match v {
+        .map(|v| match v {
             Token::Int(i) => i,
             _ => panic!(),
         })
@@ -64,7 +64,7 @@ mod tests_transpiler {
             Token::Keyword(s) => *s == *k,
             _ => false,
         })
-        .fmap(|v| match v {
+        .map(|v| match v {
             Token::Keyword(s) => s.clone(),
             _ => panic!(),
         })

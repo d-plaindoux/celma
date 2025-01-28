@@ -64,7 +64,7 @@ impl Transpile<TokenStream> for ASTParsecRule {
                 use celma_core::parser::and::AndOperation;
                 use celma_core::parser::check::check;
                 use celma_core::parser::lookahead::lookahead;
-                use celma_core::parser::fmap::FMapOperation;
+                use celma_core::parser::map::MapOperation;
                 use celma_core::parser::not::NotOperation;
                 use celma_core::parser::option::OptionalOperation;
                 use celma_core::parser::or::OrOperation;
@@ -86,7 +86,7 @@ impl Transpile<TokenStream> for ASTParsec {
                 use celma_core::parser::a_try::a_try;
                 use celma_core::parser::and::AndOperation;
                 use celma_core::parser::check::check;
-                use celma_core::parser::fmap::FMapOperation;
+                use celma_core::parser::map::MapOperation;
                 use celma_core::parser::not::NotOperation;
                 use celma_core::parser::option::OptionalOperation;
                 use celma_core::parser::or::OrOperation;
@@ -122,10 +122,10 @@ impl TranspileBody<(Option<String>, TokenStream)> for ASTParsec {
                 let c = syn::parse_str::<TokenStream>(c.as_str()).unwrap();
 
                 if pp.is_none() {
-                    (None, quote!(#pt.fmap(|_|{ #c })))
+                    (None, quote!(#pt.map(|_|{ #c })))
                 } else {
                     let pp = syn::parse_str::<TokenStream>(pp.unwrap().as_str()).unwrap();
-                    (None, quote!(#pt.fmap(|#pp|{ #c })))
+                    (None, quote!(#pt.map(|#pp|{ #c })))
                 }
             }
             PSequence(l, r) => {

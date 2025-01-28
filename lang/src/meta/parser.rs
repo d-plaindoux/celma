@@ -18,7 +18,7 @@ use celma_core::parser::and::{AndOperation, AndProjection};
 use celma_core::parser::bind::BindOperation;
 use celma_core::parser::char::{a_char, char_in_range, char_in_set, not_char};
 use celma_core::parser::core::{eos, fail, parser, returns};
-use celma_core::parser::fmap::FMapOperation;
+use celma_core::parser::map::MapOperation;
 use celma_core::parser::lazy::lazy;
 use celma_core::parser::literal::{delimited_char, delimited_string, string};
 use celma_core::parser::option::OptionalOperation;
@@ -41,7 +41,7 @@ where
 {
     char_in_set(vec!['\n', '\r', '\t', ' '])
         .opt_rep()
-        .fmap(|_| ())
+        .map(|_| ())
 }
 
 #[inline]
@@ -63,7 +63,7 @@ where
     }))
     .or(a_char('_')))
     .rep()
-    .fmap(|v| v.into_iter().collect())
+    .map(|v| v.into_iter().collect())
     .bind(|s| {
         if s == *"let" {
             parser(fail(false))
@@ -94,7 +94,7 @@ where
         .and_left(skip())
         .and(parsec())
         .and_left(skip())
-        .fmap(
+        .map(
             |(((n, i), r), b): (((String, Option<String>), String), ASTParsec)| ASTParsecRule {
                 name: n,
                 input: i.unwrap_or(String::from("char")),
@@ -122,7 +122,7 @@ where
         .and(additional().opt())
         .and_left(skip())
         .and(transform().opt())
-        .fmap(|((((bind, atom), occ), add), trans)| {
+        .map(|((((bind, atom), occ), add), trans)| {
             let occ = if let Some(value) = occ {
                 match value {
                     '?' => POptional(Box::new(atom)),
@@ -182,7 +182,7 @@ where
 {
     a_char('|')
         .opt()
-        .fmap(|o| o.is_some())
+        .map(|o| o.is_some())
         .and_left(skip())
         .and(lazy(|| parser(parsec())))
 }
@@ -195,19 +195,19 @@ where
     a_char('^')
         .and_left(skip())
         .and_right(atom2())
-        .fmap(|p| PNot(Box::new(p)))
+        .map(|p| PNot(Box::new(p)))
         .or(a_char('!')
             .and_left(skip())
             .and_right(atom2())
-            .fmap(|p| PTry(Box::new(p))))
+            .map(|p| PTry(Box::new(p))))
         .or(a_char('#')
             .and_left(skip())
             .and_right(atom2())
-            .fmap(|p| PCheck(Box::new(p))))
+            .map(|p| PCheck(Box::new(p))))
         .or(a_char('/')
             .and_left(skip())
             .and_right(atom2())
-            .fmap(|p| PLookahead(Box::new(p))))
+            .map(|p| PLookahead(Box::new(p))))
         .or(atom2())
 }
 
@@ -221,10 +221,10 @@ where
         .and_right(lazy(|| parser(parsec())))
         .and_left(skip())
         .and_left(a_char(')')))
-    .or(code().fmap(PCode))
-    .or(delimited_char().fmap(PChar))
-    .or(delimited_string().fmap(PString))
-    .or(ident().fmap(PIdent))
+    .or(code().map(PCode))
+    .or(delimited_char().map(PChar))
+    .or(delimited_string().map(PString))
+    .or(ident().map(PIdent))
 }
 
 #[inline]
@@ -242,7 +242,7 @@ where
     a_char('{')
         .and_right(not_char('}').opt_rep())
         .and_left(a_char('}'))
-        .fmap(|v| v.into_iter().collect())
+        .map(|v| v.into_iter().collect())
 }
 
 fn code<'a, S>() -> impl Parse<String, S> + Combine<String> + 'a
@@ -252,7 +252,7 @@ where
     a_char('{')
         .and_right(not_char('}').opt_rep())
         .and_left(a_char('}'))
-        .fmap(|v| v.into_iter().collect())
+        .map(|v| v.into_iter().collect())
 }
 
 // -------------------------------------------------------------------------------------------------
