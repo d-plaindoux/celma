@@ -30,7 +30,7 @@ mod tests_and {
             .map(|ast| ast.transpile_body());
 
         match response {
-            Success((_, ast), _, _) => assert_eq!(
+            Success(Ok((_, ast)), _, _) => assert_eq!(
                 ast.to_string(),
                 quote!(celma_core::parser::char::a_char('a')).to_string()
             ),
@@ -45,7 +45,7 @@ mod tests_and {
             .map(|ast| ast.transpile_body());
 
         match response {
-            Success((_, ast), _, _) => assert_eq!(
+            Success(Ok((_, ast)), _, _) => assert_eq!(
                 ast.to_string(),
                 quote!(celma_core::parser::char::a_char('a')
                     .and_right(celma_core::parser::char::a_char('b')))
@@ -62,7 +62,7 @@ mod tests_and {
             .map(|ast| ast.transpile_body());
 
         match response {
-            Success((_, ast), _, _) => assert_eq!(
+            Success(Ok((_, ast)), _, _) => assert_eq!(
                 ast.to_string(),
                 quote!(celma_core::parser::char::a_char('a')
                     .and_right(a_try(celma_core::parser::char::a_char('b'))))
@@ -79,7 +79,7 @@ mod tests_and {
             .map(|ast| ast.transpile_body());
 
         match response {
-            Success((_, ast), _, _) => assert_eq!(
+            Success(Ok((_, ast)), _, _) => assert_eq!(
                 ast.to_string(),
                 quote!(celma_core::parser::char::a_char('a')
                     .and_right(lookahead(celma_core::parser::char::a_char('b'))))
@@ -96,7 +96,7 @@ mod tests_and {
             .map(|ast| ast.transpile_body());
 
         match response {
-            Success((params, ast), _, _) => {
+            Success(Ok((params, ast)), _, _) => {
                 assert_eq!(
                     ast.to_string(),
                     quote!(celma_core::parser::char::a_char('a')
@@ -116,7 +116,7 @@ mod tests_and {
             .map(|ast| ast.transpile_body());
 
         match response {
-            Success((params, _), _, _) => assert_eq!(params, Some(String::from("(a,b)"))),
+            Success(Ok((params, _)), _, _) => assert_eq!(params, Some(String::from("(a,b)"))),
             _ => assert_eq!(true, false),
         };
     }
@@ -128,7 +128,7 @@ mod tests_and {
             .map(|ast| ast.transpile_body());
 
         match response {
-            Success((params, ast), _, _) => {
+            Success(Ok((params, ast)), _, _) => {
                 assert_eq!(
                     ast.to_string(),
                     quote!(celma_core::parser::char::a_char('a').and(
@@ -150,7 +150,7 @@ mod tests_and {
             .map(|ast| ast.transpile_body());
 
         match response {
-            Success((params, ast), _, _) => {
+            Success(Ok((params, ast)), _, _) => {
                 assert_eq!(
                     ast.to_string(),
                     quote!(celma_core::parser::char::a_char('a').and(
@@ -172,7 +172,7 @@ mod tests_and {
             .map(|ast| ast.transpile_body());
 
         match response {
-            Success((_, ast), _, _) => assert_eq!(
+            Success(Ok((_, ast)), _, _) => assert_eq!(
                 ast.to_string(),
                 quote!(
                     celma_core::parser::char::a_char('a').or(celma_core::parser::char::a_char('b'))

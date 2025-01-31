@@ -52,12 +52,13 @@ where
     fn next(&self) -> (Option<Self::Item>, Self) {
         let option = self.0.chars().next();
 
-        if option.is_some() {
-            let np = self.1.step(option.unwrap() == '\n');
-
+        if let Some(c) = option {
             (
                 option,
-                CharStream(self.0.get(1..self.0.len()).unwrap_or(""), np),
+                CharStream(
+                    self.0.get(1..self.0.len()).unwrap_or(""),
+                    self.1.step(c == '\n'),
+                ),
             )
         } else {
             (None, CharStream(self.0, self.1.clone()))

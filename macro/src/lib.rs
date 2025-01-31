@@ -16,14 +16,13 @@
 
 extern crate proc_macro;
 
-use proc_macro::TokenStream;
-
 use celma_core::parser::response::Response::{Reject, Success};
 use celma_core::parser::specs::Parse;
 use celma_core::stream::char_stream::CharStream;
 use celma_core::stream::specs::Stream;
 use celma_lang::meta::parser::{celma_parsec, celma_parsec_rules};
 use celma_lang::meta::transpiler::Transpile;
+use proc_macro::TokenStream;
 
 #[proc_macro]
 pub fn parsec(input: TokenStream) -> TokenStream {
@@ -33,8 +32,11 @@ pub fn parsec(input: TokenStream) -> TokenStream {
         .map(|ast| ast.transpile());
 
     match result {
-        Success(code, _, _) => code.into(),
-        Reject(s, _) => panic!("Error at {:?}", s.position()),
+        Success(code, _, _) => match code {
+            Ok(code) => code.into(),
+            Err(err) => panic!("{}", err.into_compile_error()),
+        },
+        Reject(s, _) => panic!("Parse error at {:?}", s.position()),
     }
 }
 
@@ -46,7 +48,10 @@ pub fn parsec_rules(input: TokenStream) -> TokenStream {
         .map(|ast| ast.transpile());
 
     match result {
-        Success(code, _, _) => code.into(),
-        Reject(s, _) => panic!("Error at {:?}", s.position()),
+        Success(code, _, _) => match code {
+            Ok(code) => code.into(),
+            Err(err) => panic!("{}", err.into_compile_error()),
+        },
+        Reject(s, _) => panic!("Parse error at {:?}", s.position()),
     }
 }

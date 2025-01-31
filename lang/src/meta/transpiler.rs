@@ -16,32 +16,35 @@
 
 extern crate proc_macro;
 
-use proc_macro2::{Span, TokenStream};
-use quote::quote;
-
 use crate::meta::syntax::ASTParsec;
 use crate::meta::syntax::ASTParsec::{
     PBind, PChar, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional, PRepeat,
     PSequence, PString, PTry,
 };
 use crate::meta::syntax::ASTParsecRule;
+use proc_macro2::{Span, TokenStream};
+use quote::quote;
+use syn::Error;
 
 pub trait Transpile<E> {
-    fn transpile(&self) -> E;
+    fn transpile(&self) -> Result<E, Error>;
 }
 
 impl Transpile<TokenStream> for Vec<ASTParsecRule> {
-    fn transpile(&self) -> TokenStream {
-        let parsers: TokenStream = self.iter().map(|a| a.transpile()).collect();
+    fn transpile(&self) -> Result<TokenStream, Error> {
+        let parsers: TokenStream = self
+            .iter()
+            .map(|a| a.transpile())
+            .collect::<Result<TokenStream, Error>>()?;
 
-        quote!(
+        Ok(quote!(
             #parsers
-        )
+        ))
     }
 }
 
 impl Transpile<TokenStream> for ASTParsecRule {
-    fn transpile(&self) -> TokenStream {
+    fn transpile(&self) -> Result<TokenStream, Error> {
         let Self {
             name,
             input,
@@ -50,11 +53,11 @@ impl Transpile<TokenStream> for ASTParsecRule {
         } = self;
 
         let name = syn::Ident::new(name.as_str(), Span::call_site());
-        let input = syn::parse_str::<TokenStream>(input.as_str()).unwrap();
-        let returns = syn::parse_str::<TokenStream>(returns.as_str()).unwrap();
-        let body = body.transpile_body().1;
+        let input = syn::parse_str::<TokenStream>(input.as_str())?;
+        let returns = syn::parse_str::<TokenStream>(returns.as_str())?;
+        let body = body.transpile_body()?.1;
 
-        quote!(
+        Ok(quote!(
             pub fn #name<'a,S:'a>() -> impl celma_core::parser::specs::Parse<#returns,S> +
                                             celma_core::parser::specs::Combine<#returns> +
                                             'a
@@ -73,15 +76,15 @@ impl Transpile<TokenStream> for ASTParsecRule {
 
                 celma_core::parser::core::parser(#body)
             }
-        )
+        ))
     }
 }
 
 impl Transpile<TokenStream> for ASTParsec {
-    fn transpile(&self) -> TokenStream {
-        let body = self.transpile_body().1;
+    fn transpile(&self) -> Result<TokenStream, Error> {
+        let body = self.transpile_body()?.1;
 
-        quote!(
+        Ok(quote!(
             {
                 use celma_core::parser::a_try::a_try;
                 use celma_core::parser::and::AndOperation;
@@ -95,87 +98,86 @@ impl Transpile<TokenStream> for ASTParsec {
 
                 celma_core::parser::core::parser(#body)
             }
-        )
+        ))
     }
 }
 
 pub trait TranspileBody<E> {
-    fn transpile_body(&self) -> E;
+    fn transpile_body(&self) -> Result<E, Error>;
 }
 
 impl TranspileBody<(Option<String>, TokenStream)> for ASTParsec {
-    fn transpile_body(&self) -> (Option<String>, TokenStream) {
+    fn transpile_body(&self) -> Result<(Option<String>, TokenStream), Error> {
         match self {
-            PBind(n, p) => (Some(n.clone()), p.transpile_body().1),
+            PBind(n, p) => Ok((Some(n.clone()), p.transpile_body()?.1)),
             PIdent(n) => {
                 let n = syn::Ident::new(n, Span::call_site());
-                (None, quote!(celma_core::parser::lazy::lazy(|| #n())))
+                Ok((None, quote!(celma_core::parser::lazy::lazy(|| #n()))))
             }
-            PChar(c) => (None, quote!(celma_core::parser::char::a_char(#c))),
-            PString(s) => (None, quote!(celma_core::parser::literal::string(#s))),
+            PChar(c) => Ok((None, quote!(celma_core::parser::char::a_char(#c)))),
+            PString(s) => Ok((None, quote!(celma_core::parser::literal::string(#s)))),
             PCode(c) => {
                 let c = syn::parse_str::<TokenStream>(c.as_str()).unwrap();
-                (None, quote!(#c))
+                Ok((None, quote!(#c)))
             }
             PMap(p, c) => {
-                let (pp, pt) = p.transpile_body();
-                let c = syn::parse_str::<TokenStream>(c.as_str()).unwrap();
+                let (pp, pt) = p.transpile_body()?;
+                let c = syn::parse_str::<TokenStream>(c.as_str())?;
 
-                if pp.is_none() {
-                    (None, quote!(#pt.map(|_|{ #c })))
+                if let Some(p) = pp {
+                    let pp = syn::parse_str::<TokenStream>(p.as_str())?;
+                    Ok((None, quote!(#pt.map(|#pp|{ #c }))))
                 } else {
-                    let pp = syn::parse_str::<TokenStream>(pp.unwrap().as_str()).unwrap();
-                    (None, quote!(#pt.map(|#pp|{ #c })))
+                    Ok((None, quote!(#pt.map(|_|{ #c }))))
                 }
             }
             PSequence(l, r) => {
-                let (lp, lt) = l.transpile_body();
-                let (rp, rt) = r.transpile_body();
+                let (lp, lt) = l.transpile_body()?;
+                let (rp, rt) = r.transpile_body()?;
 
                 if lp.is_none() {
-                    (rp, quote!(#lt.and_right(#rt)))
+                    Ok((rp, quote!(#lt.and_right(#rt))))
                 } else if rp.is_none() {
-                    (lp, quote!(#lt.and_left(#rt)))
+                    Ok((lp, quote!(#lt.and_left(#rt))))
                 } else {
-                    (
+                    Ok((
                         Some(format!("({},{})", lp.unwrap(), rp.unwrap())),
                         quote!(#lt.and(#rt)),
-                    )
+                    ))
                 }
             }
             PChoice(l, r) => {
-                let (_, lt) = l.transpile_body();
-                let (_, rt) = r.transpile_body();
-
-                (None, quote!(#lt.or(#rt)))
+                let (_, lt) = l.transpile_body()?;
+                let (_, rt) = r.transpile_body()?;
+                Ok((None, quote!(#lt.or(#rt))))
             }
             PNot(p) => {
-                let (_, pt) = p.transpile_body();
-                (None, quote!(#pt.not()))
+                let (_, pt) = p.transpile_body()?;
+                Ok((None, quote!(#pt.not())))
             }
             PTry(p) => {
-                let (_, pt) = p.transpile_body();
-                (None, quote!(a_try(#pt)))
+                let (_, pt) = p.transpile_body()?;
+                Ok((None, quote!(a_try(#pt))))
             }
             PCheck(p) => {
-                let (_, pt) = p.transpile_body();
-                (None, quote!(check(#pt)))
+                let (_, pt) = p.transpile_body()?;
+                Ok((None, quote!(check(#pt))))
             }
             POptional(p) => {
-                let (_, pt) = p.transpile_body();
-                (None, quote!(#pt.opt()))
+                let (_, pt) = p.transpile_body()?;
+                Ok((None, quote!(#pt.opt())))
             }
             PRepeat(b, p) => {
-                let (_, pt) = p.transpile_body();
+                let (_, pt) = p.transpile_body()?;
                 if *b {
-                    (None, quote!(#pt.opt_rep()))
+                    Ok((None, quote!(#pt.opt_rep())))
                 } else {
-                    (None, quote!(#pt.rep()))
+                    Ok((None, quote!(#pt.rep())))
                 }
             }
             PLookahead(p) => {
-                let (_, pt) = p.transpile_body();
-                (None, quote!(lookahead(#pt)))
+                let (_, pt) = p.transpile_body()?;
+                Ok((None, quote!(lookahead(#pt))))
             }
         }
     }

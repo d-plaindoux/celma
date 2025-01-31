@@ -29,7 +29,7 @@ use celma_core::parser::char::{alpha, digit};
 
 fn mk_rule(name: String, input: Option<String>, output: String, body: ASTParsec) -> ASTParsecRule {
     ASTParsecRule {
-        name: name,
+        name,
         input: input.unwrap_or(String::from("char")),
         returns: output,
         body: Box::new(body),
@@ -99,17 +99,16 @@ parsec_rules!(
         skip b=!(binding)? a=atom o=('?'|'*'|'+')? d=additional? t=transform? skip
     ) -> { mk_ast_parsec(b, a, o, d, t) }
 
-    let binding:{String} = (skip _=ident '=' skip)
-
-    let additional:{(bool,ASTParsec)} = ( skip c='|'? skip p=parsec) -> { (c.is_some(), p) }
+    let binding:{String} = skip _=ident '=' skip
+    let additional:{(bool,ASTParsec)} = (skip c='|'? skip p=parsec) -> { (c.is_some(), p) }
 
     let atom:{ASTParsec} = (
         skip o=('^'|'!'|'#'|'/')? skip p=(atom_block|atom_char|atom_string|atom_code) skip
     ) -> { mk_atom(o, p) }
 
-    let atom_block:{ASTParsec} = ('(' _=parsec ')')
-    let atom_char:{ASTParsec} = (c=delimited_char) -> { PChar(c) }
-    let atom_string:{ASTParsec} = (c=delimited_string)-> { PString(c) }
+    let atom_block:{ASTParsec} = '(' _=parsec ')'
+    let atom_char:{ASTParsec} = c=delimited_char -> { PChar(c) }
+    let atom_string:{ASTParsec} = c=delimited_string -> { PString(c) }
     let atom_code:{ASTParsec} = c=code -> { PCode(c) }
     let atom_ident:{ASTParsec} = c=ident -> { PIdent(c) }
 

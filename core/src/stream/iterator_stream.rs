@@ -67,10 +67,15 @@ where
         let mut this = self.clone(); // Mutability required by the Iterator::next call (below)
         let option = this.0.next();
 
-        if let Some(value) = option.clone() {
+        if option.is_some() {
             (
-                option,
-                IteratorStream(this.0, this.1.step(value.is_end_line()), PhantomData),
+                option.clone(),
+                IteratorStream(
+                    this.0,
+                    this.1
+                        .step(option.is_some_and(|v: Self::Item| v.is_end_line())),
+                    PhantomData,
+                ),
             )
         } else {
             (option, IteratorStream(this.0, this.1, PhantomData))

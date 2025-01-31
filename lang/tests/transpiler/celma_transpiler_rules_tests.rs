@@ -34,7 +34,7 @@ mod tests_and {
 
         match response {
             Success(ast, _, _) => assert_eq!(
-                ast.to_string(),
+                ast.unwrap().to_string(),
                 quote!(
                     pub fn a<'a, S: 'a>() -> impl celma_core::parser::specs::Parse<Vec<char>, S>
                            + celma_core::parser::specs::Combine<Vec<char> >
