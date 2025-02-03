@@ -19,9 +19,9 @@ mod tests_and {
     use celma_core::parser::response::Response::{Reject, Success};
     use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
-    use celma_lang::meta::parser::celma_parsec_rules;
-    use celma_lang::meta::syntax::ASTParsec::{PChar, PChoice, PCode};
-    use celma_lang::meta::syntax::ASTParsecRule;
+    use celma_lang_v0::meta::parser::celma_parsec_rules;
+    use celma_lang_v0::meta::syntax::ASTParsec::{PChar, PChoice, PCode};
+    use celma_lang_v0::meta::syntax::ASTParsecRule;
 
     #[test]
     fn it_parse_one_char_rule() {

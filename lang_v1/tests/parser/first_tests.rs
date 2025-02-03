@@ -16,9 +16,9 @@
 
 #[cfg(test)]
 mod tests {
-    use celma_bootstrap::bootstrap::syntax::ASTParsec::{PChar, PIdent};
-    use celma_bootstrap::bootstrap::token::First;
-    use celma_bootstrap::bootstrap::token::Token::{AllAtom, Atom};
+    use celma_lang_v1::parser::syntax::ASTParsec::{PChar, PIdent};
+    use celma_lang_v1::parser::token::First;
+    use celma_lang_v1::parser::token::Token::{AllAtom, Atom};
 
     #[test]
     fn it_compute_first_for_ident() {

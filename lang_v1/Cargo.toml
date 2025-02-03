@@ -1,5 +1,5 @@
 [package]
-name = "celma_bootstrap"
+name = "celma_lang_v1"
 version = "0.1.0"
 authors = ["d-plaindoux <d.plaindoux@free.fr>"]
 edition = "2021"

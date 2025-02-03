@@ -19,8 +19,8 @@ mod tests_and {
     use celma_core::parser::response::Response::Success;
     use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
-    use celma_lang::meta::parser::celma_parsec;
-    use celma_lang::meta::transpiler::TranspileBody;
+    use celma_lang_v0::meta::parser::celma_parsec;
+    use celma_lang_v0::meta::transpiler::TranspileBody;
     use quote::quote;
 
     #[test]

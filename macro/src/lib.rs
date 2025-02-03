@@ -20,8 +20,8 @@ use celma_core::parser::response::Response::{Reject, Success};
 use celma_core::parser::specs::Parse;
 use celma_core::stream::char_stream::CharStream;
 use celma_core::stream::specs::Stream;
-use celma_lang::meta::parser::{celma_parsec, celma_parsec_rules};
-use celma_lang::meta::transpiler::Transpile;
+use celma_lang_v0::meta::parser::{celma_parsec, celma_parsec_rules};
+use celma_lang_v0::meta::transpiler::Transpile;
 use proc_macro::TokenStream;
 
 #[proc_macro]

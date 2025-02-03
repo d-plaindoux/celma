@@ -17,11 +17,11 @@
 use celma_core::parser::core::eos;
 use celma_core::parser::literal::{delimited_char, delimited_string};
 
-use crate::bootstrap::syntax::ASTParsec::{
+use crate::parser::syntax::ASTParsec::{
     PBind, PChar, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional, PRepeat,
     PSequence, PString, PTry,
 };
-use crate::bootstrap::syntax::{ASTParsec, ASTParsecRule};
+use crate::parser::syntax::{ASTParsec, ASTParsecRule};
 use celma_macro::parsec_rules;
 
 use celma_core::parser::char::space;

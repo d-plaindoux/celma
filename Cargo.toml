@@ -2,9 +2,9 @@
 resolver = "2"
 members = [
     "core",
-    "lang",
+    "lang_v0",
     "macro",
-    "bootstrap",
+    "lang_v1",
     "extension"
 ]
 

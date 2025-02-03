@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-use crate::bootstrap::syntax::ASTParsec;
-use crate::bootstrap::token::Token::{AllAtom, Atom};
-use crate::bootstrap::token::{First, Token};
+use crate::parser::syntax::ASTParsec;
+use crate::parser::token::Token::{AllAtom, Atom};
+use crate::parser::token::{First, Token};
 
 impl First<char> for ASTParsec {
     fn first(&self) -> Vec<Token<char>> {
