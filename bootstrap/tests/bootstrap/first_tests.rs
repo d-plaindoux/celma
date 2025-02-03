@@ -1,8 +1,5 @@
 /*
  * Copyright 2019-2025 Didier Plaindoux
-=======
- * Copyright 2019-2021 Didier Plaindoux
->>>>>>> 45ec19c (Manage compiler warnings and change License header)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +16,9 @@
 
 #[cfg(test)]
 mod tests {
-    use celma_lang::meta::syntax::ASTParsec::{PChar, PIdent};
-    use celma_lang::meta::token::First;
-    use celma_lang::meta::token::Token::{AllAtom, Atom};
+    use celma_bootstrap::bootstrap::syntax::ASTParsec::{PChar, PIdent};
+    use celma_bootstrap::bootstrap::token::First;
+    use celma_bootstrap::bootstrap::token::Token::{AllAtom, Atom};
 
     #[test]
     fn it_compute_first_for_ident() {
