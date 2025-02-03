@@ -1,0 +1,11 @@
+[package]
+name = "celma_lang_v0"
+version = "0.1.0"
+authors = ["dplaindoux <d.plaindoux@fungus.fr>"]
+edition = "2021"
+
+[dependencies]
+celma_core = { version = "0.1.0", path = "../../../core" }
+proc-macro2 = "1.0.93"
+quote = "1.0.38"
+syn = "2.0.96"

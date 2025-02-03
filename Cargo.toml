@@ -2,9 +2,9 @@
 resolver = "2"
 members = [
     "core",
-    "lang_v0",
-    "macro",
-    "lang_v1",
+    "lang/v0/parser",
+    "lang/v0/macro",
+    "lang/v1/parser",
     "extension"
 ]
 

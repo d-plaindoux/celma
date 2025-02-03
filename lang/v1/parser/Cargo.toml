@@ -1,0 +1,9 @@
+[package]
+name = "celma_lang_v1"
+version = "0.1.0"
+authors = ["dplaindoux <d.plaindoux@fungus.fr>"]
+edition = "2021"
+
+[dependencies]
+celma_core = { version = "0.1.0", path = "../../../core" }
+celma_macro_v0 = { version = "0.1.0", path = "../../v0/macro" }
