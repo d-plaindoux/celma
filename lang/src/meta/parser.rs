@@ -65,7 +65,7 @@ where
     .rep()
     .map(|v| v.into_iter().collect())
     .bind(|s| {
-        if s == *"let" || s == *"pub" {
+        if s == *"let" {
             parser(fail(false))
         } else {
             parser(returns(s))
@@ -80,10 +80,7 @@ fn parsec_rules<'a, S>() -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<ASTP
 where
     S: Stream<Item = char> + 'a,
 {
-    string("pub")
-        .opt()
-        .and_left(skip())
-        .and_left(string("let"))
+    string("let")
         .and_left(skip())
         .and_right(ident())
         .and_left(skip())

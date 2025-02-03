@@ -122,6 +122,6 @@ parsec_rules!(
     let transform:{String} = (skip "->" skip _=code)
 
     // Main entries
-    pub let celma_parsec:{ASTParsec} = (_=parsec eos)
-    pub let celma_parsec_rules:{Vec<ASTParsecRule>} = (_=rules eos)
+    let celma_parsec:{ASTParsec} = (_=parsec eos)
+    let celma_parsec_rules:{Vec<ASTParsecRule>} = (_=rules eos)
 );
