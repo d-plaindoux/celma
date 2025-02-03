@@ -1,6 +1,5 @@
 # Celma 
 
-[![Build Status](https://travis-ci.org/d-plaindoux/celma.svg?branch=master)](https://travis-ci.org/d-plaindoux/celma)
 [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
 [Celma ("k")noun "channel" (KEL) in Quenya](https://www.elfdict.com/w/kelma)
@@ -17,7 +16,7 @@ Generalization is the capability to design a parser based on pipelined parsers a
 In order to have a seamless parser definition two dedicated `proc_macro` are designed:
 
 ```rust
-parsec_rules = ("let" ident ('{' rust_type '}')? ':' '{' rust_type '}' "=" parser)+
+parsec_rules = ("private"? "let" ident ('{' rust_type '}')? ':' '{' rust_type '}' "=" parser)+
 parser       = binding? atom occurrence? additional? transform?
 ```
 

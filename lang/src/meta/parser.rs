@@ -18,9 +18,9 @@ use celma_core::parser::and::{AndOperation, AndProjection};
 use celma_core::parser::bind::BindOperation;
 use celma_core::parser::char::{a_char, char_in_range, char_in_set, not_char};
 use celma_core::parser::core::{eos, fail, parser, returns};
-use celma_core::parser::map::MapOperation;
 use celma_core::parser::lazy::lazy;
 use celma_core::parser::literal::{delimited_char, delimited_string, string};
+use celma_core::parser::map::MapOperation;
 use celma_core::parser::option::OptionalOperation;
 use celma_core::parser::or::OrOperation;
 use celma_core::parser::repeat::RepeatOperation;
@@ -65,7 +65,7 @@ where
     .rep()
     .map(|v| v.into_iter().collect())
     .bind(|s| {
-        if s == *"let" {
+        if s == *"let" || s == *"pub" {
             parser(fail(false))
         } else {
             parser(returns(s))
@@ -80,7 +80,10 @@ fn parsec_rules<'a, S>() -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<ASTP
 where
     S: Stream<Item = char> + 'a,
 {
-    string("let")
+    string("pub")
+        .opt()
+        .and_left(skip())
+        .and_left(string("let"))
         .and_left(skip())
         .and_right(ident())
         .and_left(skip())
