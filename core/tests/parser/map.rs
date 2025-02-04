@@ -20,8 +20,8 @@ mod tests_monadic {
     use celma_core::parser::bind::BindOperation;
     use celma_core::parser::char::a_char;
     use celma_core::parser::core::eos;
-    use celma_core::parser::map::MapOperation;
     use celma_core::parser::literal::string;
+    use celma_core::parser::map::MapOperation;
     use celma_core::parser::repeat::RepeatOperation;
     use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;

@@ -1,6 +1,6 @@
 /*
  * Copyright 2019-2025 Didier Plaindoux
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,12 +16,11 @@
 
 extern crate proc_macro;
 
-use crate::syntax::ASTParsec;
-use crate::syntax::ASTParsec::{
-    PBind, PChar, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional, PRepeat,
-    PSequence, PString, PTry,
+use celma_lang_ast::syntax::ASTParsec::{
+    PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional,
+    PRepeat, PSequence, PTry,
 };
-use crate::syntax::ASTParsecRule;
+use celma_lang_ast::syntax::{ASTParsec, ASTParsecRule};
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::Error;
@@ -30,7 +29,7 @@ pub trait Transpile<E> {
     fn transpile(&self) -> Result<E, Error>;
 }
 
-impl Transpile<TokenStream> for Vec<ASTParsecRule> {
+impl Transpile<TokenStream> for Vec<ASTParsecRule<char>> {
     fn transpile(&self) -> Result<TokenStream, Error> {
         let parsers: TokenStream = self
             .iter()
@@ -43,13 +42,14 @@ impl Transpile<TokenStream> for Vec<ASTParsecRule> {
     }
 }
 
-impl Transpile<TokenStream> for ASTParsecRule {
+impl Transpile<TokenStream> for ASTParsecRule<char> {
     fn transpile(&self) -> Result<TokenStream, Error> {
         let Self {
             name,
             input,
             returns,
-            body,
+            rule: body,
+            ..
         } = self;
 
         let name = syn::Ident::new(name.as_str(), Span::call_site());
@@ -80,7 +80,7 @@ impl Transpile<TokenStream> for ASTParsecRule {
     }
 }
 
-impl Transpile<TokenStream> for ASTParsec {
+impl Transpile<TokenStream> for ASTParsec<char> {
     fn transpile(&self) -> Result<TokenStream, Error> {
         let body = self.transpile_body()?.1;
 
@@ -106,7 +106,7 @@ pub trait TranspileBody<E> {
     fn transpile_body(&self) -> Result<E, Error>;
 }
 
-impl TranspileBody<(Option<String>, TokenStream)> for ASTParsec {
+impl TranspileBody<(Option<String>, TokenStream)> for ASTParsec<char> {
     fn transpile_body(&self) -> Result<(Option<String>, TokenStream), Error> {
         match self {
             PBind(n, p) => Ok((Some(n.clone()), p.transpile_body()?.1)),
@@ -114,8 +114,11 @@ impl TranspileBody<(Option<String>, TokenStream)> for ASTParsec {
                 let n = syn::Ident::new(n, Span::call_site());
                 Ok((None, quote!(celma_core::parser::lazy::lazy(|| #n()))))
             }
-            PChar(c) => Ok((None, quote!(celma_core::parser::char::a_char(#c)))),
-            PString(s) => Ok((None, quote!(celma_core::parser::literal::string(#s)))),
+            PAtom(c) => Ok((None, quote!(celma_core::parser::char::a_char(#c)))),
+            PAtoms(s) => {
+                let s = s.into_iter().collect::<String>();
+                Ok((None, quote!(celma_core::parser::literal::string(#s))))
+            }
             PCode(c) => {
                 let c = syn::parse_str::<TokenStream>(c.as_str()).unwrap();
                 Ok((None, quote!(#c)))

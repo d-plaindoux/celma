@@ -49,3 +49,13 @@ impl<E> HasLambda for Vec<Token<E>> {
 pub trait First<I> {
     fn first(&self) -> Vec<Token<I>>;
 }
+
+pub struct Types<I> {
+    pub null: bool,
+    pub first: Vec<I>,
+    pub last: Vec<I>,
+}
+
+pub trait FirstFollow<I> {
+    fn first_follow(&self) -> Types<I>;
+}

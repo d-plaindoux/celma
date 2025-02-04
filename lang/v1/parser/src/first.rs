@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-use crate::syntax::ASTParsec;
 use crate::token::Token::{AllAtom, Atom};
 use crate::token::{First, Token};
+use celma_lang_ast::syntax::ASTParsec;
 
-impl First<char> for ASTParsec {
+impl First<char> for ASTParsec<char> {
     fn first(&self) -> Vec<Token<char>> {
         match self {
             ASTParsec::PIdent(_) => vec![AllAtom],
-            ASTParsec::PChar(c) => vec![Atom(*c)],
-            ASTParsec::PString(s) => s.chars().next().map(|c| vec![Atom(c)]).unwrap_or(vec![]),
+            ASTParsec::PAtom(c) => vec![Atom(*c)],
+            ASTParsec::PAtoms(s) => vec![Atom(s[0])], // /!\ Should not be empty !
             ASTParsec::PBind(_, p) => p.first(),
             ASTParsec::PCode(_) => vec![AllAtom],
             ASTParsec::PMap(p, _) => p.first(),

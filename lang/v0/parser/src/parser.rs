@@ -1,6 +1,6 @@
 /*
  * Copyright 2019-2025 Didier Plaindoux
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,11 +28,11 @@ use celma_core::parser::specs::{Combine, Parse};
 use celma_core::stream::specs::Stream;
 use std::ops::Range;
 
-use crate::syntax::ASTParsec::{
-    PBind, PChar, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional, PRepeat,
-    PSequence, PString, PTry,
+use celma_lang_ast::syntax::ASTParsec::{
+    PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional,
+    PRepeat, PSequence, PTry,
 };
-use crate::syntax::{ASTParsec, ASTParsecRule};
+use celma_lang_ast::syntax::{ASTParsec, ASTParsecRule};
 
 #[inline]
 fn skip<'a, S>() -> impl Parse<(), S> + Combine<()> + 'a
@@ -76,7 +76,8 @@ where
 // -------------------------------------------------------------------------------------------------
 
 #[inline]
-fn parsec_rules<'a, S>() -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<ASTParsecRule>> + 'a
+fn parsec_rules<'a, S>(
+) -> impl Parse<Vec<ASTParsecRule<char>>, S> + Combine<Vec<ASTParsecRule<char>>> + 'a
 where
     S: Stream<Item = char> + 'a,
 {
@@ -95,11 +96,14 @@ where
         .and(parsec())
         .and_left(skip())
         .map(
-            |(((n, i), r), b): (((String, Option<String>), String), ASTParsec)| ASTParsecRule {
-                name: n,
-                input: i.unwrap_or(String::from("char")),
-                returns: r,
-                body: Box::new(b),
+            |(((n, i), r), b): (((String, Option<String>), String), ASTParsec<char>)| {
+                ASTParsecRule {
+                    public: true,
+                    name: n,
+                    input: i.unwrap_or(String::from("char")),
+                    returns: r,
+                    rule: Box::new(b),
+                }
             },
         )
         .rep()
@@ -108,7 +112,7 @@ where
 // -------------------------------------------------------------------------------------------------
 
 #[inline]
-fn parsec<'a, S>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + 'a
+fn parsec<'a, S>() -> impl Parse<ASTParsec<char>, S> + Combine<ASTParsec<char>> + 'a
 where
     S: Stream<Item = char> + 'a,
 {
@@ -176,7 +180,8 @@ where
     char_in_set(vec!['+', '?', '*'])
 }
 
-fn additional<'a, S>() -> impl Parse<(bool, ASTParsec), S> + Combine<(bool, ASTParsec)> + 'a
+fn additional<'a, S>(
+) -> impl Parse<(bool, ASTParsec<char>), S> + Combine<(bool, ASTParsec<char>)> + 'a
 where
     S: Stream<Item = char> + 'a,
 {
@@ -188,7 +193,7 @@ where
 }
 
 #[inline]
-fn atom<'a, S>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + 'a
+fn atom<'a, S>() -> impl Parse<ASTParsec<char>, S> + Combine<ASTParsec<char>> + 'a
 where
     S: Stream<Item = char> + 'a,
 {
@@ -212,7 +217,7 @@ where
 }
 
 #[inline]
-fn atom2<'a, S>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + 'a
+fn atom2<'a, S>() -> impl Parse<ASTParsec<char>, S> + Combine<ASTParsec<char>> + 'a
 where
     S: Stream<Item = char> + 'a,
 {
@@ -222,8 +227,8 @@ where
         .and_left(skip())
         .and_left(a_char(')')))
     .or(code().map(PCode))
-    .or(delimited_char().map(PChar))
-    .or(delimited_string().map(PString))
+    .or(delimited_char().map(PAtom))
+    .or(delimited_string().map(|l| PAtoms(l.chars().collect())))
     .or(ident().map(PIdent))
 }
 
@@ -257,7 +262,7 @@ where
 
 // -------------------------------------------------------------------------------------------------
 
-pub fn celma_parsec<'a, S>() -> impl Parse<ASTParsec, S> + Combine<ASTParsec> + 'a
+pub fn celma_parsec<'a, S>() -> impl Parse<ASTParsec<char>, S> + Combine<ASTParsec<char>> + 'a
 where
     S: Stream<Item = char> + 'a,
 {
@@ -265,7 +270,7 @@ where
 }
 
 pub fn celma_parsec_rules<'a, S>(
-) -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<ASTParsecRule>> + 'a
+) -> impl Parse<Vec<ASTParsecRule<char>>, S> + Combine<Vec<ASTParsecRule<char>>> + 'a
 where
     S: Stream<Item = char> + 'a,
 {

@@ -16,7 +16,7 @@
 
 #[cfg(test)]
 mod tests {
-    use celma_lang_v1::syntax::ASTParsec::{PChar, PIdent};
+    use celma_lang_ast::syntax::ASTParsec::{PAtom, PIdent};
     use celma_lang_v1::token::First;
     use celma_lang_v1::token::Token::{AllAtom, Atom};
 
@@ -27,6 +27,6 @@ mod tests {
 
     #[test]
     fn it_compute_first_for_char() {
-        assert_eq!(vec![Atom('a')], PChar('a').first());
+        assert_eq!(vec![Atom('a')], PAtom('a').first());
     }
 }

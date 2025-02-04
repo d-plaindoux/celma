@@ -19,9 +19,9 @@ mod tests_and {
     use celma_core::parser::response::Response::{Reject, Success};
     use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
+    use celma_lang_ast::syntax::ASTParsec::{PAtom, PChoice, PCode};
+    use celma_lang_ast::syntax::ASTParsecRule;
     use celma_lang_v0::parser::celma_parsec_rules;
-    use celma_lang_v0::syntax::ASTParsec::{PChar, PChoice, PCode};
-    use celma_lang_v0::syntax::ASTParsecRule;
 
     #[test]
     fn it_parse_one_char_rule() {
@@ -31,10 +31,11 @@ mod tests_and {
             Success(ast, _, _) => assert_eq!(
                 ast,
                 vec!(ASTParsecRule {
+                    public: true,
                     name: String::from("a"),
                     input: String::from("char"),
                     returns: String::from("char"),
-                    body: Box::new(PChar('a')),
+                    rule: Box::new(PAtom('a')),
                 })
             ),
             _ => assert_eq!(true, false),
@@ -52,16 +53,18 @@ mod tests_and {
                 ast,
                 vec!(
                     ASTParsecRule {
+                        public: true,
                         name: String::from("a"),
                         input: String::from("char"),
                         returns: String::from("char"),
-                        body: Box::new(PCode(String::from("char(\'a\')"))),
+                        rule: Box::new(PCode(String::from("char(\'a\')"))),
                     },
                     ASTParsecRule {
+                        public: true,
                         name: String::from("b"),
                         input: String::from("char"),
                         returns: String::from("char"),
-                        body: Box::new(PCode(String::from("char(\'b\')"))),
+                        rule: Box::new(PCode(String::from("char(\'b\')"))),
                     }
                 )
             ),
@@ -80,19 +83,21 @@ mod tests_and {
                 ast,
                 vec!(
                     ASTParsecRule {
+                        public: true,
                         name: String::from("a"),
                         input: String::from("char"),
                         returns: String::from("char"),
-                        body: Box::new(PChoice(
-                            Box::new(PChar('a')),
+                        rule: Box::new(PChoice(
+                            Box::new(PAtom('a')),
                             Box::new(PCode(String::from("char(\'b\')"))),
                         )),
                     },
                     ASTParsecRule {
+                        public: true,
                         name: String::from("b"),
                         input: String::from("char"),
                         returns: String::from("char"),
-                        body: Box::new(PCode(String::from("char(\'c\')"))),
+                        rule: Box::new(PCode(String::from("char(\'c\')"))),
                     }
                 )
             ),

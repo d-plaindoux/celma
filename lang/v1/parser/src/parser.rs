@@ -17,11 +17,11 @@
 use celma_core::parser::core::eos;
 use celma_core::parser::literal::{delimited_char, delimited_string};
 
-use crate::syntax::ASTParsec::{
-    PBind, PChar, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional, PRepeat,
-    PSequence, PString, PTry,
+use celma_lang_ast::syntax::ASTParsec::{
+    PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional,
+    PRepeat, PSequence, PTry,
 };
-use crate::syntax::{ASTParsec, ASTParsecRule};
+use celma_lang_ast::syntax::{ASTParsec, ASTParsecRule};
 use celma_macro_v0::parsec_rules;
 
 use celma_core::parser::char::space;
@@ -32,24 +32,24 @@ fn mk_rule(
     name: String,
     input: Option<String>,
     returns: String,
-    body: ASTParsec,
-) -> ASTParsecRule {
+    body: ASTParsec<char>,
+) -> ASTParsecRule<char> {
     ASTParsecRule {
         public,
         name,
         input: input.unwrap_or(String::from("char")),
         returns,
-        body: Box::new(body),
+        rule: Box::new(body),
     }
 }
 
 fn mk_ast_parsec(
     bind: Option<String>,
-    atom: ASTParsec,
+    atom: ASTParsec<char>,
     occ: Option<char>,
-    add: Option<(bool, ASTParsec)>,
+    add: Option<(bool, ASTParsec<char>)>,
     trans: Option<String>,
-) -> ASTParsec {
+) -> ASTParsec<char> {
     let occ = match occ {
         Some('?') => POptional(Box::new(atom)),
         Some('*') => PRepeat(true, Box::new(atom)),
@@ -80,7 +80,7 @@ fn mk_ast_parsec(
     }
 }
 
-fn mk_atom(operation: Option<char>, parsec: ASTParsec) -> ASTParsec {
+fn mk_atom(operation: Option<char>, parsec: ASTParsec<char>) -> ASTParsec<char> {
     match operation {
         Some('^') => PNot(Box::new(parsec)),
         Some('!') => PTry(Box::new(parsec)),
@@ -97,31 +97,31 @@ parsec_rules!(
     let kind:{String} = ('{' v=^'}'* '}') -> { v.into_iter().collect() }
     let code:{String} = ('{' c=^'}'* '}') -> { c.into_iter().collect() }
 
-    let rules:{Vec<ASTParsecRule>} = rule*
-    let rule:{ASTParsecRule} = (
+    let rules:{Vec<ASTParsecRule<char>>} = rule*
+    let rule:{ASTParsecRule<char>} = (
         skip p="pub"? skip "let" n=ident i=kind? ':' r=kind '=' b=parsec skip
     ) -> { mk_rule(p.is_some(), n, i, r, b) }
 
-    let parsec:{ASTParsec} = (
+    let parsec:{ASTParsec<char>} = (
         skip b=!(binding)? a=atom o=('?'|'*'|'+')? d=additional? t=transform? skip
     ) -> { mk_ast_parsec(b, a, o, d, t) }
 
     let binding:{String} = skip _=ident '=' skip
-    let additional:{(bool,ASTParsec)} = (skip c='|'? skip p=parsec) -> { (c.is_some(), p) }
+    let additional:{(bool,ASTParsec<char>)} = (skip c='|'? skip p=parsec) -> { (c.is_some(), p) }
 
-    let atom:{ASTParsec} = (
+    let atom:{ASTParsec<char>} = (
         skip o=('^'|'!'|'#'|'/')? skip p=(atom_block|atom_char|atom_string|atom_code) skip
     ) -> { mk_atom(o, p) }
 
-    let atom_block:{ASTParsec} = '(' _=parsec ')'
-    let atom_char:{ASTParsec} = c=delimited_char -> { PChar(c) }
-    let atom_string:{ASTParsec} = c=delimited_string -> { PString(c) }
-    let atom_code:{ASTParsec} = c=code -> { PCode(c) }
-    let atom_ident:{ASTParsec} = c=ident -> { PIdent(c) }
+    let atom_block:{ASTParsec<char>} = '(' _=parsec ')'
+    let atom_char:{ASTParsec<char>} = c=delimited_char -> { PAtom(c) }
+    let atom_string:{ASTParsec<char>} = c=delimited_string -> { PAtoms(c.chars().collect()) }
+    let atom_code:{ASTParsec<char>} = c=code -> { PCode(c) }
+    let atom_ident:{ASTParsec<char>} = c=ident -> { PIdent(c) }
 
     let transform:{String} = (skip "->" skip _=code)
 
     // Main entries
-    let celma_parsec:{ASTParsec} = (_=parsec eos)
-    let celma_parsec_rules:{Vec<ASTParsecRule>} = (_=rules eos)
+    let celma_parsec:{ASTParsec<char>} = (_=parsec eos)
+    let celma_parsec_rules:{Vec<ASTParsecRule<char>>} = (_=rules eos)
 );

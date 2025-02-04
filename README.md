@@ -16,7 +16,7 @@ Generalization is the capability to design a parser based on pipelined parsers a
 In order to have a seamless parser definition two dedicated `proc_macro` are designed:
 
 ```rust
-parsec_rules = ("private"? "let" ident ('{' rust_type '}')? ':' '{' rust_type '}' "=" parser)+
+parsec_rules = "let" ident ('{' rust_type '}')? ':' '{' rust_type '}' "=" parser)+
 parser       = binding? atom occurrence? additional? transform?
 ```
 
@@ -25,7 +25,7 @@ binding      = ident '='
 occurrence   = ("*" | "+" | "?")
 additional   = "|"? parser
 transform    = "->" '{' rust_code '}'
-atom         = alter? '(' parser ')' | CHAR | STRING | ident | '{' rust_code '}'
+atom         = alter? '(' parser ')' | CHAR | STRING | ident
 alter        = ("^"|"!"|"#"|"/")
 ident        = [a..zA..Z][a..zA..Z0..9_]* - {"let"}
 ```
@@ -181,16 +181,6 @@ match response {
     _ => assert_eq!(true, false),
 }
 ```
-
-## Bootstrap scenario
-
-### Stage 1
-
-The [Celma parser v0](https://github.com/d-plaindoux/celma/blob/master/lang/src/meta/parser.rs) is written with parser combinators
-
-### Stage 2
-
-The [Celma parser V1](https://github.com/d-plaindoux/celma/blob/master/bootstrap/src/bootstrap/parser.rs) is written using the Celma parser V0.
 
 # License
 

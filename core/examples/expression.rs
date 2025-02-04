@@ -17,8 +17,8 @@
 use celma_core::parser::and::{AndOperation, AndProjection};
 use celma_core::parser::char::{a_char, alpha, char_in_set, digit, not_char};
 use celma_core::parser::core::{eos, parser};
-use celma_core::parser::map::MapOperation;
 use celma_core::parser::lazy::lazy;
+use celma_core::parser::map::MapOperation;
 use celma_core::parser::or::OrOperation;
 use celma_core::parser::repeat::RepeatOperation;
 use celma_core::parser::response::Response::Success;
