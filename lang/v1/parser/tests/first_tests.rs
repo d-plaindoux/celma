@@ -22,7 +22,7 @@ mod tests {
 
     #[test]
     fn it_compute_first_for_ident() {
-        assert_eq!(vec![AllAtom], PIdent(String::from("test")).first());
+        assert_eq!(vec![AllAtom::<char>], PIdent(String::from("test")).first());
     }
 
     #[test]

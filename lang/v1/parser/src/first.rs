@@ -18,8 +18,11 @@ use crate::token::Token::{AllAtom, Atom};
 use crate::token::{First, Token};
 use celma_lang_ast::syntax::ASTParsec;
 
-impl First<char> for ASTParsec<char> {
-    fn first(&self) -> Vec<Token<char>> {
+impl<E> First<E> for ASTParsec<E>
+where
+    E: Copy,
+{
+    fn first(&self) -> Vec<Token<E>> {
         match self {
             ASTParsec::PIdent(_) => vec![AllAtom],
             ASTParsec::PAtom(c) => vec![Atom(*c)],

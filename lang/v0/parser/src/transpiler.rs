@@ -116,7 +116,7 @@ impl TranspileBody<(Option<String>, TokenStream)> for ASTParsec<char> {
             }
             PAtom(c) => Ok((None, quote!(celma_core::parser::char::a_char(#c)))),
             PAtoms(s) => {
-                let s = s.into_iter().collect::<String>();
+                let s = s.iter().collect::<String>();
                 Ok((None, quote!(celma_core::parser::literal::string(#s))))
             }
             PCode(c) => {
