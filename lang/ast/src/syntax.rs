@@ -34,11 +34,19 @@ pub enum ASTParsec<I> {
     PLookahead(Box<ASTParsec<I>>),
 }
 
+
+
+impl<I> ASTParsec<I> {
+    pub fn wrap(self) -> Box<Self> {
+        Box::new(self)
+    }
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ASTParsecRule<I> {
     pub public: bool,
     pub name: String,
     pub input: String,
     pub returns: String,
-    pub rule: Box<ASTParsec<I>>,
+    pub rule: ASTParsec<I>,
 }

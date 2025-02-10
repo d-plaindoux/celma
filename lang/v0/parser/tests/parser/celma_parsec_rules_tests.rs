@@ -35,7 +35,7 @@ mod tests_and {
                     name: String::from("a"),
                     input: String::from("char"),
                     returns: String::from("char"),
-                    rule: Box::new(PAtom('a')),
+                    rule: PAtom('a'),
                 })
             ),
             _ => assert_eq!(true, false),
@@ -57,14 +57,14 @@ mod tests_and {
                         name: String::from("a"),
                         input: String::from("char"),
                         returns: String::from("char"),
-                        rule: Box::new(PCode(String::from("char(\'a\')"))),
+                        rule: PCode(String::from("char(\'a\')")),
                     },
                     ASTParsecRule {
                         public: true,
                         name: String::from("b"),
                         input: String::from("char"),
                         returns: String::from("char"),
-                        rule: Box::new(PCode(String::from("char(\'b\')"))),
+                        rule: PCode(String::from("char(\'b\')")),
                     }
                 )
             ),
@@ -87,17 +87,17 @@ mod tests_and {
                         name: String::from("a"),
                         input: String::from("char"),
                         returns: String::from("char"),
-                        rule: Box::new(PChoice(
+                        rule: PChoice(
                             Box::new(PAtom('a')),
                             Box::new(PCode(String::from("char(\'b\')"))),
-                        )),
+                        ),
                     },
                     ASTParsecRule {
                         public: true,
                         name: String::from("b"),
                         input: String::from("char"),
                         returns: String::from("char"),
-                        rule: Box::new(PCode(String::from("char(\'c\')"))),
+                        rule: PCode(String::from("char(\'c\')")),
                     }
                 )
             ),

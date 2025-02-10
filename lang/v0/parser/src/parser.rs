@@ -102,7 +102,7 @@ where
                     name: n,
                     input: i.unwrap_or(String::from("char")),
                     returns: r,
-                    rule: Box::new(b),
+                    rule: b,
                 }
             },
         )
@@ -129,9 +129,9 @@ where
         .map(|((((bind, atom), occ), add), trans)| {
             let occ = if let Some(value) = occ {
                 match value {
-                    '?' => POptional(Box::new(atom)),
-                    '*' => PRepeat(true, Box::new(atom)),
-                    '+' => PRepeat(false, Box::new(atom)),
+                    '?' => POptional(atom.wrap()),
+                    '*' => PRepeat(true, atom.wrap()),
+                    '+' => PRepeat(false, atom.wrap()),
                     _ => atom,
                 }
             } else {
@@ -139,7 +139,7 @@ where
             };
 
             let bind = if let Some(value) = bind {
-                PBind(value, Box::new(occ))
+                PBind(value, occ.wrap())
             } else {
                 occ
             };
@@ -148,16 +148,16 @@ where
                 let value = add.unwrap();
 
                 if value.0 {
-                    PChoice(Box::new(bind), Box::new(value.1))
+                    PChoice(bind.wrap(), value.1.wrap())
                 } else {
-                    PSequence(Box::new(bind), Box::new(value.1))
+                    PSequence(bind.wrap(), value.1.wrap())
                 }
             } else {
                 bind
             };
 
             if let Some(value) = trans {
-                PMap(Box::new(add), value)
+                PMap(add.wrap(), value)
             } else {
                 add
             }
@@ -200,19 +200,19 @@ where
     a_char('^')
         .and_left(skip())
         .and_right(atom2())
-        .map(|p| PNot(Box::new(p)))
+        .map(|p| PNot(p.wrap()))
         .or(a_char('!')
             .and_left(skip())
             .and_right(atom2())
-            .map(|p| PTry(Box::new(p))))
+            .map(|p| PTry(p.wrap())))
         .or(a_char('#')
             .and_left(skip())
             .and_right(atom2())
-            .map(|p| PCheck(Box::new(p))))
+            .map(|p| PCheck(p.wrap())))
         .or(a_char('/')
             .and_left(skip())
             .and_right(atom2())
-            .map(|p| PLookahead(Box::new(p))))
+            .map(|p| PLookahead(p.wrap())))
         .or(atom2())
 }
 
@@ -221,11 +221,11 @@ fn atom2<'a, S>() -> impl Parse<ASTParsec<char>, S> + Combine<ASTParsec<char>> +
 where
     S: Stream<Item = char> + 'a,
 {
-    (a_char('(')
+    a_char('(')
         .and_left(skip())
         .and_right(lazy(|| parser(parsec())))
         .and_left(skip())
-        .and_left(a_char(')')))
+        .and_left(a_char(')'))
     .or(code().map(PCode))
     .or(delimited_char().map(PAtom))
     .or(delimited_string().map(|l| PAtoms(l.chars().collect())))

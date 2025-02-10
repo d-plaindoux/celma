@@ -15,3 +15,5 @@
  */
 
 pub mod first_tests;
+
+pub mod parser_tests;
