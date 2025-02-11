@@ -9,12 +9,6 @@ the Rust compilation stage.
 In the V0 the compilation is a direct style Parsec generation without any 
 optimisations. 
 
-### V1
-
-This version target an aggressive and an efficient parser compilation. For this
-purpose the compilation follows a traditional control ans data flow and was 
-mainly inspired by the paper [A Typed, Algebraic Approach to Parsing](https://www.cl.cam.ac.uk/~jdy22/papers/a-typed-algebraic-approach-to-parsing.pdf)
-
 #### Abstract syntax tree
 
 ```rust
@@ -37,10 +31,16 @@ pub enum ASTParsec {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ASTParsecRule {
-    pub public: bool,
     pub name: String,
     pub input: String,
     pub returns: String,
     pub rule: Box<ASTParsec>,
 }
 ```
+
+### V1
+
+This version target an aggressive and an efficient parser compilation. For this
+purpose the compilation follows a traditional control ans data flow and was 
+mainly inspired by the paper [A Typed, Algebraic Approach to Parsing](https://www.cl.cam.ac.uk/~jdy22/papers/a-typed-algebraic-approach-to-parsing.pdf)
+

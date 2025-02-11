@@ -15,37 +15,37 @@
  */
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub enum ASTParsec<I> {
+pub enum ASTParsec {
     PIdent(String),
     // Are these constructors required?
-    PAtom(I),
-    PAtoms(Vec<I>),
-    PBind(String, Box<ASTParsec<I>>),
+    PAtom(char),
+    PAtoms(Vec<char>),
+    PBind(String, Box<ASTParsec>),
     // --------------------------------
     PCode(String),
-    PMap(Box<ASTParsec<I>>, String),
-    PSequence(Box<ASTParsec<I>>, Box<ASTParsec<I>>),
-    PChoice(Box<ASTParsec<I>>, Box<ASTParsec<I>>),
-    PNot(Box<ASTParsec<I>>),
-    PTry(Box<ASTParsec<I>>),
-    PCheck(Box<ASTParsec<I>>),
-    POptional(Box<ASTParsec<I>>),
-    PRepeat(bool, Box<ASTParsec<I>>),
-    PLookahead(Box<ASTParsec<I>>),
+    PMap(Box<ASTParsec>, String),
+    PSequence(Box<ASTParsec>, Box<ASTParsec>),
+    PChoice(Box<ASTParsec>, Box<ASTParsec>),
+    PNot(Box<ASTParsec>),
+    PTry(Box<ASTParsec>),
+    PCheck(Box<ASTParsec>),
+    POptional(Box<ASTParsec>),
+    PRepeat(bool, Box<ASTParsec>),
+    PLookahead(Box<ASTParsec>),
 }
 
 
 
-impl<I> ASTParsec<I> {
+impl ASTParsec {
     pub fn wrap(self) -> Box<Self> {
         Box::new(self)
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct ASTParsecRule<I> {
+pub struct ASTParsecRule {
     pub name: String,
     pub input: String,
     pub returns: String,
-    pub rule: ASTParsec<I>,
+    pub rule: ASTParsec,
 }

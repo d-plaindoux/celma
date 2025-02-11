@@ -16,7 +16,7 @@
 
 #[cfg(test)]
 mod tests {
-    use celma_lang_v0_ast::syntax::ASTParsec::{PAtom, PIdent};
+    use celma_lang_v1_ast::syntax::ASTParsec::{PAtom, PIdent};
     use celma_lang_v1::token::First;
     use celma_lang_v1::token::Token::{AllAtom, Atom};
 

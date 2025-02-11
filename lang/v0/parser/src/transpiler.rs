@@ -29,7 +29,7 @@ pub trait Transpile<E> {
     fn transpile(&self) -> Result<E, Error>;
 }
 
-impl Transpile<TokenStream> for Vec<ASTParsecRule<char>> {
+impl Transpile<TokenStream> for Vec<ASTParsecRule> {
     fn transpile(&self) -> Result<TokenStream, Error> {
         let parsers: TokenStream = self
             .iter()
@@ -42,7 +42,7 @@ impl Transpile<TokenStream> for Vec<ASTParsecRule<char>> {
     }
 }
 
-impl Transpile<TokenStream> for ASTParsecRule<char> {
+impl Transpile<TokenStream> for ASTParsecRule {
     fn transpile(&self) -> Result<TokenStream, Error> {
         let Self {
             name,
@@ -80,7 +80,7 @@ impl Transpile<TokenStream> for ASTParsecRule<char> {
     }
 }
 
-impl Transpile<TokenStream> for ASTParsec<char> {
+impl Transpile<TokenStream> for ASTParsec {
     fn transpile(&self) -> Result<TokenStream, Error> {
         let body = self.transpile_body()?.1;
 
@@ -106,7 +106,7 @@ pub trait TranspileBody<E> {
     fn transpile_body(&self) -> Result<E, Error>;
 }
 
-impl TranspileBody<(Option<String>, TokenStream)> for ASTParsec<char> {
+impl TranspileBody<(Option<String>, TokenStream)> for ASTParsec {
     fn transpile_body(&self) -> Result<(Option<String>, TokenStream), Error> {
         match self {
             PBind(n, p) => Ok((Some(n.clone()), p.transpile_body()?.1)),
