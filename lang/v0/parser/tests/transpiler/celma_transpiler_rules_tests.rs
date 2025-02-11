@@ -18,11 +18,11 @@
 mod tests_and {
     use quote::quote;
 
-    use celma_core::parser::response::Response::Success;
-    use celma_core::parser::specs::Parse;
-    use celma_core::stream::char_stream::CharStream;
-    use celma_lang_v0_parser::parser::celma_parsec_rules;
-    use celma_lang_v0_parser::transpiler::Transpile;
+    use celma_v0_core::parser::response::Response::Success;
+    use celma_v0_core::parser::specs::Parse;
+    use celma_v0_core::stream::char_stream::CharStream;
+    use celma_v0_parser::parser::celma_parsec_rules;
+    use celma_v0_parser::transpiler::Transpile;
 
     #[test]
     fn it_parse_two_char_rules() {
@@ -36,44 +36,44 @@ mod tests_and {
             Success(ast, _, _) => assert_eq!(
                 ast.unwrap().to_string(),
                 quote!(
-                    pub fn a<'a, S: 'a>() -> impl celma_core::parser::specs::Parse<Vec<char>, S>
-                           + celma_core::parser::specs::Combine<Vec<char> >
+                    pub fn a<'a, S: 'a>() -> impl celma_v0_core::parser::specs::Parse<Vec<char>, S>
+                           + celma_v0_core::parser::specs::Combine<Vec<char> >
                            + 'a
                     where
-                        S: celma_core::stream::specs::Stream<Item = char>,
+                        S: celma_v0_core::stream::specs::Stream<Item = char>,
                     {
-                        use celma_core::parser::a_try::a_try;
-                        use celma_core::parser::and::AndOperation;
-                        use celma_core::parser::check::check;
-                        use celma_core::parser::lookahead::lookahead;
-                        use celma_core::parser::map::MapOperation;
-                        use celma_core::parser::not::NotOperation;
-                        use celma_core::parser::option::OptionalOperation;
-                        use celma_core::parser::or::OrOperation;
-                        use celma_core::parser::repeat::RepeatOperation;
-                        use celma_core::parser::specs::Parse;
+                        use celma_v0_core::parser::a_try::a_try;
+                        use celma_v0_core::parser::and::AndOperation;
+                        use celma_v0_core::parser::check::check;
+                        use celma_v0_core::parser::lookahead::lookahead;
+                        use celma_v0_core::parser::map::MapOperation;
+                        use celma_v0_core::parser::not::NotOperation;
+                        use celma_v0_core::parser::option::OptionalOperation;
+                        use celma_v0_core::parser::or::OrOperation;
+                        use celma_v0_core::parser::repeat::RepeatOperation;
+                        use celma_v0_core::parser::specs::Parse;
 
-                        celma_core::parser::core::parser(celma_core::parser::lazy::lazy(|| b()))
+                        celma_v0_core::parser::core::parser(celma_v0_core::parser::lazy::lazy(|| b()))
                     }
 
-                    pub fn b<'a, S: 'a>() -> impl celma_core::parser::specs::Parse<Vec<char>, S>
-                           + celma_core::parser::specs::Combine<Vec<char> >
+                    pub fn b<'a, S: 'a>() -> impl celma_v0_core::parser::specs::Parse<Vec<char>, S>
+                           + celma_v0_core::parser::specs::Combine<Vec<char> >
                            + 'a
                     where
-                        S: celma_core::stream::specs::Stream<Item = char>,
+                        S: celma_v0_core::stream::specs::Stream<Item = char>,
                     {
-                        use celma_core::parser::a_try::a_try;
-                        use celma_core::parser::and::AndOperation;
-                        use celma_core::parser::check::check;
-                        use celma_core::parser::lookahead::lookahead;
-                        use celma_core::parser::map::MapOperation;
-                        use celma_core::parser::not::NotOperation;
-                        use celma_core::parser::option::OptionalOperation;
-                        use celma_core::parser::or::OrOperation;
-                        use celma_core::parser::repeat::RepeatOperation;
-                        use celma_core::parser::specs::Parse;
+                        use celma_v0_core::parser::a_try::a_try;
+                        use celma_v0_core::parser::and::AndOperation;
+                        use celma_v0_core::parser::check::check;
+                        use celma_v0_core::parser::lookahead::lookahead;
+                        use celma_v0_core::parser::map::MapOperation;
+                        use celma_v0_core::parser::not::NotOperation;
+                        use celma_v0_core::parser::option::OptionalOperation;
+                        use celma_v0_core::parser::or::OrOperation;
+                        use celma_v0_core::parser::repeat::RepeatOperation;
+                        use celma_v0_core::parser::specs::Parse;
 
-                        celma_core::parser::core::parser(celma_core::parser::char::a_char('b').rep())
+                        celma_v0_core::parser::core::parser(celma_v0_core::parser::char::a_char('b').rep())
                     }
                 )
                 .to_string()

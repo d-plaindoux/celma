@@ -16,11 +16,11 @@
 
 #[cfg(test)]
 mod tests_and {
-    use celma_core::parser::response::Response::Success;
-    use celma_core::parser::specs::Parse;
-    use celma_core::stream::char_stream::CharStream;
-    use celma_lang_v0_parser::parser::celma_parsec;
-    use celma_lang_v0_parser::transpiler::TranspileBody;
+    use celma_v0_core::parser::response::Response::Success;
+    use celma_v0_core::parser::specs::Parse;
+    use celma_v0_core::stream::char_stream::CharStream;
+    use celma_v0_parser::parser::celma_parsec;
+    use celma_v0_parser::transpiler::TranspileBody;
     use quote::quote;
 
     #[test]
@@ -32,7 +32,7 @@ mod tests_and {
         match response {
             Success(Ok((_, ast)), _, _) => assert_eq!(
                 ast.to_string(),
-                quote!(celma_core::parser::char::a_char('a')).to_string()
+                quote!(celma_v0_core::parser::char::a_char('a')).to_string()
             ),
             _ => assert_eq!(true, false),
         };
@@ -47,8 +47,8 @@ mod tests_and {
         match response {
             Success(Ok((_, ast)), _, _) => assert_eq!(
                 ast.to_string(),
-                quote!(celma_core::parser::char::a_char('a')
-                    .and_right(celma_core::parser::char::a_char('b')))
+                quote!(celma_v0_core::parser::char::a_char('a')
+                    .and_right(celma_v0_core::parser::char::a_char('b')))
                 .to_string()
             ),
             _ => assert_eq!(true, false),
@@ -64,8 +64,8 @@ mod tests_and {
         match response {
             Success(Ok((_, ast)), _, _) => assert_eq!(
                 ast.to_string(),
-                quote!(celma_core::parser::char::a_char('a')
-                    .and_right(a_try(celma_core::parser::char::a_char('b'))))
+                quote!(celma_v0_core::parser::char::a_char('a')
+                    .and_right(a_try(celma_v0_core::parser::char::a_char('b'))))
                 .to_string()
             ),
             _ => assert_eq!(true, false),
@@ -81,8 +81,8 @@ mod tests_and {
         match response {
             Success(Ok((_, ast)), _, _) => assert_eq!(
                 ast.to_string(),
-                quote!(celma_core::parser::char::a_char('a')
-                    .and_right(lookahead(celma_core::parser::char::a_char('b'))))
+                quote!(celma_v0_core::parser::char::a_char('a')
+                    .and_right(lookahead(celma_v0_core::parser::char::a_char('b'))))
                 .to_string()
             ),
             _ => assert_eq!(true, false),
@@ -99,8 +99,8 @@ mod tests_and {
             Success(Ok((params, ast)), _, _) => {
                 assert_eq!(
                     ast.to_string(),
-                    quote!(celma_core::parser::char::a_char('a')
-                        .and_left(celma_core::parser::char::a_char('b')))
+                    quote!(celma_v0_core::parser::char::a_char('a')
+                        .and_left(celma_v0_core::parser::char::a_char('b')))
                     .to_string()
                 );
                 assert_eq!(params, Some(String::from("a")));
@@ -131,9 +131,9 @@ mod tests_and {
             Success(Ok((params, ast)), _, _) => {
                 assert_eq!(
                     ast.to_string(),
-                    quote!(celma_core::parser::char::a_char('a').and(
-                        celma_core::parser::char::a_char('b')
-                            .and_right(celma_core::parser::char::a_char('c'))
+                    quote!(celma_v0_core::parser::char::a_char('a').and(
+                        celma_v0_core::parser::char::a_char('b')
+                            .and_right(celma_v0_core::parser::char::a_char('c'))
                     ))
                     .to_string()
                 );
@@ -153,9 +153,9 @@ mod tests_and {
             Success(Ok((params, ast)), _, _) => {
                 assert_eq!(
                     ast.to_string(),
-                    quote!(celma_core::parser::char::a_char('a').and(
-                        celma_core::parser::char::a_char('b')
-                            .and(celma_core::parser::char::a_char('c'))
+                    quote!(celma_v0_core::parser::char::a_char('a').and(
+                        celma_v0_core::parser::char::a_char('b')
+                            .and(celma_v0_core::parser::char::a_char('c'))
                     ))
                     .to_string()
                 );
@@ -175,7 +175,7 @@ mod tests_and {
             Success(Ok((_, ast)), _, _) => assert_eq!(
                 ast.to_string(),
                 quote!(
-                    celma_core::parser::char::a_char('a').or(celma_core::parser::char::a_char('b'))
+                    celma_v0_core::parser::char::a_char('a').or(celma_v0_core::parser::char::a_char('b'))
                 )
                 .to_string()
             ),

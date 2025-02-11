@@ -16,12 +16,12 @@
 
 #[cfg(test)]
 mod tests_transpiler {
-    use celma_core::parser::and::AndOperation;
-    use celma_core::parser::core::eos;
-    use celma_core::parser::response::Response::Success;
-    use celma_core::parser::specs::Parse;
-    use celma_core::stream::char_stream::CharStream;
-    use celma_lang_v0_macro::parsec_rules;
+    use celma_v0_core::parser::and::AndOperation;
+    use celma_v0_core::parser::core::eos;
+    use celma_v0_core::parser::response::Response::Success;
+    use celma_v0_core::parser::specs::Parse;
+    use celma_v0_core::stream::char_stream::CharStream;
+    use celma_v0_macro::parsec_rules;
 
     #[test]
     fn it_parse_aaa() {

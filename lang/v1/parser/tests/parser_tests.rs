@@ -16,11 +16,11 @@
 
 #[cfg(test)]
 mod parser_tests {
-    use celma_core::parser::specs::Parse;
-    use celma_core::stream::char_stream::CharStream;
-    use celma_lang_v1_ast::syntax::ASTParsec::{PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PNot, POptional, PSequence, PTry};
-    use celma_lang_v1_ast::syntax::ASTParsecRule;
-    use celma_lang_v1::parser::{
+    use celma_v0_core::parser::specs::Parse;
+    use celma_v0_core::stream::char_stream::CharStream;
+    use celma_v1_ast::syntax::ASTParsec::{PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PNot, POptional, PSequence, PTry};
+    use celma_v1_ast::syntax::ASTParsecRule;
+    use celma_v1::parser::{
         atom_char, atom_code, atom_ident, atom_string, kind, parsec, rule,
     };
 

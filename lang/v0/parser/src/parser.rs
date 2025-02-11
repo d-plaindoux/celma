@@ -13,26 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use celma_core::parser::a_try::a_try;
-use celma_core::parser::and::{AndOperation, AndProjection};
-use celma_core::parser::bind::BindOperation;
-use celma_core::parser::char::{a_char, char_in_range, char_in_set, not_char};
-use celma_core::parser::core::{eos, fail, parser, returns};
-use celma_core::parser::lazy::lazy;
-use celma_core::parser::literal::{delimited_char, delimited_string, string};
-use celma_core::parser::map::MapOperation;
-use celma_core::parser::option::OptionalOperation;
-use celma_core::parser::or::OrOperation;
-use celma_core::parser::repeat::RepeatOperation;
-use celma_core::parser::specs::{Combine, Parse};
-use celma_core::stream::specs::Stream;
+use celma_v0_core::parser::a_try::a_try;
+use celma_v0_core::parser::and::{AndOperation, AndProjection};
+use celma_v0_core::parser::bind::BindOperation;
+use celma_v0_core::parser::char::{a_char, char_in_range, char_in_set, not_char};
+use celma_v0_core::parser::core::{eos, fail, parser, returns};
+use celma_v0_core::parser::lazy::lazy;
+use celma_v0_core::parser::literal::{delimited_char, delimited_string, string};
+use celma_v0_core::parser::map::MapOperation;
+use celma_v0_core::parser::option::OptionalOperation;
+use celma_v0_core::parser::or::OrOperation;
+use celma_v0_core::parser::repeat::RepeatOperation;
+use celma_v0_core::parser::specs::{Combine, Parse};
+use celma_v0_core::stream::specs::Stream;
 use std::ops::Range;
 
-use celma_lang_v0_ast::syntax::ASTParsec::{
+use celma_v0_ast::syntax::ASTParsec::{
     PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional,
     PRepeat, PSequence, PTry,
 };
-use celma_lang_v0_ast::syntax::{ASTParsec, ASTParsecRule};
+use celma_v0_ast::syntax::{ASTParsec, ASTParsecRule};
 
 #[inline]
 fn skip<'a, S>() -> impl Parse<(), S> + Combine<()> + 'a

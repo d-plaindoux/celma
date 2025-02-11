@@ -16,12 +16,12 @@
 
 extern crate proc_macro;
 
-use celma_core::parser::response::Response::{Reject, Success};
-use celma_core::parser::specs::Parse;
-use celma_core::stream::char_stream::CharStream;
-use celma_core::stream::specs::Stream;
-use celma_lang_v0_parser::parser::{celma_parsec, celma_parsec_rules};
-use celma_lang_v0_parser::transpiler::Transpile;
+use celma_v0_core::parser::response::Response::{Reject, Success};
+use celma_v0_core::parser::specs::Parse;
+use celma_v0_core::stream::char_stream::CharStream;
+use celma_v0_core::stream::specs::Stream;
+use celma_v0_parser::parser::{celma_parsec, celma_parsec_rules};
+use celma_v0_parser::transpiler::Transpile;
 use proc_macro::TokenStream;
 
 #[proc_macro]

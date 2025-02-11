@@ -1,0 +1,20 @@
+[package]
+name = "celma_v0_core"
+version = "0.1.0"
+authors = ["dplaindoux <d.plaindoux@fungus.fr>"]
+edition = "2021"
+
+[dev-dependencies]
+bencher = "0.1.5"
+
+[[bench]]
+name = "str_bench"
+harness = false
+
+[[bench]]
+name = "array_bench"
+harness = false
+
+[[bench]]
+name = "iter_bench"
+harness = false

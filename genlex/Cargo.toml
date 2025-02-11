@@ -1,0 +1,9 @@
+[package]
+name = "celma_extension"
+version = "0.1.0"
+authors = ["d-plaindoux <d.plaindoux@free.fr>"]
+edition = "2021"
+
+[dependencies]
+celma_v0_core = { version = "0.1.0", path = "../lang/v0/core" }
+celma_v0_macro = { version = "0.1.0", path = "../lang/v0/macro" }

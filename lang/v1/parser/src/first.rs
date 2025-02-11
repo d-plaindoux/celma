@@ -16,7 +16,7 @@
 
 use crate::token::Token::{AllAtom, Atom};
 use crate::token::{First, Token};
-use celma_lang_v1_ast::syntax::ASTParsec;
+use celma_v1_ast::syntax::ASTParsec;
 
 impl<E> First<E> for ASTParsec<E>
 where

@@ -1,11 +1,11 @@
 [package]
-name = "celma_lang_v1"
+name = "celma_v1"
 version = "0.1.0"
 authors = ["dplaindoux <d.plaindoux@fungus.fr>"]
 edition = "2021"
 
 [dependencies]
-celma_core = { version = "0.1.0", path = "../../../core" }
-celma_lang_v0_ast = { version = "0.1.0", path = "../../v0/ast" }
-celma_lang_v0_macro = { version = "0.1.0", path = "../../v0/macro" }
-celma_lang_v1_ast = { version = "0.1.0", path = "../../v1/ast" }
+celma_v0_core = { version = "0.1.0", path = "../../v0/core" }
+celma_v0_ast = { version = "0.1.0", path = "../../v0/ast" }
+celma_v0_macro = { version = "0.1.0", path = "../../v0/macro" }
+celma_v1_ast = { version = "0.1.0", path = "../ast" }

@@ -1,5 +1,5 @@
 [package]
-name = "celma_lang_v0_macro"
+name = "celma_v0_macro"
 version = "0.1.0"
 authors = ["d-plaindoux <d.plaindoux@free.fr>"]
 edition = "2021"
@@ -8,8 +8,8 @@ edition = "2021"
 proc-macro = true
 
 [dependencies]
-celma_core = { version = "0.1.0", path = "../../../core" }
-celma_lang_v0_parser = { version = "0.1.0", path = "../parser" }
+celma_v0_core = { version = "0.1.0", path = "../core" }
+celma_v0_parser = { version = "0.1.0", path = "../parser" }
 
 [dev-dependencies]
 bencher = "0.1.5"

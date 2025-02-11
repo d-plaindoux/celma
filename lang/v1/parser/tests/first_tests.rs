@@ -16,9 +16,9 @@
 
 #[cfg(test)]
 mod tests {
-    use celma_lang_v1_ast::syntax::ASTParsec::{PAtom, PIdent};
-    use celma_lang_v1::token::First;
-    use celma_lang_v1::token::Token::{AllAtom, Atom};
+    use celma_v1_ast::syntax::ASTParsec::{PAtom, PIdent};
+    use celma_v1::token::First;
+    use celma_v1::token::Token::{AllAtom, Atom};
 
     #[test]
     fn it_compute_first_for_ident() {

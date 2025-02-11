@@ -16,17 +16,17 @@
 
 #[cfg(test)]
 mod tests_transpiler {
-    use celma_core::parser::and::AndOperation;
-    use celma_core::parser::char::{digit, space};
-    use celma_core::parser::core::eos;
-    use celma_core::parser::map::MapOperation;
-    use celma_core::parser::response::Response;
-    use celma_core::parser::satisfy::Satisfy;
-    use celma_core::parser::specs::{Combine, Parse};
-    use celma_core::stream::char_stream::CharStream;
-    use celma_core::stream::parser_stream::ParserStream;
-    use celma_core::stream::specs::Stream;
-    use celma_lang_v0_macro::parsec_rules;
+    use celma_v0_core::parser::and::AndOperation;
+    use celma_v0_core::parser::char::{digit, space};
+    use celma_v0_core::parser::core::eos;
+    use celma_v0_core::parser::map::MapOperation;
+    use celma_v0_core::parser::response::Response;
+    use celma_v0_core::parser::satisfy::Satisfy;
+    use celma_v0_core::parser::specs::{Combine, Parse};
+    use celma_v0_core::stream::char_stream::CharStream;
+    use celma_v0_core::stream::parser_stream::ParserStream;
+    use celma_v0_core::stream::specs::Stream;
+    use celma_v0_macro::parsec_rules;
 
     // ---------------------------------------------------------------------------------------------
     // Tokens

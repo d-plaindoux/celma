@@ -16,11 +16,11 @@
 
 extern crate proc_macro;
 
-use celma_lang_v0_ast::syntax::ASTParsec::{
+use celma_v0_ast::syntax::ASTParsec::{
     PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional,
     PRepeat, PSequence, PTry,
 };
-use celma_lang_v0_ast::syntax::{ASTParsec, ASTParsecRule};
+use celma_v0_ast::syntax::{ASTParsec, ASTParsecRule};
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::Error;
@@ -58,23 +58,23 @@ impl Transpile<TokenStream> for ASTParsecRule {
         let body = body.transpile_body()?.1;
 
         Ok(quote!(
-            pub fn #name<'a,S:'a>() -> impl celma_core::parser::specs::Parse<#returns,S> +
-                                            celma_core::parser::specs::Combine<#returns> +
+            pub fn #name<'a,S:'a>() -> impl celma_v0_core::parser::specs::Parse<#returns,S> +
+                                            celma_v0_core::parser::specs::Combine<#returns> +
                                             'a
-                where S:celma_core::stream::specs::Stream<Item=#input>,
+                where S:celma_v0_core::stream::specs::Stream<Item=#input>,
             {
-                use celma_core::parser::a_try::a_try;
-                use celma_core::parser::and::AndOperation;
-                use celma_core::parser::check::check;
-                use celma_core::parser::lookahead::lookahead;
-                use celma_core::parser::map::MapOperation;
-                use celma_core::parser::not::NotOperation;
-                use celma_core::parser::option::OptionalOperation;
-                use celma_core::parser::or::OrOperation;
-                use celma_core::parser::repeat::RepeatOperation;
-                use celma_core::parser::specs::Parse;
+                use celma_v0_core::parser::a_try::a_try;
+                use celma_v0_core::parser::and::AndOperation;
+                use celma_v0_core::parser::check::check;
+                use celma_v0_core::parser::lookahead::lookahead;
+                use celma_v0_core::parser::map::MapOperation;
+                use celma_v0_core::parser::not::NotOperation;
+                use celma_v0_core::parser::option::OptionalOperation;
+                use celma_v0_core::parser::or::OrOperation;
+                use celma_v0_core::parser::repeat::RepeatOperation;
+                use celma_v0_core::parser::specs::Parse;
 
-                celma_core::parser::core::parser(#body)
+                celma_v0_core::parser::core::parser(#body)
             }
         ))
     }
@@ -86,17 +86,17 @@ impl Transpile<TokenStream> for ASTParsec {
 
         Ok(quote!(
             {
-                use celma_core::parser::a_try::a_try;
-                use celma_core::parser::and::AndOperation;
-                use celma_core::parser::check::check;
-                use celma_core::parser::map::MapOperation;
-                use celma_core::parser::not::NotOperation;
-                use celma_core::parser::option::OptionalOperation;
-                use celma_core::parser::or::OrOperation;
-                use celma_core::parser::repeat::RepeatOperation;
-                use celma_core::parser::specs::Parse;
+                use celma_v0_core::parser::a_try::a_try;
+                use celma_v0_core::parser::and::AndOperation;
+                use celma_v0_core::parser::check::check;
+                use celma_v0_core::parser::map::MapOperation;
+                use celma_v0_core::parser::not::NotOperation;
+                use celma_v0_core::parser::option::OptionalOperation;
+                use celma_v0_core::parser::or::OrOperation;
+                use celma_v0_core::parser::repeat::RepeatOperation;
+                use celma_v0_core::parser::specs::Parse;
 
-                celma_core::parser::core::parser(#body)
+                celma_v0_core::parser::core::parser(#body)
             }
         ))
     }
@@ -112,12 +112,12 @@ impl TranspileBody<(Option<String>, TokenStream)> for ASTParsec {
             PBind(n, p) => Ok((Some(n.clone()), p.transpile_body()?.1)),
             PIdent(n) => {
                 let n = syn::Ident::new(n, Span::call_site());
-                Ok((None, quote!(celma_core::parser::lazy::lazy(|| #n()))))
+                Ok((None, quote!(celma_v0_core::parser::lazy::lazy(|| #n()))))
             }
-            PAtom(c) => Ok((None, quote!(celma_core::parser::char::a_char(#c)))),
+            PAtom(c) => Ok((None, quote!(celma_v0_core::parser::char::a_char(#c)))),
             PAtoms(s) => {
                 let s = s.iter().collect::<String>();
-                Ok((None, quote!(celma_core::parser::literal::string(#s))))
+                Ok((None, quote!(celma_v0_core::parser::literal::string(#s))))
             }
             PCode(c) => {
                 let c = syn::parse_str::<TokenStream>(c.as_str()).unwrap();
