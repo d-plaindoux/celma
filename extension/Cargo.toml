@@ -6,4 +6,4 @@ edition = "2021"
 
 [dependencies]
 celma_core = { version = "0.1.0", path = "../core" }
-celma_macro_v0 = { version = "0.1.0", path = "../lang/v0/macro" }
+celma_lang_v0_macro = { version = "0.1.0", path = "../lang/v0/macro" }

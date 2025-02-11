@@ -18,8 +18,8 @@
 mod parser_tests {
     use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
-    use celma_lang_ast::syntax::ASTParsec::{PAtom, PAtoms, PBind, PCode, PIdent, POptional};
-    use celma_lang_ast::syntax::ASTParsecRule;
+    use celma_lang_v1_ast::syntax::ASTParsec::{PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PNot, POptional, PSequence, PTry};
+    use celma_lang_v1_ast::syntax::ASTParsecRule;
     use celma_lang_v1::parser::{
         atom_char, atom_code, atom_ident, atom_string, kind, parsec, rule,
     };
@@ -82,12 +82,46 @@ mod parser_tests {
     }
 
     #[test]
+    fn should_parse_sequence_body() {
+        let response = parsec().parse(CharStream::new("entry1 entry2"));
+
+        assert_eq!(
+            response.fold(
+                |v, _, _| v
+                    == PSequence(
+                        PIdent(String::from("entry1")).wrap(),
+                        PIdent(String::from("entry2")).wrap(),
+                    ),
+                |_, _| false
+            ),
+            true
+        );
+    }
+
+    #[test]
+    fn should_parse_choice_body() {
+        let response = parsec().parse(CharStream::new("entry1 | entry2"));
+
+        assert_eq!(
+            response.fold(
+                |v, _, _| v
+                    == PChoice(
+                        PIdent(String::from("entry1")).wrap(),
+                        PIdent(String::from("entry2")).wrap(),
+                    ),
+                |_, _| false
+            ),
+            true
+        );
+    }
+
+    #[test]
     fn should_parse_optional_ident_body() {
         let response = parsec().parse(CharStream::new("entry?"));
 
         assert_eq!(
             response.fold(
-                |v, _, _| v == POptional(Box::new(PIdent(String::from("entry")))),
+                |v, _, _| v == POptional(PIdent(String::from("entry")).wrap()),
                 |_, _| false
             ),
             true
@@ -103,8 +137,76 @@ mod parser_tests {
                 |v, _, _| v
                     == PBind(
                         String::from("a"),
-                        Box::new(POptional(Box::new(PIdent(String::from("entry")))))
+                        POptional(PIdent(String::from("entry")).wrap()).wrap()
                     ),
+                |_, _| false
+            ),
+            true
+        );
+    }
+
+    #[test]
+    fn should_parse_bind_optional_ident_body_with_capture_all_chars() {
+        let response = parsec().parse(CharStream::new("a=#entry"));
+
+        assert_eq!(
+            response.fold(
+                |v, _, _| v
+                    == PBind(
+                        String::from("a"),
+                        PCheck(PIdent(String::from("entry")).wrap()).wrap()
+                    ),
+                |_, _| false
+            ),
+            true
+        );
+    }
+
+    #[test]
+    fn should_parse_bind_optional_ident_body_with_negation() {
+        let response = parsec().parse(CharStream::new("a=^entry"));
+
+        assert_eq!(
+            response.fold(
+                |v, _, _| v
+                    == PBind(
+                        String::from("a"),
+                        PNot(PIdent(String::from("entry")).wrap()).wrap()
+                    ),
+                |_, _| false
+            ),
+            true
+        );
+    }
+
+    #[test]
+    fn should_parse_bind_optional_ident_body_with_try() {
+        let response = parsec().parse(CharStream::new("a=!entry"));
+
+        assert_eq!(
+            response.fold(
+                |v, _, _| v
+                    == PBind(
+                    String::from("a"),
+                    PTry(PIdent(String::from("entry")).wrap()).wrap()
+                ),
+                |_, _| false
+            ),
+            true
+        );
+    }
+
+    #[test]
+    fn should_parse_bind_optional_ident_body_with_lookahead() {
+        let response = parsec().parse(CharStream::new("a=/entry"));
+
+        assert_eq!(
+            response.fold(
+                |v, _, _| v
+                    == PBind(
+                    String::from("a"),
+                    PLookahead(PIdent(String::from("entry")).wrap()).wrap()
+                ),
                 |_, _| false
             ),
             true

@@ -28,11 +28,11 @@ use celma_core::parser::specs::{Combine, Parse};
 use celma_core::stream::specs::Stream;
 use std::ops::Range;
 
-use celma_lang_ast::syntax::ASTParsec::{
+use celma_lang_v0_ast::syntax::ASTParsec::{
     PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional,
     PRepeat, PSequence, PTry,
 };
-use celma_lang_ast::syntax::{ASTParsec, ASTParsecRule};
+use celma_lang_v0_ast::syntax::{ASTParsec, ASTParsecRule};
 
 #[inline]
 fn skip<'a, S>() -> impl Parse<(), S> + Combine<()> + 'a
@@ -98,7 +98,6 @@ where
         .map(
             |(((n, i), r), b): (((String, Option<String>), String), ASTParsec<char>)| {
                 ASTParsecRule {
-                    public: true,
                     name: n,
                     input: i.unwrap_or(String::from("char")),
                     returns: r,

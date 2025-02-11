@@ -21,7 +21,7 @@ mod tests_transpiler {
     use celma_core::parser::response::Response::Success;
     use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
-    use celma_macro_v0::parsec;
+    use celma_lang_v0_macro::parsec;
 
     #[test]
     fn it_parse_aaa() {

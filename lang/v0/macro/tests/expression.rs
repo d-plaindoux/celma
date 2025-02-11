@@ -22,7 +22,7 @@ mod tests_transpiler {
     use celma_core::parser::response::Response::Success;
     use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
-    use celma_macro_v0::{parsec, parsec_rules};
+    use celma_lang_v0_macro::{parsec, parsec_rules};
 
     #[derive(Clone)]
     pub enum Expr {

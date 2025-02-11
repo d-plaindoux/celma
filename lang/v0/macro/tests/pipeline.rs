@@ -26,7 +26,7 @@ mod tests_transpiler {
     use celma_core::stream::char_stream::CharStream;
     use celma_core::stream::parser_stream::ParserStream;
     use celma_core::stream::specs::Stream;
-    use celma_macro_v0::parsec_rules;
+    use celma_lang_v0_macro::parsec_rules;
 
     // ---------------------------------------------------------------------------------------------
     // Tokens

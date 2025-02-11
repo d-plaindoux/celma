@@ -30,7 +30,7 @@ where
     S: Stream<Item = char> + 'a,
 {
     use celma_core::parser::char::{alpha, digit, space};
-    use celma_macro_v0::parsec_rules;
+    use celma_lang_v0_macro::parsec_rules;
 
     fn mk_char(a: Vec<char>) -> char {
         *a.first().unwrap()

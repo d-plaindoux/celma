@@ -16,11 +16,11 @@
 
 extern crate proc_macro;
 
-use celma_lang_ast::syntax::ASTParsec::{
+use celma_lang_v0_ast::syntax::ASTParsec::{
     PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional,
     PRepeat, PSequence, PTry,
 };
-use celma_lang_ast::syntax::{ASTParsec, ASTParsecRule};
+use celma_lang_v0_ast::syntax::{ASTParsec, ASTParsecRule};
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::Error;

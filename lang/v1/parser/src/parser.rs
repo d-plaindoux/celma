@@ -17,12 +17,12 @@
 use celma_core::parser::core::eos;
 use celma_core::parser::literal::{delimited_char, delimited_string};
 
-use celma_lang_ast::syntax::ASTParsec::{
+use celma_lang_v1_ast::syntax::ASTParsec::{
     PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional,
     PRepeat, PSequence, PTry,
 };
-use celma_lang_ast::syntax::{ASTParsec, ASTParsecRule};
-use celma_macro_v0::parsec_rules;
+use celma_lang_v1_ast::syntax::{ASTParsec, ASTParsecRule};
+use celma_lang_v0_macro::parsec_rules;
 
 use celma_core::parser::char::{alpha, digit};
 

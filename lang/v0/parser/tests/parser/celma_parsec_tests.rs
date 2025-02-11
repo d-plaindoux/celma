@@ -19,10 +19,10 @@ mod tests_and {
     use celma_core::parser::response::Response::Success;
     use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
-    use celma_lang_ast::syntax::ASTParsec::{
+    use celma_lang_v0_ast::syntax::ASTParsec::{
         PBind, PChoice, PCode, PMap, POptional, PRepeat, PSequence,
     };
-    use celma_lang_v0::parser::celma_parsec;
+    use celma_lang_v0_parser::parser::celma_parsec;
 
     #[test]
     fn it_parse_one_character() {

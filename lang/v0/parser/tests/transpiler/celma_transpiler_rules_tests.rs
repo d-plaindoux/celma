@@ -21,8 +21,8 @@ mod tests_and {
     use celma_core::parser::response::Response::Success;
     use celma_core::parser::specs::Parse;
     use celma_core::stream::char_stream::CharStream;
-    use celma_lang_v0::parser::celma_parsec_rules;
-    use celma_lang_v0::transpiler::Transpile;
+    use celma_lang_v0_parser::parser::celma_parsec_rules;
+    use celma_lang_v0_parser::transpiler::Transpile;
 
     #[test]
     fn it_parse_two_char_rules() {
