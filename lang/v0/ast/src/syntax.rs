@@ -17,11 +17,9 @@
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ASTParsec {
     PIdent(String),
-    // Are these constructors required?
     PAtom(char),
     PAtoms(Vec<char>),
     PBind(String, Box<ASTParsec>),
-    // --------------------------------
     PCode(String),
     PMap(Box<ASTParsec>, String),
     PSequence(Box<ASTParsec>, Box<ASTParsec>),

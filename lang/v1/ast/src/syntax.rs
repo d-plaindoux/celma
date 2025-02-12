@@ -15,13 +15,28 @@
  */
 
 #[derive(Clone, Debug, Eq, PartialEq)]
+pub struct ASTParsecRule<I> {
+    pub public: bool,
+    pub name: String,
+    pub input: ASTType,
+    pub returns: ASTType,
+    pub rule: ASTParsec<I>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum ASTType {
+    PUnit,
+    PChar,
+    PString,
+    POther(String),
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ASTParsec<I> {
     PIdent(String),
-    // Are these constructors required?
     PAtom(I),
     PAtoms(Vec<I>),
     PBind(String, Box<ASTParsec<I>>),
-    // --------------------------------
     PCode(String),
     PMap(Box<ASTParsec<I>>, String),
     PSequence(Box<ASTParsec<I>>, Box<ASTParsec<I>>),
@@ -34,19 +49,8 @@ pub enum ASTParsec<I> {
     PLookahead(Box<ASTParsec<I>>),
 }
 
-
-
 impl<I> ASTParsec<I> {
     pub fn wrap(self) -> Box<Self> {
         Box::new(self)
     }
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct ASTParsecRule<I> {
-    pub public: bool,
-    pub name: String,
-    pub input: String,
-    pub returns: String,
-    pub rule: ASTParsec<I>,
 }

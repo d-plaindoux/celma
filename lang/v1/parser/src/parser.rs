@@ -17,27 +17,28 @@
 use celma_v0_core::parser::core::eos;
 use celma_v0_core::parser::literal::{delimited_char, delimited_string};
 
+use celma_v0_macro::parsec_rules;
 use celma_v1_ast::syntax::ASTParsec::{
     PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional,
     PRepeat, PSequence, PTry,
 };
 use celma_v1_ast::syntax::{ASTParsec, ASTParsecRule};
-use celma_v0_macro::parsec_rules;
 
 use celma_v0_core::parser::char::{alpha, digit};
+use celma_v1_ast::syntax::ASTType::{PChar, POther, PUnit};
 
 fn mk_rule(
     public: bool,
     name: String,
     input: Option<String>,
-    returns: String,
+    returns: Option<String>,
     body: ASTParsec<char>,
 ) -> ASTParsecRule<char> {
     ASTParsecRule {
         public,
         name,
-        input: input.unwrap_or(String::from("char")),
-        returns,
+        input: input.map_or_else(|| PChar, POther),
+        returns: returns.map_or_else(|| PUnit, POther),
         rule: body,
     }
 }
@@ -98,7 +99,7 @@ parsec_rules!(
 
     let rules:{Vec<ASTParsecRule<char>>} = rule*
     let rule:{ASTParsecRule<char>} = (
-        skip p="pub"? skip "let" skip n=ident i=kind? ':' r=kind '=' b=parsec skip
+        skip p="pub"? skip "let" skip n=ident i=kind? r=(':' _=kind)? '=' b=parsec skip
     ) -> { mk_rule(p.is_some(), n, i, r, b) }
 
     let parsec:{ASTParsec<char>} = (

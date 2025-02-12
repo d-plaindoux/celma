@@ -190,45 +190,52 @@ the Rust compilation stage.
 
 ### V0
 
-In the V0 the compilation is a direct style Parsec generation without any
-optimisations.
-
-#### Abstract syntax tree
-
-```rust
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub enum ASTParsec {
-    PIdent(String),
-    PChar(char),
-    PString(String),
-    PBind(String, Box<ASTParsec>),
-    PMap(Box<ASTParsec>, String),
-    PSequence(Box<ASTParsec>, Box<ASTParsec>),
-    PChoice(Box<ASTParsec>, Box<ASTParsec>),
-    PNot(Box<ASTParsec>),
-    PTry(Box<ASTParsec>),
-    PCheck(Box<ASTParsec>),
-    POptional(Box<ASTParsec>),
-    PRepeat(bool, Box<ASTParsec>),
-    PLookahead(Box<ASTParsec>),
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct ASTParsecRule {
-    pub name: String,
-    pub input: String,
-    pub returns: String,
-    pub rule: Box<ASTParsec>,
-}
-```
+In the V0 the transpilation is a direct style Parsec generation without any
+optimisations. 
 
 ### V1
 
 This version target an aggressive and an efficient parser compilation. For this
-purpose the compilation follows a traditional control ans data flow and was
-mainly inspired by the paper [A Typed, Algebraic Approach to Parsing](https://www.cl.cam.ac.uk/~jdy22/papers/a-typed-algebraic-approach-to-parsing.pdf)
+purpose the compilation follows a traditional control and data flow mainly inspired 
+by the paper [A Typed, Algebraic Approach to Parsing](https://www.cl.cam.ac.uk/~jdy22/papers/a-typed-algebraic-approach-to-parsing.pdf)
 
+#### Celma lang in Celma lang
 
+```rust
+let skip:{()} = (' '|'\t'|'\n'|'\r')* -> {}
+let ident:{String} = (skip i=#(alpha (alpha|digit|'_')*) skip) -> { i.into_iter().collect() }
+
+let kind:{String} = (skip '{' v=^'}'* '}' skip) -> { v.into_iter().collect() }
+let code:{String} = (skip '{' c=^'}'* '}' skip) -> { c.into_iter().collect() }
+
+let rules:{Vec<ASTParsecRule<char>>} = rule*
+let rule:{ASTParsecRule<char>} = (
+    skip p="pub"? skip "let" skip n=ident i=kind? r=(':' _=kind)? '=' b=parsec skip
+) -> { mk_rule(p.is_some(), n, i, r, b) }
+
+let parsec:{ASTParsec<char>} = (
+    skip b=!(binding)? a=atom o=('?'|'*'|'+')? d=additional? t=transform? skip
+) -> { mk_ast_parsec(b, a, o, d, t) }
+
+let binding:{String} = skip _=ident '=' skip
+let additional:{(bool,ASTParsec<char>)} = (skip c='|'? skip p=parsec) -> { (c.is_some(), p) }
+
+let atom:{ASTParsec<char>} = (
+    skip o=('^'|'!'|'#'|'/')? skip p=(atom_block|atom_ident|atom_char|atom_string|atom_code) skip
+) -> { mk_atom(o, p) }
+
+let atom_block:{ASTParsec<char>} = '(' _=parsec ')'
+let atom_ident:{ASTParsec<char>} = c=ident -> { PIdent(c) }
+let atom_char:{ASTParsec<char>} = c=delimited_char -> { PAtom(c) }
+let atom_string:{ASTParsec<char>} = c=delimited_string -> { PAtoms(c.chars().collect()) }
+let atom_code:{ASTParsec<char>} = c=code -> { PCode(c) }
+
+let transform:{String} = (skip "->" skip _=code)
+
+// Main entries
+let celma_parsec:{ASTParsec<char>} = (_=parsec eos)
+let celma_parsec_rules:{Vec<ASTParsecRule<char>>} = (_=rules eos)
+```
 
 # License
 

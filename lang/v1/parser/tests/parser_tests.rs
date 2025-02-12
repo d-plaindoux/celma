@@ -18,11 +18,13 @@
 mod parser_tests {
     use celma_v0_core::parser::specs::Parse;
     use celma_v0_core::stream::char_stream::CharStream;
-    use celma_v1_ast::syntax::ASTParsec::{PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PNot, POptional, PSequence, PTry};
-    use celma_v1_ast::syntax::ASTParsecRule;
-    use celma_v1::parser::{
-        atom_char, atom_code, atom_ident, atom_string, kind, parsec, rule,
+    use celma_v1::parser::{atom_char, atom_code, atom_ident, atom_string, kind, parsec, rule};
+    use celma_v1_ast::syntax::ASTParsec::{
+        PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PNot, POptional,
+        PSequence, PTry,
     };
+    use celma_v1_ast::syntax::ASTParsecRule;
+    use celma_v1_ast::syntax::ASTType::{PChar, PUnit};
 
     #[test]
     fn should_parse_kind() {
@@ -187,9 +189,9 @@ mod parser_tests {
             response.fold(
                 |v, _, _| v
                     == PBind(
-                    String::from("a"),
-                    PTry(PIdent(String::from("entry")).wrap()).wrap()
-                ),
+                        String::from("a"),
+                        PTry(PIdent(String::from("entry")).wrap()).wrap()
+                    ),
                 |_, _| false
             ),
             true
@@ -204,9 +206,9 @@ mod parser_tests {
             response.fold(
                 |v, _, _| v
                     == PBind(
-                    String::from("a"),
-                    PLookahead(PIdent(String::from("entry")).wrap()).wrap()
-                ),
+                        String::from("a"),
+                        PLookahead(PIdent(String::from("entry")).wrap()).wrap()
+                    ),
                 |_, _| false
             ),
             true
@@ -215,7 +217,7 @@ mod parser_tests {
 
     #[test]
     fn should_parse_protected_simple_rule() {
-        let response = rule().parse(CharStream::new("let x:{()} = entry"));
+        let response = rule().parse(CharStream::new("let x = entry"));
 
         assert_eq!(
             response.fold(
@@ -223,8 +225,8 @@ mod parser_tests {
                     == ASTParsecRule::<char> {
                         public: false,
                         name: String::from("x"),
-                        input: String::from("char"),
-                        returns: String::from("()"),
+                        input: PChar,
+                        returns: PUnit,
                         rule: PIdent(String::from("entry"))
                     },
                 |_, _| false
@@ -235,7 +237,7 @@ mod parser_tests {
 
     #[test]
     fn should_parse_public_simple_rule() {
-        let response = rule().parse(CharStream::new("pub let x:{()} = entry"));
+        let response = rule().parse(CharStream::new("pub let x = entry"));
 
         assert_eq!(
             response.fold(
@@ -243,8 +245,8 @@ mod parser_tests {
                     == ASTParsecRule::<char> {
                         public: true,
                         name: String::from("x"),
-                        input: String::from("char"),
-                        returns: String::from("()"),
+                        input: PChar,
+                        returns: PUnit,
                         rule: PIdent(String::from("entry"))
                     },
                 |_, _| false
