@@ -18,7 +18,10 @@
 mod parser_tests {
     use celma_v0_core::parser::specs::Parse;
     use celma_v0_core::stream::char_stream::CharStream;
-    use celma_v1::parser::{atom_char, atom_code, atom_ident, atom_string, kind, parsec, rule};
+    use celma_v0_core::stream::specs::Len;
+    use celma_v1::parser::{
+        atom_char, atom_code, atom_ident, atom_string, code, kind, rcode, parsec, rule,
+    };
     use celma_v1_ast::syntax::ASTParsec::{
         PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PNot, POptional,
         PSequence, PTry,
@@ -28,9 +31,9 @@ mod parser_tests {
 
     #[test]
     fn should_parse_kind() {
-        let response = kind().parse(CharStream::new("{hello()}"));
+        let response = kind().parse(CharStream::new("<hello>"));
 
-        assert_eq!(response.fold(|v, _, _| v == "hello()", |_, _| false), true);
+        assert_eq!(response.fold(|v, _, _| v == "hello", |_, _| false), true);
     }
 
     #[test]
@@ -67,6 +70,50 @@ mod parser_tests {
         assert_eq!(
             response.fold(
                 |v, _, _| v == PAtoms("test".chars().collect()),
+                |_, _| false
+            ),
+            true
+        );
+    }
+
+    #[test]
+    fn should_parse_ident_empty_rcode() {
+        let response = rcode().parse(CharStream::new("}"));
+
+        assert_eq!(response.fold(|_, s, _| s.len() == 1, |_, _| false), true);
+    }
+
+    #[test]
+    fn should_parse_ident_body_with_block_rcode() {
+        let response = rcode().parse(CharStream::new("tutu { titi } toto }"));
+
+        assert_eq!(response.fold(|_, s, _| s.len() == 1, |_, _| false), true);
+    }
+
+    #[test]
+    fn should_parse_ident_body_with_block_unbalanced_rcode() {
+        let response = rcode().parse(CharStream::new("{ titi }"));
+
+        assert_eq!(response.fold(|_, _, _| false, |_, _| true), true);
+    }
+
+    #[test]
+    fn should_parse_ident_body_code() {
+        let response = code().parse(CharStream::new("{ titi }"));
+
+        assert_eq!(
+            response.fold(|v, _, _| v == String::from(" titi "), |_, _| false),
+            true
+        );
+    }
+
+    #[test]
+    fn should_parse_ident_body_code_with_block() {
+        let response = code().parse(CharStream::new("{ {titi} }"));
+
+        assert_eq!(
+            response.fold(
+                |v, s, _| v == String::from(" {titi} ") && s.is_empty(),
                 |_, _| false
             ),
             true

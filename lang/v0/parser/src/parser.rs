@@ -86,20 +86,20 @@ where
         .and_left(skip())
         .and(kind().opt())
         .and_left(skip())
-        .and_left(a_char(':'))
-        .and_left(skip())
-        .and(kind())
+        .and(a_char(':').and_right(skip()).and_right(kind()).opt())
         .and_left(skip())
         .and_left(string("="))
         .and_left(skip())
         .and(parsec())
         .and_left(skip())
         .map(
-            |(((n, i), r), b): (((String, Option<String>), String), ASTParsec)| ASTParsecRule {
-                name: n,
-                input: i.unwrap_or(String::from("char")),
-                returns: r,
-                rule: b,
+            |(((n, i), r), b): (((String, Option<String>), Option<String>), ASTParsec)| {
+                ASTParsecRule {
+                    name: n,
+                    input: i.unwrap_or(String::from("char")),
+                    returns: r.unwrap_or(String::from("()")),
+                    rule: b,
+                }
             },
         )
         .rep()

@@ -100,7 +100,7 @@ mod tests_transpiler {
     #[test]
     fn it_parse_with_recursive_parser() {
         parsec_rules!(
-            let parens:{()} = ('(' parens ')')? -> { () }
+            let parens = ('(' parens ')')? -> { () }
         );
 
         let response = parens()

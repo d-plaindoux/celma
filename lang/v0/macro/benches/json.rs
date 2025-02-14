@@ -73,9 +73,9 @@ parsec_rules!(
 parsec_rules!(
     let STRING:{String}      = delimited_string
     let NUMBER:{f64}         = c=#(INT ('.' NAT)? (('E'|'e') INT)?)    -> {mk_f64(c)}
-    let INT:{()}             = ('-'|'+')? NAT                          -> {}
-    let NAT:{()}             = digit+                                  -> {}
-    let S:{()}               = space*                                  -> {}
+    let INT             = ('-'|'+')? NAT                          -> {}
+    let NAT             = digit+                                  -> {}
+    let S               = space*                                  -> {}
 );
 
 // -------------------------------------------------------------------------------------------------

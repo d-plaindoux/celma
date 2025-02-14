@@ -91,11 +91,19 @@ fn mk_atom(operation: Option<char>, parsec: ASTParsec<char>) -> ASTParsec<char> 
 }
 
 parsec_rules!(
-    let skip:{()} = (' '|'\t'|'\n'|'\r')* -> {}
+    let skip = (' '|'\t'|'\n'|'\r')* -> {}
     let ident:{String} = (skip i=#(alpha (alpha|digit|'_')*) skip) -> { i.into_iter().collect() }
 
-    let kind:{String} = (skip '{' v=^'}'* '}' skip) -> { v.into_iter().collect() }
-    let code:{String} = (skip '{' c=^'}'* '}' skip) -> { c.into_iter().collect() }
+    let rkind = (/'>' -> {})
+              | (^('<'|'>')+ rkind -> {})
+              | ('<' rkind '>' rkind -> {})
+
+    let rcode = (/'}' -> {})
+              | (^('}'|'{')+ rcode -> {})
+              | ('{' rcode '}' rcode -> {})
+
+    let kind:{String} = (skip '<' c=#rkind '>' skip) -> { c.into_iter().collect() }
+    let code:{String} = (skip '{' c=#rcode '}' skip) -> { c.into_iter().collect() }
 
     let rules:{Vec<ASTParsecRule<char>>} = rule*
     let rule:{ASTParsecRule<char>} = (

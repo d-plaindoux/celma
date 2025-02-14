@@ -123,8 +123,8 @@ mod tests_transpiler {
         let keyword{char}:{Token} = s=('+'|'*'|'('|')')    -> { Token::Keyword(s) }
 
         let INT{char}:{i64}       = c=#(('-'|'+')? NAT)    -> { mk_string(c).parse().unwrap() }
-        let NAT{char}:{()}        = digit+                 -> {}
-        let S{char}:{()}          = space*                 -> {}
+        let NAT{char}        = digit+                 -> {}
+        let S{char}          = space*                 -> {}
     );
 
     // ---------------------------------------------------------------------------------------------
@@ -133,10 +133,10 @@ mod tests_transpiler {
 
     // Lexemes
     parsec_rules!(
-        let PLUS{Token}:{()}   = {kwd('+')} -> {}
-        let MULT{Token}:{()}   = {kwd('*')} -> {}
-        let LPAREN{Token}:{()} = {kwd('(')} -> {}
-        let RPAREN{Token}:{()} = {kwd(')')} -> {}
+        let PLUS{Token}   = {kwd('+')} -> {}
+        let MULT{Token}   = {kwd('*')} -> {}
+        let LPAREN{Token} = {kwd('(')} -> {}
+        let RPAREN{Token} = {kwd(')')} -> {}
     );
 
     // Parser

@@ -16,7 +16,7 @@ Generalization is the capability to design a parser based on pipelined parsers a
 In order to have a seamless parser definition two dedicated `proc_macro` are designed:
 
 ```rust
-parsec_rules = "let" ident ('{' rust_type '}')? ':' '{' rust_type '}' "=" parser)+
+parsec_rules = "pub"? "let" ident ('{' rust_type '}')? (':' '{' rust_type '}')? "=" parser)+
 parser       = binding? atom occurrence? additional? transform?
 ```
 
@@ -113,11 +113,11 @@ parsec_rules!(
 
 ```rust
 parsec_rules!(
-    let STRING:{String}      = delimited_string
-    let NUMBER:{f64}         = c=#(INT ('.' NAT)? (('E'|'e') INT)?)    -> {mk_f64(c)}
-    let INT:{()}             = ('-'|'+')? NAT                          -> {}
-    let NAT:{()}             = digit+                                  -> {}
-    let S:{()}               = space*                                  -> {}
+    let STRING:{String} = delimited_string
+    let NUMBER:{f64}    = c=#(INT ('.' NAT)? (('E'|'e') INT)?)    -> {mk_f64(c)}
+    let INT             = ('-'|'+')? NAT                          -> {}
+    let NAT             = digit+                                  -> {}
+    let S               = space*                                  -> {}
 );
 ```
 
@@ -136,7 +136,7 @@ parsec_rules!(
     let token:{Token}   = S _=(int|keyword) S
     let int:{Token}     = c=!(#(('-'|'+')? digit+)) -> {Token::Int(mk_i64(c))}
     let keyword:{Token} = s=('+'|'*'|'('|')')       -> {Token::Keyword(s)}
-    let S:{()}          = space*                    -> {}
+    let S               = space*                    -> {}
 );
 ```
 
@@ -146,10 +146,10 @@ The Lexeme parser recognizes simple token keywords.
 
 ```rust
 parsec_rules!(
-    let PLUS{Token}:{()}   = {kwd('+')} -> {}
-    let MULT{Token}:{()}   = {kwd('*')} -> {}
-    let LPAREN{Token}:{()} = {kwd('(')} -> {}
-    let RPAREN{Token}:{()} = {kwd(')')} -> {}
+    let PLUS{Token}   = {kwd('+')} -> {}
+    let MULT{Token}   = {kwd('*')} -> {}
+    let LPAREN{Token} = {kwd('(')} -> {}
+    let RPAREN{Token} = {kwd(')')} -> {}
 );
 ```
 
@@ -202,11 +202,19 @@ by the paper [A Typed, Algebraic Approach to Parsing](https://www.cl.cam.ac.uk/~
 #### Celma lang in Celma lang
 
 ```rust
-let skip:{()} = (' '|'\t'|'\n'|'\r')* -> {}
+let skip = (' '|'\t'|'\n'|'\r')* -> {}
 let ident:{String} = (skip i=#(alpha (alpha|digit|'_')*) skip) -> { i.into_iter().collect() }
 
-let kind:{String} = (skip '{' v=^'}'* '}' skip) -> { v.into_iter().collect() }
-let code:{String} = (skip '{' c=^'}'* '}' skip) -> { c.into_iter().collect() }
+let rkind = (/'>' -> {})
+          | (^('<'|'>')+ rkind -> {})
+          | ('<' rkind '>' rkind -> {})
+
+let rcode = (/'}' -> {})
+          | (^('}'|'{')+ rcode -> {})
+          | ('{' rcode '}' rcode -> {})
+
+let kind:{String} = (skip '<' c=#rkind '>' skip) -> { c.into_iter().collect() }
+let code:{String} = (skip '{' c=#rcode '}' skip) -> { c.into_iter().collect() }
 
 let rules:{Vec<ASTParsecRule<char>>} = rule*
 let rule:{ASTParsecRule<char>} = (

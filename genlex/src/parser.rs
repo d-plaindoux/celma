@@ -45,9 +45,9 @@ where
     }
 
     parsec_rules!(
-        let INT:{()}    = ('-'|'+')? NAT -> {}
-        let NAT:{()}    = digit+         -> {}
-        let SPACES:{()} = space*         -> {}
+        let INT    = ('-'|'+')? NAT -> {}
+        let NAT    = digit+         -> {}
+        let SPACES = space*         -> {}
     );
 
     parsec_rules!(
