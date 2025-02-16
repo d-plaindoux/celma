@@ -1,6 +1,6 @@
 # Celma 
 
-[![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
+[![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
 [Celma ("k")noun "channel" (KEL) in Quenya](https://www.elfdict.com/w/kelma)
 
@@ -182,68 +182,36 @@ match response {
 }
 ```
 
-## Celma Lang internal design
+# Celma language internal design
 
-Celma is a embedded language in Rust targeting simple parser construction.
-As already explained in the main README such language is processes during
-the Rust compilation stage.
+Celma is an embedded language in Rust for building simple parsers.
+The language is processed when Rust is compiled. To this end, we
+identify two steps. The first is to analyse the language using a 
+syntax analyser in a direct style. Then, this parser is invoked 
+during the compilation phase, using a procedural macro dedicated 
+to Rust to manage the language in Rust.
 
-### V0
+## V0
 
 In the V0 the transpilation is a direct style Parsec generation without any
-optimisations. 
+optimisations cf. [celma parser in direct style](https://github.com/d-plaindoux/celma/blob/master/lang/v0/parser/src/parser.rs). 
 
-### V1
+## V1
 
 This version target an aggressive and an efficient parser compilation. For this
 purpose the compilation follows a traditional control and data flow mainly inspired 
-by the paper [A Typed, Algebraic Approach to Parsing](https://www.cl.cam.ac.uk/~jdy22/papers/a-typed-algebraic-approach-to-parsing.pdf)
+by the paper [A Typed, Algebraic Approach to Parsing](https://www.cl.cam.ac.uk/~jdy22/papers/a-typed-algebraic-approach-to-parsing.pdf). 
 
-#### Celma lang in Celma lang
+First, we express [Celma in Celma](https://github.com/d-plaindoux/celma/blob/master/lang/v1/parser/src/parser.rs).
+This gives us an AST denoting parsers expressed using the Celma language.
 
-```rust
-let skip = (' '|'\t'|'\n'|'\r')* -> {}
-let ident:{String} = (skip i=#(alpha (alpha|digit|'_')*) skip) -> { i.into_iter().collect() }
+### Type checking
 
-let rkind = (/'>' -> {})
-          | (^('<'|'>')+ rkind -> {})
-          | ('<' rkind '>' rkind -> {})
+Work in progress
 
-let rcode = (/'}' -> {})
-          | (^('}'|'{')+ rcode -> {})
-          | ('{' rcode '}' rcode -> {})
+### Compilation to Rust
 
-let kind:{String} = (skip '<' c=#rkind '>' skip) -> { c.into_iter().collect() }
-let code:{String} = (skip '{' c=#rcode '}' skip) -> { c.into_iter().collect() }
-
-let rules:{Vec<ASTParsecRule<char>>} = rule*
-let rule:{ASTParsecRule<char>} = (
-    skip p="pub"? skip "let" skip n=ident i=kind? r=(':' _=kind)? '=' b=parsec skip
-) -> { mk_rule(p.is_some(), n, i, r, b) }
-
-let parsec:{ASTParsec<char>} = (
-    skip b=!(binding)? a=atom o=('?'|'*'|'+')? d=additional? t=transform? skip
-) -> { mk_ast_parsec(b, a, o, d, t) }
-
-let binding:{String} = skip _=ident '=' skip
-let additional:{(bool,ASTParsec<char>)} = (skip c='|'? skip p=parsec) -> { (c.is_some(), p) }
-
-let atom:{ASTParsec<char>} = (
-    skip o=('^'|'!'|'#'|'/')? skip p=(atom_block|atom_ident|atom_char|atom_string|atom_code) skip
-) -> { mk_atom(o, p) }
-
-let atom_block:{ASTParsec<char>} = '(' _=parsec ')'
-let atom_ident:{ASTParsec<char>} = c=ident -> { PIdent(c) }
-let atom_char:{ASTParsec<char>} = c=delimited_char -> { PAtom(c) }
-let atom_string:{ASTParsec<char>} = c=delimited_string -> { PAtoms(c.chars().collect()) }
-let atom_code:{ASTParsec<char>} = c=code -> { PCode(c) }
-
-let transform:{String} = (skip "->" skip _=code)
-
-// Main entries
-let celma_parsec:{ASTParsec<char>} = (_=parsec eos)
-let celma_parsec_rules:{Vec<ASTParsecRule<char>>} = (_=rules eos)
-```
+Work in progress
 
 # License
 
