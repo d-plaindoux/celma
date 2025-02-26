@@ -16,37 +16,38 @@
 
 extern crate proc_macro;
 
+use celma_v0_core::parser::response::Response;
 use celma_v0_core::parser::response::Response::{Reject, Success};
 use celma_v0_core::parser::specs::Parse;
 use celma_v0_core::stream::char_stream::CharStream;
 use celma_v0_core::stream::specs::Stream;
 use celma_v0_parser::parser::{celma_parsec, celma_parsec_rules};
 use celma_v0_parser::transpiler::Transpile;
-use proc_macro::TokenStream;
+use syn::Error;
 
 #[proc_macro]
-pub fn parsec(input: TokenStream) -> TokenStream {
+pub fn parsec(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let source = input.to_string();
     let result = celma_parsec()
         .parse(CharStream::new(source.as_str()))
         .map(|ast| ast.transpile());
 
-    match result {
-        Success(code, _, _) => match code {
-            Ok(code) => code.into(),
-            Err(err) => panic!("{}", err.into_compile_error()),
-        },
-        Reject(s, _) => panic!("Parse error at {:?}", s.position()),
-    }
+    conclude_parsing(result)
 }
 
 #[proc_macro]
-pub fn parsec_rules(input: TokenStream) -> TokenStream {
+pub fn parsec_rules(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let source = input.to_string();
     let result = celma_parsec_rules()
         .parse(CharStream::new(source.as_str()))
         .map(|ast| ast.transpile());
 
+    conclude_parsing(result)
+}
+
+fn conclude_parsing(
+    result: Response<Result<proc_macro2::TokenStream, Error>, CharStream<(usize, usize, usize)>>,
+) -> proc_macro::TokenStream {
     match result {
         Success(code, _, _) => match code {
             Ok(code) => code.into(),

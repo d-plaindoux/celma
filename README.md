@@ -200,10 +200,11 @@ optimisations cf. [celma parser in direct style](https://github.com/d-plaindoux/
 
 This version target an aggressive and an efficient parser compilation. For this
 purpose the compilation follows a traditional control and data flow mainly inspired 
-by the paper [A Typed, Algebraic Approach to Parsing](https://www.cl.cam.ac.uk/~jdy22/papers/a-typed-algebraic-approach-to-parsing.pdf). 
+by the papers like [A Typed, Algebraic Approach to Parsing](https://www.cl.cam.ac.uk/~jdy22/papers/a-typed-algebraic-approach-to-parsing.pdf) 
+and [Fusing Lexing and Parsing](https://www.cl.cam.ac.uk/~jdy22/papers/fusing-lexing-and-parsing.pdf).
 
 First, we express [Celma in Celma](https://github.com/d-plaindoux/celma/blob/master/lang/v1/parser/src/parser.rs).
-This gives us an AST denoting parsers expressed using the Celma language.
+This gives us an AST denoting parsers expressed using the Celma language i.e. Celma(v1) thanks to Celma(v0).
 
 ### Type checking
 

@@ -8,8 +8,10 @@ edition = "2021"
 proc-macro = true
 
 [dependencies]
+syn = "2.0.98"
 celma_v0_core = { version = "0.1.0", path = "../core" }
 celma_v0_parser = { version = "0.1.0", path = "../parser" }
+proc-macro2 = "1.0.93"
 
 [dev-dependencies]
 bencher = "0.1.5"
