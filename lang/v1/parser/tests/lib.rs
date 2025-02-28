@@ -14,6 +14,4 @@
  * limitations under the License.
  */
 
-pub mod first_tests;
-
 pub mod parser_tests;

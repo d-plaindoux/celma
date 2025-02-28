@@ -206,11 +206,15 @@ and [Fusing Lexing and Parsing](https://www.cl.cam.ac.uk/~jdy22/papers/fusing-le
 First, we express [Celma in Celma](https://github.com/d-plaindoux/celma/blob/master/lang/v1/parser/src/parser.rs).
 This gives us an AST denoting parsers expressed using the Celma language i.e. Celma(v1) thanks to Celma(v0).
 
-### Type checking
+### Normalisation
 
 Work in progress
 
-### Compilation to Rust
+### Fusion
+
+Work in progress
+
+### Staging
 
 Work in progress
 
