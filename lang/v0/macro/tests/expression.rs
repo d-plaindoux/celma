@@ -73,9 +73,9 @@ mod tests_transpiler {
 
     parsec_rules!(
         let NUMBER:{f64} = c=#(INT ('.' NAT)? (('E'|'e') INT)?) -> {mk_f64(c)}
-        let INT     = ('-'|'+')? NAT                       -> {}
-        let NAT     = digit+                               -> {}
-        let S       = space*                               -> {}
+        let INT          = ('-'|'+')? NAT                       -> {}
+        let NAT          = digit+                               -> {}
+        let S            = space*                               -> {}
     );
 
     #[test]

@@ -41,13 +41,12 @@ pub enum JSON {
 }
 
 fn mk_vec<E>(a: Option<(E, Vec<E>)>) -> Vec<E> {
-    if a.is_none() {
-        Vec::new()
-    } else {
-        let (a, v) = a.unwrap();
+    if let Some((a, v)) = a {
         let mut r = v;
         r.insert(0, a);
         r
+    } else {
+        Vec::new()
     }
 }
 
@@ -73,9 +72,9 @@ parsec_rules!(
 parsec_rules!(
     let STRING:{String}      = delimited_string
     let NUMBER:{f64}         = c=#(INT ('.' NAT)? (('E'|'e') INT)?)    -> {mk_f64(c)}
-    let INT             = ('-'|'+')? NAT                          -> {}
-    let NAT             = digit+                                  -> {}
-    let S               = space*                                  -> {}
+    let INT                  = ('-'|'+')? NAT                          -> {}
+    let NAT                  = digit+                                  -> {}
+    let S                    = space*                                  -> {}
 );
 
 // -------------------------------------------------------------------------------------------------

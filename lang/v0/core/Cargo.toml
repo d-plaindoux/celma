@@ -2,7 +2,7 @@
 name = "celma_v0_core"
 version = "0.1.0"
 authors = ["dplaindoux <d.plaindoux@fungus.fr>"]
-edition = "2021"
+edition = "2024"
 
 [dev-dependencies]
 bencher = "0.1.5"

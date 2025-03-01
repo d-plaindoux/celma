@@ -2,7 +2,7 @@
 name = "celma_v0_macro"
 version = "0.1.0"
 authors = ["d-plaindoux <d.plaindoux@free.fr>"]
-edition = "2021"
+edition = "2024"
 
 [lib]
 proc-macro = true

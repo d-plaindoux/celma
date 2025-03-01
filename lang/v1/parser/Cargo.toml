@@ -2,7 +2,7 @@
 name = "celma_v1"
 version = "0.1.0"
 authors = ["dplaindoux <d.plaindoux@fungus.fr>"]
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 celma_v0_core = { version = "0.1.0", path = "../../v0/core" }

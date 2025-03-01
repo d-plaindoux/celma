@@ -2,5 +2,5 @@
 name = "celma_v1_ast"
 version = "0.1.0"
 authors = ["dplaindoux <d.plaindoux@fungus.fr>"]
-edition = "2021"
+edition = "2024"
 
