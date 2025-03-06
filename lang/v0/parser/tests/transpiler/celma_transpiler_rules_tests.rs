@@ -16,6 +16,7 @@
 
 #[cfg(test)]
 mod tests_and {
+    use proc_macro2::TokenStream;
     use quote::quote;
 
     use celma_v0_core::parser::response::Response::Success;
@@ -33,52 +34,53 @@ mod tests_and {
             .map(|ast| ast.transpile());
 
         match response {
-            Success(ast, _, _) => assert_eq!(
-                ast.unwrap().to_string(),
-                quote!(
-                    pub fn a<'a, S: 'a>() -> impl celma_v0_core::parser::specs::Parse<Vec<char>, S>
-                           + celma_v0_core::parser::specs::Combine<Vec<char> >
-                           + 'a
-                    where
-                        S: celma_v0_core::stream::specs::Stream<Item = char>,
-                    {
-                        use celma_v0_core::parser::a_try::a_try;
-                        use celma_v0_core::parser::and::AndOperation;
-                        use celma_v0_core::parser::check::check;
-                        use celma_v0_core::parser::lookahead::lookahead;
-                        use celma_v0_core::parser::map::MapOperation;
-                        use celma_v0_core::parser::not::NotOperation;
-                        use celma_v0_core::parser::option::OptionalOperation;
-                        use celma_v0_core::parser::or::OrOperation;
-                        use celma_v0_core::parser::repeat::RepeatOperation;
-                        use celma_v0_core::parser::specs::Parse;
-
-                        celma_v0_core::parser::core::parser(celma_v0_core::parser::lazy::lazy(|| b()))
-                    }
-
-                    pub fn b<'a, S: 'a>() -> impl celma_v0_core::parser::specs::Parse<Vec<char>, S>
-                           + celma_v0_core::parser::specs::Combine<Vec<char> >
-                           + 'a
-                    where
-                        S: celma_v0_core::stream::specs::Stream<Item = char>,
-                    {
-                        use celma_v0_core::parser::a_try::a_try;
-                        use celma_v0_core::parser::and::AndOperation;
-                        use celma_v0_core::parser::check::check;
-                        use celma_v0_core::parser::lookahead::lookahead;
-                        use celma_v0_core::parser::map::MapOperation;
-                        use celma_v0_core::parser::not::NotOperation;
-                        use celma_v0_core::parser::option::OptionalOperation;
-                        use celma_v0_core::parser::or::OrOperation;
-                        use celma_v0_core::parser::repeat::RepeatOperation;
-                        use celma_v0_core::parser::specs::Parse;
-
-                        celma_v0_core::parser::core::parser(celma_v0_core::parser::char::a_char('b').rep())
-                    }
-                )
-                .to_string()
-            ),
+            Success(ast, _, _) => assert_eq!(ast.unwrap().to_string(), expect_code().to_string()),
             _ => assert_eq!(true, false),
         };
+    }
+
+    #[rustfmt::skip]
+    fn expect_code() -> TokenStream {
+        quote!(
+            pub fn a<'a, S: 'a>() -> impl celma_v0_core::parser::specs::Parse<Vec<char>, S>
+                   + celma_v0_core::parser::specs::Combine<Vec<char> >
+                   + 'a
+            where
+                S: celma_v0_core::stream::specs::Stream<Item = char>,
+            {
+                use celma_v0_core::parser::a_try::a_try;
+                use celma_v0_core::parser::and::AndOperation;
+                use celma_v0_core::parser::check::check;
+                use celma_v0_core::parser::lookahead::lookahead;
+                use celma_v0_core::parser::map::MapOperation;
+                use celma_v0_core::parser::not::NotOperation;
+                use celma_v0_core::parser::option::OptionalOperation;
+                use celma_v0_core::parser::or::OrOperation;
+                use celma_v0_core::parser::repeat::RepeatOperation;
+                use celma_v0_core::parser::specs::Parse;
+
+                celma_v0_core::parser::core::parser(celma_v0_core::parser::lazy::lazy(|| b()))
+            }
+
+            pub fn b<'a, S: 'a>() -> impl celma_v0_core::parser::specs::Parse<Vec<char>, S>
+                   + celma_v0_core::parser::specs::Combine<Vec<char> >
+                   + 'a
+            where
+                S: celma_v0_core::stream::specs::Stream<Item = char>,
+            {
+                use celma_v0_core::parser::a_try::a_try;
+                use celma_v0_core::parser::and::AndOperation;
+                use celma_v0_core::parser::check::check;
+                use celma_v0_core::parser::lookahead::lookahead;
+                use celma_v0_core::parser::map::MapOperation;
+                use celma_v0_core::parser::not::NotOperation;
+                use celma_v0_core::parser::option::OptionalOperation;
+                use celma_v0_core::parser::or::OrOperation;
+                use celma_v0_core::parser::repeat::RepeatOperation;
+                use celma_v0_core::parser::specs::Parse;
+
+                celma_v0_core::parser::core::parser(celma_v0_core::parser::char::a_char('b').rep())
+            }
+        )
     }
 }

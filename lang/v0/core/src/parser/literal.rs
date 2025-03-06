@@ -73,14 +73,16 @@ pub fn escaped<'a, S>() -> impl Parse<char, S> + Combine<char> + 'a
 where
     S: Stream<Item = char> + 'a,
 {
-    string(r#"\'"#)
-        .map(|_| '\'')
-        .or(string(r#"\""#).map(|_| '\"'))
-        .or(string(r#"\\"#).map(|_| '\\'))
-        .or(string(r#"\n"#).map(|_| '\n'))
-        .or(string(r#"\r"#).map(|_| '\r'))
-        .or(string(r#"\t"#).map(|_| '\t'))
-        .or(string(r#"\0"#).map(|_| '\0'))
+    a_char('\\').and_right(
+        a_char('\'')
+            .map(|_| '\'')
+            .or(a_char('"').map(|_| '\"'))
+            .or(a_char('\\').map(|_| '\\'))
+            .or(a_char('n').map(|_| '\n'))
+            .or(a_char('r').map(|_| '\r'))
+            .or(a_char('t').map(|_| '\t'))
+            .or(a_char('0').map(|_| '\0')),
+    )
     // etc. TODO
 }
 

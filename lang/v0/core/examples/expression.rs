@@ -61,6 +61,7 @@ where
     S: Stream<Item = char>,
 {
     alpha()
+        .or(a_char('🙃'))
         .rep()
         .map(|v| Token::Ident(v.into_iter().collect::<String>()))
 }
@@ -126,8 +127,8 @@ fn main() {
         _ => println!("KO"),
     }
 
-    match ident().and(eos()).left().parse(CharStream::new("Toto")) {
-        Success(Token::Ident(ref s), _, _) if *s == String::from("Toto") => {
+    match ident().and(eos()).left().parse(CharStream::new("Toto🙃")) {
+        Success(Token::Ident(ref s), _, _) if *s == String::from("Toto🙃") => {
             println!("Ident = {}", s)
         }
         _ => println!("KO"),

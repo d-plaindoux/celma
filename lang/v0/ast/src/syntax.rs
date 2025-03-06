@@ -32,8 +32,6 @@ pub enum ASTParsec {
     PLookahead(Box<ASTParsec>),
 }
 
-
-
 impl ASTParsec {
     pub fn wrap(self) -> Box<Self> {
         Box::new(self)

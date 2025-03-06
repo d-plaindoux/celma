@@ -17,7 +17,7 @@
 #[macro_use]
 extern crate bencher;
 
-use bencher::{black_box, Bencher};
+use bencher::{Bencher, black_box};
 
 use celma_v0_core::parser::and::AndOperation;
 use celma_v0_core::parser::core::any;
@@ -103,7 +103,7 @@ fn basic_a_and_b(bencher: &mut Bencher) {
 }
 
 fn basic_delimited_string(bencher: &mut Bencher) {
-    let data = b"\"hello\"".to_vec().repeat(SIZE);
+    let data = b"\"hello world!\"".to_vec().repeat(SIZE);
 
     let parser = u8('"')
         .and(not_u8('"').opt_rep())

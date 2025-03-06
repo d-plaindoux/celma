@@ -1,44 +1,48 @@
-# Celma 
+# Celma
 
 [![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
 [Celma ("k")noun "channel" (KEL) in Quenya](https://www.elfdict.com/w/kelma)
 
-Celma is a generalised parser combinator implementation. Generalised means not an implementation restricted to a stream of characters.
+Celma is a generalised parser combinator implementation. Generalised means not an implementation restricted to a stream
+of characters.
 
 ## Overview
 
-Generalization is the capability to design a parser based on pipelined parsers and separate parsers regarding their semantic level.
+Generalization is the capability to design a parser based on pipelined parsers and separate parsers regarding their
+semantic level.
 
 # Celma parser meta language
 
 ## Grammar
+
 In order to have a seamless parser definition two dedicated `proc_macro` are designed:
 
 ```rust
-parsec_rules = "pub"? "let" ident ('{' rust_type '}')? (':' '{' rust_type '}')? "=" parser)+
+parsec_rules = "pub" ? "let" ident ('{' rust_type '}') ? (':' '{' rust_type '}') ? "=" parser) +
 parser       = binding? atom occurrence? additional? transform?
 ```
 
 ```rust
 binding      = ident '='
 occurrence   = ("*" | "+" | "?")
-additional   = "|"? parser
+additional   = "|" ? parser
 transform    = "->" '{' rust_code '}'
 atom         = alter? '(' parser ')' | CHAR | STRING | ident
-alter        = ("^"|"!"|"#"|"/")
-ident        = [a..zA..Z][a..zA..Z0..9_]* - {"let"}
+alter        = ("^" | "!" | "#" | "/")
+ident        = [a..zA..Z][a..zA..Z0..9_] * - {"let"}
 ```
 
 The `alter` is an annotation where:
+
 - `^` allows the capability to recognize negation,
-- `!` allows the capability to backtrack on failure and 
+- `!` allows the capability to backtrack on failure and
 - `#` allows the capability to capture all chars.
 - `/` allows the capability to lookahead without consuming scanned elements.
 
-The `#` alteration is important because it prevents massive list construction in memory. 
+The `#` alteration is important because it prevents massive list construction in memory.
 
-##  Using the meta-language
+## Using the meta-language
 
 Therefore, a parser can be defined using this meta-language.
 
@@ -50,7 +54,8 @@ let parser = parsec!(
 
 ## A Full Example: JSON
 
-A [JSon parser](https://github.com/d-plaindoux/celma/blob/master/macro/benches/json.rs#L61) can be designed thanks to the Celma parser meta language.
+A [JSon parser](https://github.com/d-plaindoux/celma/blob/master/macro/benches/json.rs#L61) can be designed thanks to
+the Celma parser meta language.
 
 ### JSon abstract data type
 
@@ -66,7 +71,7 @@ pub enum JSON {
 }
 ```
 
-### Transformation functions 
+### Transformation functions
 
 ```rust
 fn mk_vec<E>(a: Option<(E, Vec<E>)>) -> Vec<E> {
@@ -91,7 +96,7 @@ fn mk_f64(a: Vec<char>) -> f64 {
 
 ### The JSon parser
 
-The JSon parser is define by six rules dedicated to `number`, `string`, `null`, `boolean`, `array` 
+The JSon parser is define by six rules dedicated to `number`, `string`, `null`, `boolean`, `array`
 and `object`.
 
 #### JSON Rules
@@ -123,9 +128,11 @@ parsec_rules!(
 
 ## The expression parser thanks to pipelined parsers.
 
-The previous parser mixes char analysis and high-level term construction. This can be done in a different manner since Celma is a generalized parser combinator implementation.
+The previous parser mixes char analysis and high-level term construction. This can be done in a different manner since
+Celma is a generalized parser combinator implementation.
 
-For instance a first parser dedicated to lexeme recognition can be designed. Then on top of this lexer an expression parser can be easily designed.  
+For instance a first parser dedicated to lexeme recognition can be designed. Then on top of this lexer an expression
+parser can be easily designed.
 
 ### Tokenizer
 
@@ -142,7 +149,7 @@ parsec_rules!(
 
 ### Lexemes
 
-The Lexeme parser recognizes simple token keywords. 
+The Lexeme parser recognizes simple token keywords.
 
 ```rust
 parsec_rules!(
@@ -155,8 +162,10 @@ parsec_rules!(
 
 ### Expression parser
 
-The expression parser builds expression consuming tokens. For this purpose the stream type can be specified for each parser. If it's not the case the default one is `char`.
-In the following example the declaration `expr{Token}:{Expr}` denotes a parser consuming a `Token` stream and producing an `Expr`. 
+The expression parser builds expression consuming tokens. For this purpose the stream type can be specified for each
+parser. If it's not the case the default one is `char`.
+In the following example the declaration `expr{Token}:{Expr}` denotes a parser consuming a `Token` stream and producing
+an `Expr`.
 
 ```rust
 parsec_rules!(
@@ -173,12 +182,12 @@ parsec_rules!(
 
 ```rust
 let tokenizer = token();
-let stream = ParserStream::new(&tokenizer, CharStream::new("1 + 2"));
+let stream = ParserStream::new( & tokenizer, CharStream::new("1 + 2"));
 let response = expr().and_left(eos()).parse(stream);
 
 match response {
-    Success(v, _, _) => assert_eq!(v.eval(), 3),
-    _ => assert_eq!(true, false),
+Success(v, _, _) => assert_eq!(v.eval(), 3),
+_ => assert_eq!(true, false),
 }
 ```
 
@@ -186,37 +195,46 @@ match response {
 
 Celma is an embedded language in Rust for building simple parsers.
 The language is processed when Rust is compiled. To this end, we
-identify two steps. The first is to analyse the language using a 
-syntax analyser in a direct style. Then, this parser is invoked 
-during the compilation phase, using a procedural macro dedicated 
+identify two steps. The first is to analyse the language using a
+syntax analyser in a direct style. Then, this parser is invoked
+during the compilation phase, using a procedural macro dedicated
 to Rust to manage the language in Rust.
 
 ## V0
 
-In the V0 the transpilation is a direct style Parsec generation without any
-optimisations cf. [celma parser in direct style](https://github.com/d-plaindoux/celma/blob/master/lang/v0/parser/src/parser.rs). 
+In V0, transpilation is a direct style generation of Parsec without any
+optimisations. To this end, the `AST` is translated directly into a parser
+parser using the `core` library.
+cf. [celma parser in direct style](https://github.com/d-plaindoux/celma/blob/master/lang/v0/parser/src/parser.rs).
 
 ## V1
 
-This version target an aggressive and an efficient parser compilation. For this
-purpose the compilation follows a traditional control and data flow mainly inspired 
-by the papers like [A Typed, Algebraic Approach to Parsing](https://www.cl.cam.ac.uk/~jdy22/papers/a-typed-algebraic-approach-to-parsing.pdf) 
-and [Fusing Lexing and Parsing](https://www.cl.cam.ac.uk/~jdy22/papers/fusing-lexing-and-parsing.pdf).
+This version targets an aggressive and an efficient parser compilation. For this
+purpose the compilation follows a traditional control and data flow inspired by 
+the following papers:
+- [A Typed, Algebraic Approach to Parsing](https://www.cl.cam.ac.uk/~jdy22/papers/a-typed-algebraic-approach-to-parsing.pdf)    nd
+- [Fusing Lexing and Parsing](https://www.cl.cam.ac.uk/~jdy22/papers/fusing-lexing-and-parsing.pdf).
+
+### Celma AST generation 
 
 First, we express [Celma in Celma](https://github.com/d-plaindoux/celma/blob/master/lang/v1/parser/src/parser.rs).
 This gives us an AST denoting parsers expressed using the Celma language i.e. Celma(v1) thanks to Celma(v0).
 
 ### Normalisation
 
-Work in progress
+The first step is to produce the **Deterministic Greibach Normal Form** 
+of a given grammar. For this purpose we have a first AST for the grammar
+abstract denotation.
+
+NOTE: Work in progress
 
 ### Fusion
 
-Work in progress
+NOTE: Work in progress
 
 ### Staging
 
-Work in progress
+NOTE: Work in progress
 
 # License
 

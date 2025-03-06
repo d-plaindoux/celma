@@ -16,11 +16,11 @@
 
 #[cfg(test)]
 mod tests_and {
+    use celma_v0_ast::syntax::ASTParsec::{PAtom, PChoice, PCode};
+    use celma_v0_ast::syntax::ASTParsecRule;
     use celma_v0_core::parser::response::Response::{Reject, Success};
     use celma_v0_core::parser::specs::Parse;
     use celma_v0_core::stream::char_stream::CharStream;
-    use celma_v0_ast::syntax::ASTParsec::{PAtom, PChoice, PCode};
-    use celma_v0_ast::syntax::ASTParsecRule;
     use celma_v0_parser::parser::celma_parsec_rules;
 
     #[test]

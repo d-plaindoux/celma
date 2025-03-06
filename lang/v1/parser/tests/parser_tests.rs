@@ -20,7 +20,7 @@ mod parser_tests {
     use celma_v0_core::stream::char_stream::CharStream;
     use celma_v0_core::stream::specs::Len;
     use celma_v1::parser::{
-        atom_char, atom_code, atom_ident, atom_string, code, kind, rcode, parsec, rule,
+        atom_char, atom_code, atom_ident, atom_string, code, kind, parsec, rcode, rule,
     };
     use celma_v1_ast::syntax::ASTParsec::{
         PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PNot, POptional,

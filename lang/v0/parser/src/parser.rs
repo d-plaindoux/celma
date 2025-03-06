@@ -264,8 +264,8 @@ where
     skip().and_right(parsec()).and_left(skip()).and_left(eos())
 }
 
-pub fn celma_parsec_rules<'a, S>(
-) -> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<ASTParsecRule>> + 'a
+pub fn celma_parsec_rules<'a, S>()
+-> impl Parse<Vec<ASTParsecRule>, S> + Combine<Vec<ASTParsecRule>> + 'a
 where
     S: Stream<Item = char> + 'a,
 {

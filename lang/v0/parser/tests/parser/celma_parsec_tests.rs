@@ -16,12 +16,12 @@
 
 #[cfg(test)]
 mod tests_and {
-    use celma_v0_core::parser::response::Response::Success;
-    use celma_v0_core::parser::specs::Parse;
-    use celma_v0_core::stream::char_stream::CharStream;
     use celma_v0_ast::syntax::ASTParsec::{
         PBind, PChoice, PCode, PMap, POptional, PRepeat, PSequence,
     };
+    use celma_v0_core::parser::response::Response::Success;
+    use celma_v0_core::parser::specs::Parse;
+    use celma_v0_core::stream::char_stream::CharStream;
     use celma_v0_parser::parser::celma_parsec;
 
     #[test]

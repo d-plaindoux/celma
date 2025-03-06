@@ -17,7 +17,7 @@
 #[macro_use]
 extern crate bencher;
 
-use bencher::{black_box, Bencher};
+use bencher::{Bencher, black_box};
 
 use celma_v0_core::parser::and::AndOperation;
 use celma_v0_core::parser::char::a_char;
