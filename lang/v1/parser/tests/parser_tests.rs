@@ -20,7 +20,7 @@ mod parser_tests {
     use celma_v0_core::stream::char_stream::CharStream;
     use celma_v0_core::stream::specs::Len;
     use celma_v1::parser::{
-        atom_char, atom_code, atom_ident, atom_string, code, kind, parsec, rcode, rule,
+        atom_char, atom_code, atom_ident, atom_string, code, code_content, kind, parsec, rule,
     };
     use celma_v1_ast::syntax::ASTParsec::{
         PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PEpsilon, PIdent, PNot, PRepeat, PSequence,
@@ -77,22 +77,22 @@ mod parser_tests {
     }
 
     #[test]
-    fn should_parse_ident_empty_rcode() {
-        let response = rcode().parse(CharStream::new("}"));
+    fn should_parse_ident_empty_code_content() {
+        let response = code_content().parse(CharStream::new("}"));
 
         assert_eq!(response.fold(|_, s, _| s.len() == 1, |_, _| false), true);
     }
 
     #[test]
-    fn should_parse_ident_body_with_block_rcode() {
-        let response = rcode().parse(CharStream::new("tutu { titi } toto }"));
+    fn should_parse_ident_body_with_block_code_content() {
+        let response = code_content().parse(CharStream::new("tutu { titi } toto }"));
 
         assert_eq!(response.fold(|_, s, _| s.len() == 1, |_, _| false), true);
     }
 
     #[test]
-    fn should_parse_ident_body_with_block_unbalanced_rcode() {
-        let response = rcode().parse(CharStream::new("{ titi"));
+    fn should_parse_ident_body_with_block_unbalanced_code_content() {
+        let response = code_content().parse(CharStream::new("{ titi"));
 
         assert_eq!(response.fold(|_, _, _| false, |_, _| true), true);
     }

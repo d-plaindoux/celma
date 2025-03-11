@@ -13,7 +13,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-
 extern crate proc_macro;
 
 use celma_v0_core::parser::response::Response;
