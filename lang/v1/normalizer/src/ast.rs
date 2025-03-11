@@ -23,14 +23,29 @@ pub enum ASTGrammar<A> {
     Rec(String, Box<AST<A>>),
     Var(String)
 }
-
 /*
-  -- Pre-normalization
-  PN : ASTParsec -> ASTGrammar
+    PAtom(char),                    // Single char
+    PAtoms(Vec<char>),              // Char sequence
+    PBind(String, Box<ASTParsec>),  // Variable
+    PCode(String),                  // Production
+    PMap(Box<ASTParsec>, String),   // Remove?
+    PNot(Box<ASTParsec>),           // ?
+    PCheck(Box<ASTParsec>),         // No capture
 
-  PN[PSequence(T1,T2]] = Seq(PN[T1],PN[T2])
-  PN[PChoice(T1,T2]] = Choice(PN[T1],PN[T2])
-  PN[PRepeat(true, T)] = Rec(a,Choice(Epsilon, Seq(PN[T],String(a)) // When a is not in FV(T)
-  PN[PRepeat(false, T)] = Choice(PN[T],PN[PRepeat(true, T)])
-  PN[POptional(T)] = Choice(Epsilon, PN[T])
+    -- Pre-normalization
+
+    PN : ASTParsec -> (string -> ASTParsec) -> string list -> ASTGrammar
+
+                     / Var(n)               if n in l
+    PN[PIdent(n)]gl = {
+                     \ mu(n,PN[g(n)]g(n::l) otherwise
+
+    PN[PSequence(T1,T2]]gl  = Seq(PN[T1]gl,PN[T2]gl)
+    PN[PChoice(T1,T2)]gl    = Choice(PN[T1]gl,PN[T2]gl)
+    PN[PRepeat(false, T)]gl = Choice(PN[T]gl,PN[PRepeat(true, T)]gl)
+
+    PN[PRepeat(true, T)]gl  = PN[PChoice(PRepeat(false, T),PEpsilon)]gl
+    PN[POptional(T)]gl      = PN[PChoice(T,PEpsilon)]gl
+    PN[PTry(T)gl]           = PN[T]gl
  */
+

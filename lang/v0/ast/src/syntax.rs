@@ -29,7 +29,6 @@ pub enum ASTParsec {
     PCheck(Box<ASTParsec>),
     POptional(Box<ASTParsec>),
     PRepeat(bool, Box<ASTParsec>),
-    PLookahead(Box<ASTParsec>),
 }
 
 impl ASTParsec {

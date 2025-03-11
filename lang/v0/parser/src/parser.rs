@@ -29,8 +29,8 @@ use celma_v0_core::stream::specs::Stream;
 use std::ops::Range;
 
 use celma_v0_ast::syntax::ASTParsec::{
-    PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional,
-    PRepeat, PSequence, PTry,
+    PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat,
+    PSequence, PTry,
 };
 use celma_v0_ast::syntax::{ASTParsec, ASTParsecRule};
 
@@ -204,10 +204,6 @@ where
             .and_left(skip())
             .and_right(atom2())
             .map(|p| PCheck(p.wrap())))
-        .or(a_char('/')
-            .and_left(skip())
-            .and_right(atom2())
-            .map(|p| PLookahead(p.wrap())))
         .or(atom2())
 }
 

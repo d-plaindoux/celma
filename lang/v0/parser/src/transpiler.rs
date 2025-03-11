@@ -17,8 +17,8 @@
 extern crate proc_macro;
 
 use celma_v0_ast::syntax::ASTParsec::{
-    PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional,
-    PRepeat, PSequence, PTry,
+    PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat,
+    PSequence, PTry,
 };
 use celma_v0_ast::syntax::{ASTParsec, ASTParsecRule};
 use proc_macro2::{Span, TokenStream};
@@ -177,10 +177,6 @@ impl TranspileBody<(Option<String>, TokenStream)> for ASTParsec {
                 } else {
                     Ok((None, quote!(#pt.rep())))
                 }
-            }
-            PLookahead(p) => {
-                let (_, pt) = p.transpile_body()?;
-                Ok((None, quote!(lookahead(#pt))))
             }
         }
     }

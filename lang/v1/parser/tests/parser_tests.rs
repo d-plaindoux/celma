@@ -23,7 +23,7 @@ mod parser_tests {
         atom_char, atom_code, atom_ident, atom_string, code, kind, parsec, rcode, rule,
     };
     use celma_v1_ast::syntax::ASTParsec::{
-        PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PNot, POptional,
+        PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PNot, POptional,
         PSequence, PTry,
     };
     use celma_v1_ast::syntax::ASTParsecRule;
@@ -92,7 +92,7 @@ mod parser_tests {
 
     #[test]
     fn should_parse_ident_body_with_block_unbalanced_rcode() {
-        let response = rcode().parse(CharStream::new("{ titi }"));
+        let response = rcode().parse(CharStream::new("{ titi"));
 
         assert_eq!(response.fold(|_, _, _| false, |_, _| true), true);
     }
@@ -238,23 +238,6 @@ mod parser_tests {
                     == PBind(
                         String::from("a"),
                         PTry(PIdent(String::from("entry")).wrap()).wrap()
-                    ),
-                |_, _| false
-            ),
-            true
-        );
-    }
-
-    #[test]
-    fn should_parse_bind_optional_ident_body_with_lookahead() {
-        let response = parsec().parse(CharStream::new("a=/entry"));
-
-        assert_eq!(
-            response.fold(
-                |v, _, _| v
-                    == PBind(
-                        String::from("a"),
-                        PLookahead(PIdent(String::from("entry")).wrap()).wrap()
                     ),
                 |_, _| false
             ),

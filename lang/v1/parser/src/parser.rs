@@ -14,13 +14,13 @@
    limitations under the License.
 */
 
-use celma_v0_core::parser::core::eos;
+use celma_v0_core::parser::core::{eos, returns, Returns};
 use celma_v0_core::parser::literal::{delimited_char, delimited_string};
 
 use celma_v0_macro::parsec_rules;
 use celma_v1_ast::syntax::ASTParsec::{
-    PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PLookahead, PMap, PNot, POptional,
-    PRepeat, PSequence, PTry,
+    PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat,
+    PSequence, PTry,
 };
 use celma_v1_ast::syntax::{ASTParsec, ASTParsecRule};
 
@@ -63,11 +63,11 @@ fn mk_ast_parsec(
         occ
     };
 
-    let add = if let Some(value) = add {
-        if value.0 {
-            PChoice(bind.wrap(), value.1.wrap())
+    let add = if let Some((choice, parser)) = add {
+        if choice {
+            PChoice(bind.wrap(), parser.wrap())
         } else {
-            PSequence(bind.wrap(), value.1.wrap())
+            PSequence(bind.wrap(), parser.wrap())
         }
     } else {
         bind
@@ -85,22 +85,25 @@ fn mk_atom(operation: Option<char>, parsec: ASTParsec<char>) -> ASTParsec<char> 
         Some('^') => PNot(parsec.wrap()),
         Some('!') => PTry(parsec.wrap()),
         Some('#') => PCheck(parsec.wrap()),
-        Some('/') => PLookahead(parsec.wrap()),
         _ => parsec,
     }
+}
+
+fn epsilon() -> Returns<()> {
+    returns(())
 }
 
 parsec_rules!(
     let skip = (' '|'\t'|'\n'|'\r')* -> {}
     let ident:{String} = (skip i=#(alpha (alpha|digit|'_')*) skip) -> { i.into_iter().collect() }
 
-    let rkind = (/'>' -> {})
-              | (^('<'|'>')+ rkind -> {})
+    let rkind = (^('<'|'>')+ rkind -> {})
               | ('<' rkind '>' rkind -> {})
+              | epsilon
 
-    let rcode = (/'}' -> {})
-              | (^('}'|'{')+ rcode -> {})
+    let rcode = (^('}'|'{')+ rcode -> {})
               | ('{' rcode '}' rcode -> {})
+              | epsilon
 
     let kind:{String} = (skip '<' c=#rkind '>' skip) -> { c.into_iter().collect() }
     let code:{String} = (skip '{' c=#rcode '}' skip) -> { c.into_iter().collect() }

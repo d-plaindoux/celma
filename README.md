@@ -38,7 +38,6 @@ The `alter` is an annotation where:
 - `^` allows the capability to recognize negation,
 - `!` allows the capability to backtrack on failure and
 - `#` allows the capability to capture all chars.
-- `/` allows the capability to lookahead without consuming scanned elements.
 
 The `#` alteration is important because it prevents massive list construction in memory.
 
@@ -206,6 +205,18 @@ In V0, transpilation is a direct style generation of Parsec without any
 optimisations. To this end, the `AST` is translated directly into a parser
 parser using the `core` library.
 cf. [celma parser in direct style](https://github.com/d-plaindoux/celma/blob/master/lang/v0/parser/src/parser.rs).
+
+### Benchmarks
+
+Material: 
+
+```sh
+test json_apache      ... bench:   1,652,349 ns/iter (+/- 119,721) = 75 MB/s
+test json_canada_nom  ... bench:     135,309 ns/iter (+/- 4,034) = 68 MB/s
+test json_canada_pest ... bench:  61,084,354 ns/iter (+/- 2,746,834) = 36 MB/s
+test json_data        ... bench:     133,788 ns/iter (+/- 10,607) = 69 MB/s
+```
+
 
 ## V1
 

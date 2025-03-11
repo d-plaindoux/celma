@@ -77,25 +77,6 @@ mod tests_and {
     }
 
     #[test]
-    fn it_transpile_two_characters_with_lookahead_on_the_second_one() {
-        let response = celma_parsec()
-            .parse(CharStream::new("'a' /'b'"))
-            .map(|ast| ast.transpile_body());
-
-        match response {
-            Success(Ok((_, ast)), _, _) => assert_eq!(
-                ast.to_string(),
-                quote!(
-                    celma_v0_core::parser::char::a_char('a')
-                        .and_right(lookahead(celma_v0_core::parser::char::a_char('b')))
-                )
-                .to_string()
-            ),
-            _ => assert_eq!(true, false),
-        };
-    }
-
-    #[test]
     fn it_transpile_two_characters_bind_left() {
         let response = celma_parsec()
             .parse(CharStream::new("a='a' 'b'"))
