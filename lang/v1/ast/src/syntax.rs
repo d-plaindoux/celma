@@ -33,7 +33,7 @@ pub enum ASTType {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ASTParsec<I> {
-    PEpsilon,
+    PEpsilon(),
     PIdent(String),
     PAtom(I),
     PAtoms(Vec<I>),
@@ -45,8 +45,7 @@ pub enum ASTParsec<I> {
     PNot(Box<ASTParsec<I>>),
     PTry(Box<ASTParsec<I>>),
     PCheck(Box<ASTParsec<I>>),
-    POptional(Box<ASTParsec<I>>),
-    PRepeat(bool, Box<ASTParsec<I>>),
+    PRepeat(Box<ASTParsec<I>>),
 }
 
 impl<I> ASTParsec<I> {

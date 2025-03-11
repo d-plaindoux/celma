@@ -17,7 +17,7 @@
 #[cfg(test)]
 mod tests_and {
     use celma_v0_ast::syntax::ASTParsec::{
-        PBind, PChoice, PCode, PMap, POptional, PRepeat, PSequence,
+        PBind, PChoice, PCode, PEpsilon, PMap, POptional, PRepeat, PSequence,
     };
     use celma_v0_core::parser::response::Response::Success;
     use celma_v0_core::parser::specs::Parse;
@@ -30,7 +30,7 @@ mod tests_and {
 
         match response {
             Success(ast, _, _) => assert_eq!(ast, PCode(String::from("char(\'a\')"))),
-            _ => assert_eq!(true, false),
+            _ => panic!(),
         };
     }
 
@@ -42,11 +42,11 @@ mod tests_and {
             Success(ast, _, _) => assert_eq!(
                 ast,
                 PSequence(
-                    Box::new(PCode(String::from("char(\'a\')"))),
-                    Box::new(PCode(String::from("char(\'b\')"))),
+                    PCode(String::from("char(\'a\')")).wrap(),
+                    PCode(String::from("char(\'b\')")).wrap(),
                 )
             ),
-            _ => assert_eq!(true, false),
+            _ => panic!(),
         };
     }
 
@@ -58,11 +58,11 @@ mod tests_and {
             Success(ast, _, _) => assert_eq!(
                 ast,
                 PChoice(
-                    Box::new(PCode(String::from("char(\'a\')"))),
-                    Box::new(PCode(String::from("char(\'b\')"))),
+                    PCode(String::from("char(\'a\')")).wrap(),
+                    PCode(String::from("char(\'b\')")).wrap(),
                 )
             ),
-            _ => assert_eq!(true, false),
+            _ => panic!(),
         };
     }
 
@@ -73,12 +73,9 @@ mod tests_and {
         match response {
             Success(ast, _, _) => assert_eq!(
                 ast,
-                PBind(
-                    String::from("c"),
-                    Box::new(PCode(String::from("char(\'a\')"))),
-                )
+                PBind(String::from("c"), PCode(String::from("char(\'a\')")).wrap(),)
             ),
-            _ => assert_eq!(true, false),
+            _ => panic!(),
         };
     }
 
@@ -91,10 +88,10 @@ mod tests_and {
                 ast,
                 PBind(
                     String::from("c"),
-                    Box::new(POptional(Box::new(PCode(String::from("char(\'a\')"))))),
+                    POptional(PCode(String::from("char(\'a\')")).wrap()).wrap(),
                 )
             ),
-            _ => assert_eq!(true, false),
+            _ => panic!(),
         };
     }
 
@@ -107,10 +104,10 @@ mod tests_and {
                 ast,
                 PBind(
                     String::from("c"),
-                    Box::new(PRepeat(true, Box::new(PCode(String::from("char(\'a\')"))))),
+                    PRepeat(true, PCode(String::from("char(\'a\')")).wrap()).wrap(),
                 )
             ),
-            _ => assert_eq!(true, false),
+            _ => panic!(),
         };
     }
 
@@ -123,10 +120,10 @@ mod tests_and {
                 ast,
                 PBind(
                     String::from("c"),
-                    Box::new(PRepeat(false, Box::new(PCode(String::from("char(\'a\')"))))),
+                    PRepeat(false, PCode(String::from("char(\'a\')")).wrap()).wrap(),
                 )
             ),
-            _ => assert_eq!(true, false),
+            _ => panic!(),
         };
     }
 
@@ -138,17 +135,19 @@ mod tests_and {
             Success(ast, _, _) => assert_eq!(
                 ast,
                 PSequence(
-                    Box::new(PBind(
+                    PBind(
                         String::from("a"),
-                        Box::new(PRepeat(false, Box::new(PCode(String::from("char(\'a\')"))))),
-                    )),
-                    Box::new(PBind(
+                        PRepeat(false, PCode(String::from("char(\'a\')")).wrap()).wrap(),
+                    )
+                    .wrap(),
+                    PBind(
                         String::from("b"),
-                        Box::new(PRepeat(false, Box::new(PCode(String::from("char(\'b\')"))))),
-                    )),
+                        PRepeat(false, PCode(String::from("char(\'b\')")).wrap()).wrap(),
+                    )
+                    .wrap(),
                 )
             ),
-            _ => assert_eq!(true, false),
+            _ => panic!(),
         };
     }
 
@@ -160,17 +159,19 @@ mod tests_and {
             Success(ast, _, _) => assert_eq!(
                 ast,
                 PChoice(
-                    Box::new(PBind(
+                    PBind(
                         String::from("a"),
-                        Box::new(PRepeat(false, Box::new(PCode(String::from("char(\'a\')"))))),
-                    )),
-                    Box::new(PBind(
+                        PRepeat(false, PCode(String::from("char(\'a\')")).wrap()).wrap(),
+                    )
+                    .wrap(),
+                    PBind(
                         String::from("b"),
-                        Box::new(PRepeat(false, Box::new(PCode(String::from("char(\'b\')"))))),
-                    )),
+                        PRepeat(false, PCode(String::from("char(\'b\')")).wrap()).wrap(),
+                    )
+                    .wrap(),
                 )
             ),
-            _ => assert_eq!(true, false),
+            _ => panic!(),
         };
     }
 
@@ -182,14 +183,11 @@ mod tests_and {
             Success(ast, _, _) => assert_eq!(
                 ast,
                 PMap(
-                    Box::new(PBind(
-                        String::from("a"),
-                        Box::new(PCode(String::from("char(\'a\')"))),
-                    )),
+                    PBind(String::from("a"), PCode(String::from("char(\'a\')")).wrap(),).wrap(),
                     String::from(" Result(a) "),
                 )
             ),
-            _ => assert_eq!(true, false),
+            _ => panic!(),
         };
     }
 
@@ -203,17 +201,39 @@ mod tests_and {
             Success(ast, _, _) => assert_eq!(
                 ast,
                 PMap(
-                    Box::new(PBind(
+                    PBind(
                         String::from("a"),
-                        Box::new(PMap(
-                            Box::new(PCode(String::from("char(\'a\')"))),
+                        PMap(
+                            PCode(String::from("char(\'a\')")).wrap(),
                             String::from(" 'a' ")
-                        )),
-                    )),
+                        )
+                        .wrap(),
+                    )
+                    .wrap(),
                     String::from(" Result(a) "),
                 )
             ),
-            _ => assert_eq!(true, false),
+            _ => panic!(),
+        };
+    }
+
+    #[test]
+    fn it_parse_epsilon() {
+        let response = celma_parsec().parse(CharStream::new("()"));
+
+        match response {
+            Success(ast, _, _) => assert_eq!(ast, PEpsilon(),),
+            _ => panic!(),
+        };
+    }
+
+    #[test]
+    fn it_parse_binded_epsilon() {
+        let response = celma_parsec().parse(CharStream::new("a=()"));
+
+        match response {
+            Success(ast, _, _) => assert_eq!(ast, PBind(String::from("a"), PEpsilon().wrap()),),
+            _ => panic!(),
         };
     }
 }

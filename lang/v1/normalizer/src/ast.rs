@@ -14,38 +14,37 @@
  * limitations under the License.
  */
 
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ASTGrammar<A> {
-    Epsilon,
-    Token(A),
+    Epsilon(),
     Bottom(),
+    Var(String),
+    Token(A),
     Seq(Box<AST<A>>, Box<AST<A>>),
     Choice(Box<AST<A>>, Box<AST<A>>),
     Rec(String, Box<AST<A>>),
-    Var(String)
 }
+
 /*
-    PAtom(char),                    // Single char
-    PAtoms(Vec<char>),              // Char sequence
-    PBind(String, Box<ASTParsec>),  // Variable
-    PCode(String),                  // Production
-    PMap(Box<ASTParsec>, String),   // Remove?
-    PNot(Box<ASTParsec>),           // ?
-    PCheck(Box<ASTParsec>),         // No capture
+   PAtom(char),                    // Single char
+   PAtoms(Vec<char>),              // Char sequence
+   PBind(String, Box<ASTParsec>),  // Variable
+   PCode(String),                  // Production
+   PMap(Box<ASTParsec>, String),   // Remove?
+   PNot(Box<ASTParsec>),           // ?
+   PCheck(Box<ASTParsec>),         // No capture
 
-    -- Pre-normalization
+   -- Pre-normalization
 
-    PN : ASTParsec -> (string -> ASTParsec) -> string list -> ASTGrammar
+   PN : ASTParsec -> (string -> ASTParsec) -> string list -> ASTGrammar
 
-                     / Var(n)               if n in l
-    PN[PIdent(n)]gl = {
-                     \ mu(n,PN[g(n)]g(n::l) otherwise
+                              / Var(n)               if n in l
+   PN[PIdent(n)]gl         = {
+                              \ mu(n,PN[g(n)]g(n::l) otherwise
 
-    PN[PSequence(T1,T2]]gl  = Seq(PN[T1]gl,PN[T2]gl)
-    PN[PChoice(T1,T2)]gl    = Choice(PN[T1]gl,PN[T2]gl)
-    PN[PRepeat(false, T)]gl = Choice(PN[T]gl,PN[PRepeat(true, T)]gl)
-
-    PN[PRepeat(true, T)]gl  = PN[PChoice(PRepeat(false, T),PEpsilon)]gl
-    PN[POptional(T)]gl      = PN[PChoice(T,PEpsilon)]gl
-    PN[PTry(T)gl]           = PN[T]gl
- */
-
+   PN[PEpsilon()]gl        = Epsilon()
+   PN[PSequence(T1,T2]]gl  = Seq(PN[T1]gl,PN[T2]gl)
+   PN[PChoice(T1,T2)]gl    = Choice(PN[T1]gl,PN[T2]gl)
+   PN[PRepeat(T)]gl        = PN[T]gl | mu(n,Choice(Seq(PN[T]gl,Var(n)),Epsilon()))
+   PN[PTry(T)gl]           = PN[T]gl
+*/

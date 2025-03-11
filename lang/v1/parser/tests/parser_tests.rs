@@ -23,8 +23,8 @@ mod parser_tests {
         atom_char, atom_code, atom_ident, atom_string, code, kind, parsec, rcode, rule,
     };
     use celma_v1_ast::syntax::ASTParsec::{
-        PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PNot, POptional,
-        PSequence, PTry,
+        PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PEpsilon, PIdent, PNot, PRepeat, PSequence,
+        PTry,
     };
     use celma_v1_ast::syntax::ASTParsecRule;
     use celma_v1_ast::syntax::ASTType::{PChar, PUnit};
@@ -170,13 +170,42 @@ mod parser_tests {
 
         assert_eq!(
             response.fold(
-                |v, _, _| v == POptional(PIdent(String::from("entry")).wrap()),
+                |v, _, _| v == PChoice(PIdent(String::from("entry")).wrap(), PEpsilon().wrap()),
                 |_, _| false
             ),
             true
         );
     }
 
+    #[test]
+    fn should_parse_repeatable_ident_body() {
+        let response = parsec().parse(CharStream::new("entry+"));
+
+        assert_eq!(
+            response.fold(
+                |v, _, _| v == PRepeat(PIdent(String::from("entry")).wrap()),
+                |_, _| false
+            ),
+            true
+        );
+    }
+
+    #[test]
+    fn should_parse_optional_repeatable_ident_body() {
+        let response = parsec().parse(CharStream::new("entry*"));
+
+        assert_eq!(
+            response.fold(
+                |v, _, _| v
+                    == PChoice(
+                        PRepeat(PIdent(String::from("entry")).wrap()).wrap(),
+                        PEpsilon().wrap()
+                    ),
+                |_, _| false
+            ),
+            true
+        );
+    }
     #[test]
     fn should_parse_bind_optional_ident_body() {
         let response = parsec().parse(CharStream::new("a=entry?"));
@@ -186,7 +215,7 @@ mod parser_tests {
                 |v, _, _| v
                     == PBind(
                         String::from("a"),
-                        POptional(PIdent(String::from("entry")).wrap()).wrap()
+                        PChoice(PIdent(String::from("entry")).wrap(), PEpsilon().wrap()).wrap()
                     ),
                 |_, _| false
             ),
@@ -243,6 +272,13 @@ mod parser_tests {
             ),
             true
         );
+    }
+
+    #[test]
+    fn should_parse_epsilon() {
+        let response = parsec().parse(CharStream::new("()"));
+
+        assert_eq!(response.fold(|v, _, _| v == PEpsilon(), |_, _| false), true);
     }
 
     #[test]

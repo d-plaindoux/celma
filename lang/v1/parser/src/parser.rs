@@ -14,12 +14,12 @@
    limitations under the License.
 */
 
-use celma_v0_core::parser::core::{eos, returns, Returns};
+use celma_v0_core::parser::core::{eos, returns};
 use celma_v0_core::parser::literal::{delimited_char, delimited_string};
 
 use celma_v0_macro::parsec_rules;
 use celma_v1_ast::syntax::ASTParsec::{
-    PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat,
+    PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PEpsilon, PIdent, PMap, PNot, PRepeat,
     PSequence, PTry,
 };
 use celma_v1_ast::syntax::{ASTParsec, ASTParsecRule};
@@ -51,9 +51,9 @@ fn mk_ast_parsec(
     trans: Option<String>,
 ) -> ASTParsec<char> {
     let occ = match occ {
-        Some('?') => POptional(atom.wrap()),
-        Some('*') => PRepeat(true, atom.wrap()),
-        Some('+') => PRepeat(false, atom.wrap()),
+        Some('?') => PChoice(atom.wrap(), PEpsilon().wrap()),
+        Some('*') => PChoice(PRepeat(atom.wrap()).wrap(), PEpsilon().wrap()),
+        Some('+') => PRepeat(atom.wrap()),
         _ => atom,
     };
 
@@ -89,21 +89,17 @@ fn mk_atom(operation: Option<char>, parsec: ASTParsec<char>) -> ASTParsec<char> 
     }
 }
 
-fn epsilon() -> Returns<()> {
-    returns(())
-}
-
 parsec_rules!(
     let skip = (' '|'\t'|'\n'|'\r')* -> {}
     let ident:{String} = (skip i=#(alpha (alpha|digit|'_')*) skip) -> { i.into_iter().collect() }
 
     let rkind = (^('<'|'>')+ rkind -> {})
               | ('<' rkind '>' rkind -> {})
-              | epsilon
+              | ()
 
     let rcode = (^('}'|'{')+ rcode -> {})
               | ('{' rcode '}' rcode -> {})
-              | epsilon
+              | ()
 
     let kind:{String} = (skip '<' c=#rkind '>' skip) -> { c.into_iter().collect() }
     let code:{String} = (skip '{' c=#rcode '}' skip) -> { c.into_iter().collect() }
@@ -124,7 +120,7 @@ parsec_rules!(
         skip o=('^'|'!'|'#'|'/')? skip p=(atom_block|atom_ident|atom_char|atom_string|atom_code) skip
     ) -> { mk_atom(o, p) }
 
-    let atom_block:{ASTParsec<char>} = '(' _=parsec ')'
+    let atom_block:{ASTParsec<char>} = ('(' p=parsec? ')') -> { p.unwrap_or_else(PEpsilon) }
     let atom_ident:{ASTParsec<char>} = c=ident -> { PIdent(c) }
     let atom_char:{ASTParsec<char>} = c=delimited_char -> { PAtom(c) }
     let atom_string:{ASTParsec<char>} = c=delimited_string -> { PAtoms(c.chars().collect()) }

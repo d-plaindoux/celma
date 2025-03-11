@@ -17,7 +17,7 @@
 extern crate proc_macro;
 
 use celma_v0_ast::syntax::ASTParsec::{
-    PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PIdent, PMap, PNot, POptional, PRepeat,
+    PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PEpsilon, PIdent, PMap, PNot, POptional, PRepeat,
     PSequence, PTry,
 };
 use celma_v0_ast::syntax::{ASTParsec, ASTParsecRule};
@@ -109,6 +109,7 @@ pub trait TranspileBody<E> {
 impl TranspileBody<(Option<String>, TokenStream)> for ASTParsec {
     fn transpile_body(&self) -> Result<(Option<String>, TokenStream), Error> {
         match self {
+            PEpsilon() => Ok((None, quote! { returns(()) })),
             PBind(n, p) => Ok((Some(n.clone()), p.transpile_body()?.1)),
             PIdent(n) => {
                 let n = syn::Ident::new(n, Span::call_site());

@@ -16,6 +16,7 @@
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ASTParsec {
+    PEpsilon(),
     PIdent(String),
     PAtom(char),
     PAtoms(Vec<char>),
