@@ -20,11 +20,10 @@ mod parser_tests {
     use celma_v0_core::stream::char_stream::CharStream;
     use celma_v0_core::stream::specs::Len;
     use celma_v1::parser::{
-        atom_char, atom_code, atom_ident, atom_string, code, code_content, kind, parsec, rule,
+        atom_char, atom_ident, atom_string, code, code_content, kind, parsec, rule,
     };
     use celma_v1_ast::syntax::ASTParsec::{
-        PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PEpsilon, PIdent, PNot, PRepeat, PSequence,
-        PTry,
+        PAtom, PAtoms, PBind, PCheck, PChoice, PEpsilon, PIdent, PNot, PRepeat, PSequence, PTry,
     };
     use celma_v1_ast::syntax::ASTParsecRule;
     use celma_v1_ast::syntax::ASTType::{PChar, PUnit};
@@ -42,16 +41,6 @@ mod parser_tests {
 
         assert_eq!(
             response.fold(|v, _, _| v == PIdent(String::from("hello")), |_, _| false),
-            true
-        );
-    }
-
-    #[test]
-    fn should_parse_atom_code() {
-        let response = atom_code().parse(CharStream::new("{hello()}"));
-
-        assert_eq!(
-            response.fold(|v, _, _| v == PCode(String::from("hello()")), |_, _| false),
             true
         );
     }

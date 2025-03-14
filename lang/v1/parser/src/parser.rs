@@ -19,8 +19,7 @@ use celma_v0_core::parser::literal::{delimited_char, delimited_string};
 
 use celma_v0_macro::parsec_rules;
 use celma_v1_ast::syntax::ASTParsec::{
-    PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PEpsilon, PIdent, PMap, PNot, PRepeat, PSequence,
-    PTry,
+    PAtom, PAtoms, PBind, PCheck, PChoice, PEpsilon, PIdent, PMap, PNot, PRepeat, PSequence, PTry,
 };
 use celma_v1_ast::syntax::{ASTParsec, ASTParsecRule};
 
@@ -117,14 +116,13 @@ parsec_rules!(
     let additional:{(bool,ASTParsec<char>)} = (skip c='|'? skip p=parsec) -> { (c.is_some(), p) }
 
     let atom:{ASTParsec<char>} = (
-        skip o=('^'|'!'|'#')? skip p=(atom_block|atom_ident|atom_char|atom_string|atom_code) skip
+        skip o=('^'|'!'|'#')? skip p=(atom_block|atom_ident|atom_char|atom_string) skip
     ) -> { mk_atom(o, p) }
 
     let atom_block:{ASTParsec<char>} = ('(' p=parsec? ')') -> { p.unwrap_or_else(PEpsilon) }
     let atom_ident:{ASTParsec<char>} = c=ident -> { PIdent(c) }
     let atom_char:{ASTParsec<char>} = c=delimited_char -> { PAtom(c) }
     let atom_string:{ASTParsec<char>} = c=delimited_string -> { PAtoms(c.chars().collect()) }
-    let atom_code:{ASTParsec<char>} = c=code -> { PCode(c) }
 
     let transform:{String} = (skip "->" skip _=code)
 

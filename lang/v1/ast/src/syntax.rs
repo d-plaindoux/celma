@@ -38,7 +38,6 @@ pub enum ASTParsec<I> {
     PAtom(I),
     PAtoms(Vec<I>),
     PBind(String, Box<ASTParsec<I>>),
-    PCode(String),
     PMap(Box<ASTParsec<I>>, String),
     PSequence(Box<ASTParsec<I>>, Box<ASTParsec<I>>),
     PChoice(Box<ASTParsec<I>>, Box<ASTParsec<I>>),
