@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use bencher::{Bencher, benchmark_group, benchmark_main, black_box};
+use bencher::{benchmark_group, benchmark_main, black_box, Bencher};
 use celma_v0_core::parser::and::AndOperation;
 use celma_v0_core::parser::char::{alpha, digit};
 use celma_v0_core::parser::core::eos;
 use celma_v0_core::parser::response::Response::{Reject, Success};
 use celma_v0_core::parser::specs::Parse;
-use celma_v0_core::stream::char_stream::CharStream;
+use celma_v0_core::stream::array_stream::ArrayStream;
 use celma_v0_core::stream::position::Position;
 use celma_v0_core::stream::specs::Stream;
 use celma_v0_macro::parsec_rules;
@@ -45,13 +45,14 @@ parsec_rules!(
 // -------------------------------------------------------------------------------------------------
 
 fn http_data(b: &mut Bencher) {
-    let data = include_str!("data/request.http");
+    let vec = include_str!("data/request.http").chars().collect::<Vec<char>>();
+    let data = vec.as_slice();
     b.bytes = data.len() as u64;
     parse(b, data)
 }
 
-fn parse(b: &mut Bencher, buffer: &str) {
-    let stream = CharStream::new_with_position(buffer, <usize>::new());
+fn parse(b: &mut Bencher, buffer: &[char]) {
+    let stream = ArrayStream::new_with_position(buffer, <usize>::new());
 
     b.iter(|| {
         let response = http_header()

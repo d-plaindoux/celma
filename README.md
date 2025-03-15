@@ -202,21 +202,29 @@ to Rust to manage the language in Rust.
 ## V0
 
 In V0, transpilation is a direct style generation of Parsec without any
-optimisations. To this end, the `AST` is translated directly into a parser
-parser using the `core` library.
+optimisations. To this end, the `AST` is translated directly into a parser 
+using the `core` library.
 cf. [celma parser in direct style](https://github.com/d-plaindoux/celma/blob/master/lang/v0/parser/src/parser.rs).
 
 ### Benchmarks
 
-Material: 
+- Material: MacBookPro Apple M2 Max 64G
+- [Samples](https://github.com/d-plaindoux/celma/blob/master/lang/v0/macro/benches/data/) used for the benchmarks.
 
-```sh
-test json_apache      ... bench:   1,652,349 ns/iter (+/- 119,721) = 75 MB/s
-test json_canada_nom  ... bench:     135,309 ns/iter (+/- 4,034) = 68 MB/s
-test json_canada_pest ... bench:  61,084,354 ns/iter (+/- 2,746,834) = 36 MB/s
-test json_data        ... bench:     133,788 ns/iter (+/- 10,607) = 69 MB/s
+#### HTTP Header
+
+```shell
+test http_data        ... bench:      11,845 ns/iter (+/- 382)       = 65 MB/s
 ```
 
+#### JSON
+
+```shell
+test json_apache      ... bench:   1,560,412 ns/iter (+/- 21,383)    = 87 MB/s
+test json_canada_nom  ... bench:     127,925 ns/iter (+/- 15,263)    = 82 MB/s
+test json_canada_pest ... bench:  57,397,799 ns/iter (+/- 3,442,455) = 43 MB/s
+test json_data        ... bench:     126,348 ns/iter (+/- 5,283)     = 81 MB/s
+```
 
 ## V1
 

@@ -13,3 +13,4 @@ members = [
 [profile.release]
 lto = "fat"
 codegen-units = 1
+debug = true

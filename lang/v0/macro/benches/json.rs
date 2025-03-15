@@ -17,7 +17,7 @@
 #[macro_use]
 extern crate bencher;
 
-use bencher::{Bencher, black_box};
+use bencher::{black_box, Bencher};
 
 use celma_v0_core::parser::and::AndOperation;
 use celma_v0_core::parser::char::{digit, space};
@@ -25,7 +25,7 @@ use celma_v0_core::parser::core::eos;
 use celma_v0_core::parser::literal::delimited_string;
 use celma_v0_core::parser::response::Response::{Reject, Success};
 use celma_v0_core::parser::specs::Parse;
-use celma_v0_core::stream::char_stream::CharStream;
+use celma_v0_core::stream::array_stream::ArrayStream;
 use celma_v0_core::stream::position::Position;
 use celma_v0_core::stream::specs::Stream;
 use celma_v0_macro::parsec_rules;
@@ -59,7 +59,7 @@ fn mk_f64(a: Vec<char>) -> f64 {
 }
 
 parsec_rules!(
-    let json:{JSON}          = S _=(array | object | string | null | boolean | number) S
+    let json:{JSON}          = S _=(string | number | boolean | null | array | object ) S
     let number:{JSON}        = f=NUMBER                                -> {JSON::Number(f)}
     let string:{JSON}        = s=STRING                                -> {JSON::String(s)}
     let null:{JSON}          = "null"                                  -> {JSON::Null}
@@ -82,7 +82,10 @@ parsec_rules!(
 // -------------------------------------------------------------------------------------------------
 
 fn json_data(b: &mut Bencher) {
-    let data = include_str!("data/data.json");
+    let vec = include_str!("data/data.json")
+        .chars()
+        .collect::<Vec<char>>();
+    let data = vec.as_slice();
     b.bytes = data.len() as u64;
     parse(b, data)
 }
@@ -90,7 +93,10 @@ fn json_data(b: &mut Bencher) {
 // -------------------------------------------------------------------------------------------------
 
 fn json_canada_pest(b: &mut Bencher) {
-    let data = include_str!("data/canada_pest.json");
+    let vec = include_str!("data/canada_pest.json")
+        .chars()
+        .collect::<Vec<char>>();
+    let data = vec.as_slice();
     b.bytes = data.len() as u64;
     parse(b, data)
 }
@@ -98,7 +104,10 @@ fn json_canada_pest(b: &mut Bencher) {
 // -------------------------------------------------------------------------------------------------
 
 fn json_canada_nom(b: &mut Bencher) {
-    let data = include_str!("data/canada_nom.json");
+    let vec = include_str!("data/canada_nom.json")
+        .chars()
+        .collect::<Vec<char>>();
+    let data = vec.as_slice();
     b.bytes = data.len() as u64;
     parse(b, data)
 }
@@ -106,22 +115,25 @@ fn json_canada_nom(b: &mut Bencher) {
 // -------------------------------------------------------------------------------------------------
 
 fn json_apache(b: &mut Bencher) {
-    let data = include_str!("data/apache_builds.json");
+    let vec = include_str!("data/apache_builds.json")
+        .chars()
+        .collect::<Vec<char>>();
+    let data = vec.as_slice();
     b.bytes = data.len() as u64;
     parse(b, data)
 }
 
 // -------------------------------------------------------------------------------------------------
 
-fn parse(b: &mut Bencher, buffer: &str) {
-    let stream = CharStream::new_with_position(buffer, <usize>::new());
+fn parse(b: &mut Bencher, buffer: &[char]) {
+    let stream = ArrayStream::new_with_position(buffer, <usize>::new());
 
     b.iter(|| {
         let response = json().and_left(eos()).parse(black_box(stream.clone()));
 
         match response {
             Success(_, _, _) => (),
-            Reject(s, _) => panic!("parse error at {:?}", s.position()),
+            Reject(s, _) => panic!("parse error for {:?} at {:?}", s.next().0, s.position()),
         }
     });
 }
