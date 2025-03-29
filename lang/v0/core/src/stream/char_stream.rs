@@ -27,7 +27,7 @@ where
 
 impl<'a> CharStream<'a, LineColumnPosition<char>> {
     pub fn new(v: &'a str) -> Self {
-        Self::new_with_default(v)
+        Self::new_with_position(v, LineColumnPosition::default())
     }
 }
 
@@ -35,10 +35,6 @@ impl<'a, P> CharStream<'a, P>
 where
     P: Position,
 {
-    pub fn new_with_default(v: &'a str) -> Self {
-        Self(v, P::default())
-    }
-
     pub fn new_with_position(v: &'a str, p: P) -> Self {
         Self(v, p)
     }

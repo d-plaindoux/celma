@@ -20,7 +20,7 @@ mod tests_location {
     use celma_v0_core::parser::location::locate;
     use celma_v0_core::parser::specs::Parse;
     use celma_v0_core::stream::char_stream::CharStream;
-    use celma_v0_core::stream::position::LineColumnPosition;
+    use celma_v0_core::stream::position::{LineColumnPosition, Utf8LineColumnPosition};
 
     #[test]
     fn it_parse_one_character() {
@@ -55,6 +55,17 @@ mod tests_location {
                 |_, _| LineColumnPosition::<char>::default()
             ),
             LineColumnPosition::new(1, 1, 1)
+        );
+    }
+
+    #[test]
+    fn it_parse_one_character_with_right_end_location_byte_offset() {
+        let stream = CharStream::new_with_position("🦀", Utf8LineColumnPosition::default());
+        let response = locate(a_char('🦀')).parse(stream);
+
+        assert_eq!(
+            response.fold(|v, _, _| v.end, |_, _| Utf8LineColumnPosition::default()),
+            Utf8LineColumnPosition::new(4, 1, 1)
         );
     }
 }

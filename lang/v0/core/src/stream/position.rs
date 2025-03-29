@@ -154,3 +154,77 @@ impl<A> Display for LineColumnPosition<A> {
         write!(f, "{}:{}", self.line, self.column)
     }
 }
+
+/// Char line and column with bytes offset instead of char offset
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Utf8LineColumnPosition {
+    /// Byte offset
+    pub byte_offset: usize,
+
+    /// 1-based line
+    pub line: usize,
+
+    /// 0-based column
+    pub column: usize,
+}
+
+impl Utf8LineColumnPosition {
+    #[doc(hidden)]
+    pub fn new(byte_offset: usize, line: usize, column: usize) -> Self {
+        Self {
+            byte_offset,
+            line,
+            column,
+        }
+    }
+}
+
+impl Position for Utf8LineColumnPosition {
+    type Item = char;
+
+    #[inline]
+    fn step(&self, c: &char) -> Self {
+        let byte_offset = self.byte_offset + c.len_utf8();
+        if c.is_end_line() {
+            Self {
+                byte_offset,
+                line: self.line + 1,
+                column: 0,
+            }
+        } else {
+            Self {
+                byte_offset,
+                line: self.line,
+                column: self.column + 1,
+            }
+        }
+    }
+
+    fn offset(&self) -> usize {
+        self.column
+    }
+
+    fn char_number(&self) -> usize {
+        self.byte_offset
+    }
+
+    fn line_number(&self) -> usize {
+        self.line
+    }
+}
+
+impl Default for Utf8LineColumnPosition {
+    fn default() -> Self {
+        Self {
+            byte_offset: 0,
+            line: 1,
+            column: 0,
+        }
+    }
+}
+
+impl Display for Utf8LineColumnPosition {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}:{}", self.line, self.column)
+    }
+}

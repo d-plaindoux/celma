@@ -90,18 +90,18 @@ mod parser_tests {
     fn should_parse_ident_body_code() {
         let response = code().parse(CharStream::new("{ titi }"));
 
-    assert_eq!(response.fold(|v, _, _| v == " titi ", |_, _| false), true);
-}
+        assert_eq!(response.fold(|v, _, _| v == " titi ", |_, _| false), true);
+    }
 
     #[test]
     fn should_parse_ident_body_code_with_block() {
         let response = code().parse(CharStream::new("{ {titi} }"));
 
-    assert_eq!(
-        response.fold(|v, s, _| v == " {titi} " && s.is_empty(), |_, _| false),
-        true
-    );
-}
+        assert_eq!(
+            response.fold(|v, s, _| v == " {titi} " && s.is_empty(), |_, _| false),
+            true
+        );
+    }
 
     #[test]
     fn should_parse_ident_body() {
