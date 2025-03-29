@@ -14,9 +14,9 @@
    limitations under the License.
 */
 
-pub trait Position {
-    fn new() -> Self;
+use std::fmt::Display;
 
+pub trait Position: Default {
     fn step(&self, newline: bool) -> Self;
 
     fn offset(&self) -> usize;
@@ -30,44 +30,92 @@ pub trait Position {
     }
 }
 
-impl Position for usize {
-    fn new() -> Self {
-        0
+/// Basic position implemented with an index on the char
+///
+/// Does not count lines
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
+pub struct CharIndex(usize);
+
+impl Position for CharIndex {
+    #[inline]
+    fn step(&self, _: bool) -> Self {
+        Self(self.0 + 1)
     }
 
     #[inline]
-    fn step(&self, _: bool) -> Self {
-        self + 1
-    }
-
     fn offset(&self) -> usize {
-        *self
+        self.0
     }
 }
 
-impl Position for (usize, usize, usize) {
-    fn new() -> Self {
-        (0, 1, 0)
+impl Display for CharIndex {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
     }
+}
 
+impl PartialEq<usize> for CharIndex {
+    fn eq(&self, other: &usize) -> bool {
+        self.0 == *other
+    }
+}
+
+/// Char based position with lines & columns
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub struct CharPosition {
+    /// Char index
+    pub char_index: usize,
+
+    /// 1-based line
+    pub line: usize,
+
+    /// 0-based column
+    pub column: usize,
+}
+
+impl Default for CharPosition {
+    fn default() -> Self {
+        Self {
+            char_index: 0,
+            line: 1,
+            column: 0,
+        }
+    }
+}
+
+impl Display for CharPosition {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}:{}", self.line, self.column)
+    }
+}
+
+impl Position for CharPosition {
     #[inline]
     fn step(&self, newline: bool) -> Self {
         if newline {
-            (self.0 + 1, self.1 + 1, 0)
+            Self {
+                char_index: self.char_index + 1,
+                line: self.line + 1,
+                column: 0,
+            }
         } else {
-            (self.0 + 1, self.1, self.2 + 1)
+            Self {
+                char_index: self.char_index + 1,
+                line: self.line,
+                column: self.column + 1,
+            }
         }
     }
 
     fn offset(&self) -> usize {
-        self.0
+        self.column
     }
 
     fn char_number(&self) -> usize {
-        self.1
+        self.char_index
     }
 
     fn line_number(&self) -> usize {
-        self.2
+        self.line
     }
 }

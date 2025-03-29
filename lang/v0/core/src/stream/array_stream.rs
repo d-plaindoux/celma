@@ -19,18 +19,20 @@ use crate::stream::position::Position;
 use crate::stream::specs::Len;
 use crate::stream::specs::Stream;
 
+use super::position::CharPosition;
+
 #[derive(Copy, Clone)]
 pub struct ArrayStream<'a, A, P>(&'a [A], P)
 where
     A: EndLine,
     P: Position;
 
-impl<'a, A> ArrayStream<'a, A, (usize, usize, usize)>
+impl<'a, A> ArrayStream<'a, A, CharPosition>
 where
     A: EndLine,
 {
     pub fn new(v: &'a [A]) -> Self {
-        Self::new_with_position(v, <(usize, usize, usize)>::new())
+        Self::new_with_default(v)
     }
 }
 
@@ -39,6 +41,10 @@ where
     A: EndLine,
     P: Position,
 {
+    pub fn new_with_default(v: &'a [A]) -> Self {
+        Self::new_with_position(v, P::default())
+    }
+
     pub fn new_with_position(v: &'a [A], p: P) -> Self {
         Self(v, p)
     }

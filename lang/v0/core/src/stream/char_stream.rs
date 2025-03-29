@@ -18,14 +18,16 @@ use crate::stream::position::Position;
 use crate::stream::specs::Len;
 use crate::stream::specs::Stream;
 
+use super::position::CharPosition;
+
 #[derive(Clone)]
 pub struct CharStream<'a, P>(&'a str, P)
 where
     P: Position;
 
-impl<'a> CharStream<'a, (usize, usize, usize)> {
+impl<'a> CharStream<'a, CharPosition> {
     pub fn new(v: &'a str) -> Self {
-        Self::new_with_position(v, <(usize, usize, usize)>::new())
+        Self::new_with_default(v)
     }
 }
 
@@ -33,6 +35,10 @@ impl<'a, P> CharStream<'a, P>
 where
     P: Position,
 {
+    pub fn new_with_default(v: &'a str) -> Self {
+        Self(v, P::default())
+    }
+
     pub fn new_with_position(v: &'a str, p: P) -> Self {
         Self(v, p)
     }

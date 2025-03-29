@@ -31,7 +31,7 @@ use celma_v0_core::parser::response::Response::Success;
 use celma_v0_core::parser::specs::Combine;
 use celma_v0_core::parser::specs::Parse;
 use celma_v0_core::stream::char_stream::CharStream;
-use celma_v0_core::stream::position::Position;
+use celma_v0_core::stream::position::CharIndex;
 use celma_v0_core::stream::specs::Len;
 use celma_v0_core::stream::specs::Stream;
 
@@ -50,7 +50,7 @@ fn basic_any(bencher: &mut Bencher) {
     do_parse(
         parser,
         bencher,
-        CharStream::new_with_position(data, <usize>::new()),
+        CharStream::new_with_position(data, CharIndex::default()),
     );
 }
 
@@ -63,7 +63,7 @@ fn basic_a(bencher: &mut Bencher) {
     do_parse(
         parser,
         bencher,
-        CharStream::new_with_position(data, <usize>::new()),
+        CharStream::new_with_position(data, CharIndex::default()),
     );
 }
 
@@ -76,7 +76,7 @@ fn basic_a_or_b(bencher: &mut Bencher) {
     do_parse(
         parser,
         bencher,
-        CharStream::new_with_position(data, <usize>::new()),
+        CharStream::new_with_position(data, CharIndex::default()),
     );
 }
 
@@ -89,7 +89,7 @@ fn basic_a_and_b(bencher: &mut Bencher) {
     do_parse(
         parser,
         bencher,
-        CharStream::new_with_position(data, <usize>::new()),
+        CharStream::new_with_position(data, CharIndex::default()),
     );
 }
 
@@ -102,7 +102,7 @@ fn basic_delimited_string(bencher: &mut Bencher) {
     do_parse(
         parser,
         bencher,
-        CharStream::new_with_position(data, <usize>::new()),
+        CharStream::new_with_position(data, CharIndex::default()),
     );
 }
 

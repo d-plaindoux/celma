@@ -20,6 +20,7 @@ mod tests_location {
     use celma_v0_core::parser::location::locate;
     use celma_v0_core::parser::specs::Parse;
     use celma_v0_core::stream::char_stream::CharStream;
+    use celma_v0_core::stream::position::CharPosition;
 
     #[test]
     fn it_parse_one_character() {
@@ -36,8 +37,12 @@ mod tests_location {
         let response = locate(a_char('a')).parse(CharStream::new("a"));
 
         assert_eq!(
-            response.fold(|v, _, _| v.start, |_, _| (0, 0, 0)),
-            (0, 1, 0)
+            response.fold(|v, _, _| v.start, |_, _| CharPosition::default()),
+            CharPosition {
+                char_index: 0,
+                line: 1,
+                column: 0
+            }
         );
     }
 
@@ -45,6 +50,13 @@ mod tests_location {
     fn it_parse_one_character_with_right_end_location() {
         let response = locate(a_char('a')).parse(CharStream::new("a"));
 
-        assert_eq!(response.fold(|v, _, _| v.end, |_, _| (0, 0, 0)), (1, 1, 1));
+        assert_eq!(
+            response.fold(|v, _, _| v.end, |_, _| CharPosition::default()),
+            CharPosition {
+                char_index: 1,
+                line: 1,
+                column: 1
+            }
+        );
     }
 }

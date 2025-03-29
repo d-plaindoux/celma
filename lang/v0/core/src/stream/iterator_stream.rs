@@ -22,6 +22,8 @@ use crate::stream::position::Position;
 use crate::stream::specs::Len;
 use crate::stream::specs::Stream;
 
+use super::position::CharPosition;
+
 #[derive(Clone)]
 pub struct IteratorStream<E, I, P>(I, P, PhantomData<E>)
 where
@@ -29,13 +31,13 @@ where
     E: EndLine,
     P: Position;
 
-impl<E, I> IteratorStream<E, I, (usize, usize, usize)>
+impl<E, I> IteratorStream<E, I, CharPosition>
 where
     I: Iterator<Item = E>,
     E: EndLine,
 {
     pub fn new(s: I) -> Self {
-        IteratorStream(s, <(usize, usize, usize)>::new(), PhantomData)
+        IteratorStream(s, CharPosition::default(), PhantomData)
     }
 }
 
