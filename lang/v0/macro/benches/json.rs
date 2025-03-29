@@ -17,7 +17,7 @@
 #[macro_use]
 extern crate bencher;
 
-use bencher::{black_box, Bencher};
+use bencher::{Bencher, black_box};
 
 use celma_v0_core::parser::and::AndOperation;
 use celma_v0_core::parser::char::{digit, space};
@@ -26,7 +26,7 @@ use celma_v0_core::parser::literal::delimited_string;
 use celma_v0_core::parser::response::Response::{Reject, Success};
 use celma_v0_core::parser::specs::Parse;
 use celma_v0_core::stream::array_stream::ArrayStream;
-use celma_v0_core::stream::position::Position;
+use celma_v0_core::stream::position::IndexPosition;
 use celma_v0_core::stream::specs::Stream;
 use celma_v0_macro::parsec_rules;
 
@@ -41,10 +41,9 @@ pub enum JSON {
 }
 
 fn mk_vec<E>(a: Option<(E, Vec<E>)>) -> Vec<E> {
-    if let Some((a, v)) = a {
-        let mut r = v;
-        r.insert(0, a);
-        r
+    if let Some((a, mut v)) = a {
+        v.push(a);
+        v
     } else {
         Vec::new()
     }
@@ -126,10 +125,10 @@ fn json_apache(b: &mut Bencher) {
 // -------------------------------------------------------------------------------------------------
 
 fn parse(b: &mut Bencher, buffer: &[char]) {
-    let stream = ArrayStream::new_with_position(buffer, <usize>::new());
+    let stream = ArrayStream::new_with_position(buffer, IndexPosition::default());
 
     b.iter(|| {
-        let response = json().and_left(eos()).parse(black_box(stream.clone()));
+        let response = json().and_left(eos()).parse(black_box(stream));
 
         match response {
             Success(_, _, _) => (),

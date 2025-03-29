@@ -14,3 +14,32 @@ members = [
 lto = "fat"
 codegen-units = 1
 debug = true
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+
+[workspace.lints.clippy]
+perf = { level = "warn", priority = -1 }
+# pedantic = { level = "warn", priority = -1 }
+# cargo = { level = "warn", priority = -1 }
+
+undocumented_unsafe_blocks = "deny"
+
+expect_used = "warn"
+if_then_some_else_none = "warn"
+indexing_slicing = "warn"
+large_include_file = "warn"
+print_stderr = "allow"
+print_stdout = "allow"
+rc_buffer = "warn"
+rc_mutex = "warn"
+unnecessary_safety_doc = "warn"
+# unwrap_used = "warn"
+
+module_name_repetitions = "allow"
+
+
+# TODO maybe could be set in warn (default)
+bool_assert_comparison = "allow"
+multiple_bound_locations = "allow"
+

@@ -5,3 +5,5 @@ version = "0.1.0"
 authors = ["dplaindoux <d.plaindoux@fungus.fr>"]
 edition = "2024"
 
+[lints]
+workspace = true

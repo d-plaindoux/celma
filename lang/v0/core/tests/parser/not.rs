@@ -46,9 +46,6 @@ mod tests_literal {
             .map(|v| v.iter().collect::<String>())
             .parse(CharStream::new("abcdcde"));
 
-        assert_eq!(
-            response.fold(|v, _, _| v == "abcdc".to_owned(), |_, _| false),
-            true
-        );
+        assert_eq!(response.fold(|v, _, _| v == "abcdc", |_, _| false), true);
     }
 }

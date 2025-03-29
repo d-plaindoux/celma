@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-use std::ops::Range;
+use std::ops::RangeInclusive;
 
 use crate::parser::or::OrOperation;
 use crate::parser::satisfy::Satisfy;
@@ -39,11 +39,11 @@ where
 }
 
 #[inline]
-pub fn char_in_range<S>(r: Range<char>) -> impl Parse<char, S> + Combine<char>
+pub fn char_in_range<S>(r: RangeInclusive<char>) -> impl Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
-    Satisfy::new(r, |&v, r| r.start <= v && v <= r.end)
+    Satisfy::new(r, |v, r| r.contains(v))
 }
 
 #[inline]
@@ -59,10 +59,7 @@ pub fn digit<S>() -> impl Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
-    char_in_range(Range {
-        start: '0',
-        end: '9',
-    })
+    char_in_range('0'..='9')
 }
 
 #[inline]
@@ -70,10 +67,7 @@ pub fn alpha_lower<S>() -> impl Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
-    char_in_range(Range {
-        start: 'a',
-        end: 'z',
-    })
+    char_in_range('a'..='z')
 }
 
 #[inline]
@@ -81,10 +75,7 @@ pub fn alpha_upper<S>() -> impl Parse<char, S> + Combine<char>
 where
     S: Stream<Item = char>,
 {
-    char_in_range(Range {
-        start: 'A',
-        end: 'Z',
-    })
+    char_in_range('A'..='Z')
 }
 
 #[inline]

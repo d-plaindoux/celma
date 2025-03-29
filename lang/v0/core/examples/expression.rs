@@ -118,7 +118,7 @@ where
         .right()
         .and(a_char(']').and(skip()))
         .left()
-        .map(|v| Token::Record(v))
+        .map(Token::Record)
 }
 
 fn main() {
@@ -128,7 +128,7 @@ fn main() {
     }
 
     match ident().and(eos()).left().parse(CharStream::new("Toto🙃")) {
-        Success(Token::Ident(ref s), _, _) if *s == String::from("Toto🙃") => {
+        Success(Token::Ident(ref s), _, _) if s == "Toto🙃" => {
             println!("Ident = {}", s)
         }
         _ => println!("KO"),
@@ -139,7 +139,7 @@ fn main() {
         .left()
         .parse(CharStream::new(r#""Toto""#))
     {
-        Success(Token::String(ref s), _, _) if *s == String::from("Toto") => {
+        Success(Token::String(ref s), _, _) if s == "Toto" => {
             println!("Ident = {}", s)
         }
         _ => println!("KO"),

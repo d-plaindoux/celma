@@ -22,14 +22,21 @@ mod tests_parser_stream {
     use celma_v0_core::parser::repeat::RepeatOperation;
     use celma_v0_core::parser::specs::Parse;
     use celma_v0_core::stream::char_stream::CharStream;
+    use celma_v0_core::stream::end_line::EndLine;
     use celma_v0_core::stream::parser_stream::ParserStream;
 
     #[derive(Clone, Eq, PartialEq)]
     struct Item(char);
 
+    impl EndLine for Item {
+        fn is_end_line(&self) -> bool {
+            self.0.is_end_line()
+        }
+    }
+
     #[test]
     fn it_parse_two_character() {
-        let parser = char_in_range('a'..'z').map(|v| Item(v));
+        let parser = char_in_range('a'..='z').map(Item);
         let stream = ParserStream::new(&parser, CharStream::new("ab"));
         let response = any().rep().parse(stream);
 

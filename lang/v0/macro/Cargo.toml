@@ -23,3 +23,6 @@ harness = false
 [[bench]]
 name = "json"
 harness = false
+
+[lints]
+workspace = true
