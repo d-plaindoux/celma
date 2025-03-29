@@ -29,7 +29,7 @@ mod tests_parser_stream {
 
     #[test]
     fn it_parse_two_character() {
-        let parser = char_in_range('a'..'z').map(|v| Item(v));
+        let parser = char_in_range('a'..'z').map(Item);
         let stream = ParserStream::new(&parser, CharStream::new("ab"));
         let response = any().rep().parse(stream);
 

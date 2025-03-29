@@ -118,7 +118,7 @@ where
         .right()
         .and(a_char(']').and(skip()))
         .left()
-        .map(|v| Token::Record(v))
+        .map(Token::Record)
 }
 
 fn main() {
