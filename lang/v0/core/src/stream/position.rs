@@ -15,9 +15,14 @@
 */
 
 use std::fmt::Display;
+use std::marker::PhantomData;
+
+use super::end_line::EndLine;
 
 pub trait Position: Default {
-    fn step(&self, newline: bool) -> Self;
+    type Item;
+
+    fn step(&self, a: &Self::Item) -> Self;
 
     fn offset(&self) -> usize;
 
@@ -30,16 +35,18 @@ pub trait Position: Default {
     }
 }
 
-/// Basic position implemented with an index on the char
+/// Basic position implemented with an index
 ///
 /// Does not count lines
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
-pub struct CharIndex(usize);
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub struct IndexPosition<A>(usize, PhantomData<A>);
 
-impl Position for CharIndex {
+impl<A> Position for IndexPosition<A> {
+    type Item = A;
+
     #[inline]
-    fn step(&self, _: bool) -> Self {
-        Self(self.0 + 1)
+    fn step(&self, _: &A) -> Self {
+        Self(self.0 + 1, PhantomData)
     }
 
     #[inline]
@@ -48,21 +55,27 @@ impl Position for CharIndex {
     }
 }
 
-impl Display for CharIndex {
+impl<A> Default for IndexPosition<A> {
+    fn default() -> Self {
+        Self(0, PhantomData)
+    }
+}
+
+impl<A> Display for IndexPosition<A> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.0)
     }
 }
 
-impl PartialEq<usize> for CharIndex {
+impl<A> PartialEq<usize> for IndexPosition<A> {
     fn eq(&self, other: &usize) -> bool {
         self.0 == *other
     }
 }
 
-/// Char based position with lines & columns
+/// Line and column based position
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub struct CharPosition {
+pub struct LineColumnPosition<A> {
     /// Char index
     pub char_index: usize,
 
@@ -71,38 +84,43 @@ pub struct CharPosition {
 
     /// 0-based column
     pub column: usize,
+
+    marker: PhantomData<A>,
 }
 
-impl Default for CharPosition {
-    fn default() -> Self {
+impl<A> LineColumnPosition<A> {
+    #[doc(hidden)]
+    pub fn new(char_index: usize, line: usize, column: usize) -> Self {
         Self {
-            char_index: 0,
-            line: 1,
-            column: 0,
+            char_index,
+            line,
+            column,
+            marker: PhantomData,
         }
     }
 }
 
-impl Display for CharPosition {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}:{}", self.line, self.column)
-    }
-}
+impl<A> Position for LineColumnPosition<A>
+where
+    A: EndLine,
+{
+    type Item = A;
 
-impl Position for CharPosition {
     #[inline]
-    fn step(&self, newline: bool) -> Self {
-        if newline {
+    fn step(&self, a: &A) -> Self {
+        if a.is_end_line() {
             Self {
                 char_index: self.char_index + 1,
                 line: self.line + 1,
                 column: 0,
+                marker: PhantomData,
             }
         } else {
             Self {
                 char_index: self.char_index + 1,
                 line: self.line,
                 column: self.column + 1,
+                marker: PhantomData,
             }
         }
     }
@@ -117,5 +135,22 @@ impl Position for CharPosition {
 
     fn line_number(&self) -> usize {
         self.line
+    }
+}
+
+impl<A> Default for LineColumnPosition<A> {
+    fn default() -> Self {
+        Self {
+            char_index: 0,
+            line: 1,
+            column: 0,
+            marker: PhantomData,
+        }
+    }
+}
+
+impl<A> Display for LineColumnPosition<A> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}:{}", self.line, self.column)
     }
 }

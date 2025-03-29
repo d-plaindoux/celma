@@ -22,7 +22,7 @@ use crate::stream::position::Position;
 use crate::stream::specs::Len;
 use crate::stream::specs::Stream;
 
-use super::position::CharPosition;
+use super::position::LineColumnPosition;
 
 #[derive(Clone)]
 pub struct IteratorStream<E, I, P>(I, P, PhantomData<E>)
@@ -31,13 +31,13 @@ where
     E: EndLine,
     P: Position;
 
-impl<E, I> IteratorStream<E, I, CharPosition>
+impl<E, I> IteratorStream<E, I, LineColumnPosition<E>>
 where
     I: Iterator<Item = E>,
     E: EndLine,
 {
     pub fn new(s: I) -> Self {
-        IteratorStream(s, CharPosition::default(), PhantomData)
+        IteratorStream(s, LineColumnPosition::default(), PhantomData)
     }
 }
 
@@ -56,7 +56,7 @@ impl<E, I, P> Stream for IteratorStream<E, I, P>
 where
     I: Iterator<Item = E> + Clone,
     E: EndLine + Clone,
-    P: Position + Clone,
+    P: Position<Item = E> + Clone,
 {
     type Item = E;
     type Pos = P;
@@ -69,16 +69,9 @@ where
         let mut this = self.clone(); // Mutability required by the Iterator::next call (below)
         let option = this.0.next();
 
-        if option.is_some() {
-            (
-                option.clone(),
-                IteratorStream(
-                    this.0,
-                    this.1
-                        .step(option.is_some_and(|v: Self::Item| v.is_end_line())),
-                    PhantomData,
-                ),
-            )
+        if let Some(v) = option {
+            let stream = IteratorStream(this.0, this.1.step(&v), PhantomData);
+            (Some(v), stream)
         } else {
             (option, IteratorStream(this.0, this.1, PhantomData))
         }

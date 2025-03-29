@@ -20,7 +20,7 @@ use celma_v0_core::parser::core::eos;
 use celma_v0_core::parser::response::Response::{Reject, Success};
 use celma_v0_core::parser::specs::Parse;
 use celma_v0_core::stream::array_stream::ArrayStream;
-use celma_v0_core::stream::position::CharIndex;
+use celma_v0_core::stream::position::IndexPosition;
 use celma_v0_core::stream::specs::Stream;
 use celma_v0_macro::parsec_rules;
 
@@ -54,7 +54,7 @@ fn http_data(b: &mut Bencher) {
 }
 
 fn parse(b: &mut Bencher, buffer: &[char]) {
-    let stream = ArrayStream::new_with_position(buffer, CharIndex::default());
+    let stream = ArrayStream::new_with_position(buffer, IndexPosition::default());
 
     b.iter(|| {
         let response = http_header().and_left(eos()).parse(black_box(stream));

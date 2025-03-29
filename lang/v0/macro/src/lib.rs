@@ -19,7 +19,7 @@ use celma_v0_core::parser::response::Response;
 use celma_v0_core::parser::response::Response::{Reject, Success};
 use celma_v0_core::parser::specs::Parse;
 use celma_v0_core::stream::char_stream::CharStream;
-use celma_v0_core::stream::position::CharPosition;
+use celma_v0_core::stream::position::LineColumnPosition;
 use celma_v0_core::stream::specs::Stream;
 use celma_v0_parser::parser::{celma_parsec, celma_parsec_rules};
 use celma_v0_parser::transpiler::Transpile;
@@ -46,7 +46,7 @@ pub fn parsec_rules(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 }
 
 fn conclude_parsing(
-    result: Response<Result<proc_macro2::TokenStream, Error>, CharStream<CharPosition>>,
+    result: Response<Result<proc_macro2::TokenStream, Error>, CharStream<LineColumnPosition<char>>>,
 ) -> proc_macro::TokenStream {
     match result {
         Success(code, _, _) => match code {
