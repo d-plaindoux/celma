@@ -17,7 +17,7 @@
 #[macro_use]
 extern crate bencher;
 
-use bencher::{black_box, Bencher};
+use bencher::{Bencher, black_box};
 
 use celma_v0_core::parser::and::AndOperation;
 use celma_v0_core::parser::char::{digit, space};
@@ -129,7 +129,7 @@ fn parse(b: &mut Bencher, buffer: &[char]) {
     let stream = ArrayStream::new_with_position(buffer, <usize>::new());
 
     b.iter(|| {
-        let response = json().and_left(eos()).parse(black_box(stream.clone()));
+        let response = json().and_left(eos()).parse(black_box(stream));
 
         match response {
             Success(_, _, _) => (),

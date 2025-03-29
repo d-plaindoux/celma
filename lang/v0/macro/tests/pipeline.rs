@@ -61,7 +61,7 @@ mod tests_transpiler {
             _ => false,
         })
         .map(|v| match v {
-            Token::Keyword(s) => s.clone(),
+            Token::Keyword(s) => s,
             _ => panic!(),
         })
     }

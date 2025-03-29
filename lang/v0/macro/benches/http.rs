@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use bencher::{benchmark_group, benchmark_main, black_box, Bencher};
+use bencher::{Bencher, benchmark_group, benchmark_main, black_box};
 use celma_v0_core::parser::and::AndOperation;
 use celma_v0_core::parser::char::{alpha, digit};
 use celma_v0_core::parser::core::eos;
@@ -45,7 +45,9 @@ parsec_rules!(
 // -------------------------------------------------------------------------------------------------
 
 fn http_data(b: &mut Bencher) {
-    let vec = include_str!("data/request.http").chars().collect::<Vec<char>>();
+    let vec = include_str!("data/request.http")
+        .chars()
+        .collect::<Vec<char>>();
     let data = vec.as_slice();
     b.bytes = data.len() as u64;
     parse(b, data)
@@ -55,9 +57,7 @@ fn parse(b: &mut Bencher, buffer: &[char]) {
     let stream = ArrayStream::new_with_position(buffer, <usize>::new());
 
     b.iter(|| {
-        let response = http_header()
-            .and_left(eos())
-            .parse(black_box(stream.clone()));
+        let response = http_header().and_left(eos()).parse(black_box(stream));
 
         match response {
             Success(_, _, _) => (),
