@@ -29,7 +29,7 @@ occurrence   = ("*" | "+" | "?")
 additional   = "|" ? parser
 transform    = "->" '{' rust_code '}'
 atom         = alter? '(' parser? ')' | CHAR | STRING | ident
-alter        = ("^" | "!" | "#" | "/")
+alter        = ("^" | "!" | "#")
 ident        = [a..zA..Z][a..zA..Z0..9_] * - {"let"}
 ```
 
@@ -185,8 +185,8 @@ let stream = ParserStream::new( & tokenizer, CharStream::new("1 + 2"));
 let response = expr().and_left(eos()).parse(stream);
 
 match response {
-Success(v, _, _) => assert_eq!(v.eval(), 3),
-_ => assert_eq!(true, false),
+    Success(v, _, _) => assert_eq!(v.eval(), 3),
+    _ => assert_eq!(true, false),
 }
 ```
 

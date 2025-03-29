@@ -20,32 +20,32 @@ pub enum ASTGrammar<A> {
     Bottom(),
     Var(String),
     Token(A),
-    TokenChar(char),
     Seq(Box<AST<A>>, Box<AST<A>>),
     Choice(Box<AST<A>>, Box<AST<A>>),
     Rec(String, Box<AST<A>>),
+    // Extension for capture and transformation
+    Bind(String, Box<AST<A>>),
+    Map(Box<AST<A>>, String),
+    // Negation for alternate paths
+    Not(Box<AST<A>>),
 }
 
 /*
-   PBind(String, Box<ASTParsec>),  // Variable
-   PMap(Box<ASTParsec>, String),   // Map
-   PNot(Box<ASTParsec>),           // Negation
-
-   -- Pre-normalization
-
+   PN : ASTParsec -> (string -> ASTParsec) -> string list -> ASTGrammar
    PN : ASTParsec -> (string -> ASTParsec) -> string list -> ASTGrammar
 
-                               / Var(n)               if n in l
-   PN[PIdent(n)]gl          = {
-                               \ mu(n,PN[g(n)]g(n::l) otherwise
-
+   PN[PIdent(n)]gl          = Var(n)               if n in l
+                            | mu(n,PN[g(n)]g(n::l) otherwise
    PN[PAtom(c)]gl           = TokenChar(c)
    PN[PAtoms([])]gl         = Epsilon()
-   PN[PAtoms(c::l)]gl       = Seq(TokenChar(v),PN[PAtoms(c::l)]gl)
+   PN[PAtoms(c::l)]gl       = Seq(Token(v),PN[PAtoms(c::l)]gl)
    PN[PEpsilon()]gl         = Epsilon()
    PN[PSequence(T1,T2]]gl   = Seq(PN[T1]gl,PN[T2]gl)
    PN[PChoice(T1,T2)]gl     = Choice(PN[T1]gl,PN[T2]gl)
-   PN[PRepeat(T)]gl         = PN[T]gl | mu(n,Choice(Seq(PN[T]gl,Var(n)),Epsilon()))
+   PN[PRepeat(T)]gl         = PN[T]gl|mu(n,Choice(Seq(PN[T]gl,Var(n)),Epsilon())) - fresh n not in l
    PN[PTry(T)gl]            = PN[T]gl
-   PN[PCheck(T]gl]          = PN[T]gl
+   PN[PCheck(T)gl]          = PN[T]gl
+   PN[PBind(s,T)]gl         = Bind(s,PN[T]gl)
+   PN[PMap(T,s)]gl          = Map(PN[T]gl,s)
+   PN[PNot(T)]gl            = Not(PN[T]gl)
 */
