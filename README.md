@@ -9,14 +9,14 @@ of characters.
 
 ## Overview
 
-Generalization is the capability to design a parser based on pipelined parsers and separate parsers regarding their
+Generalisation is the capability to design a parser based on pipelined parsers and separate parsers regarding their
 semantic level.
 
 # Celma parser meta language
 
 ## Grammar
 
-In order to have a seamless parser definition two dedicated `proc_macro` are designed:
+To have a seamless parser definition, two dedicated `proc_macro` are designed:
 
 ```rust
 parsec_rules = "pub" ? "let" ident ('{' rust_type '}') ? (':' '{' rust_type '}') ? "=" parser) +
@@ -35,9 +35,9 @@ ident        = [a..zA..Z][a..zA..Z0..9_] * - {"let"}
 
 The `alter` is an annotation where:
 
-- `^` allows the capability to recognize negation,
+- `^` allows the capability to recognise negation,
 - `!` allows the capability to backtrack on failure and
-- `#` allows the capability to capture all chars.
+- `#` allows the capability to capture all characters.
 
 The `#` alteration is important because it prevents massive list construction in memory.
 
@@ -95,7 +95,7 @@ fn mk_f64(a: Vec<char>) -> f64 {
 
 ### The JSon parser
 
-The JSon parser is define by six rules dedicated to `number`, `string`, `null`, `boolean`, `array`
+The JSon parser is defined by six rules dedicated to `number`, `string`, `null`, `boolean`, `array`
 and `object`.
 
 #### JSON Rules
@@ -130,12 +130,12 @@ parsec_rules!(
 The previous parser mixes char analysis and high-level term construction. This can be done in a different manner since
 Celma is a generalized parser combinator implementation.
 
-For instance a first parser dedicated to lexeme recognition can be designed. Then on top of this lexer an expression
+For instance, a first parser dedicated to lexeme recognition can be designed. Then, on top of this lexer an expression
 parser can be easily designed.
 
 ### Tokenizer
 
-A tokenizer consumes a stream of char and produces tokens.
+A tokeniser consumes a stream of characters and produces tokens.
 
 ```rust
 parsec_rules!(
@@ -148,7 +148,7 @@ parsec_rules!(
 
 ### Lexemes
 
-The Lexeme parser recognizes simple token keywords.
+The Lexeme parser recognises simple token keywords.
 
 ```rust
 parsec_rules!(
@@ -161,9 +161,9 @@ parsec_rules!(
 
 ### Expression parser
 
-The expression parser builds expression consuming tokens. For this purpose the stream type can be specified for each
-parser. If it's not the case the default one is `char`.
-In the following example the declaration `expr{Token}:{Expr}` denotes a parser consuming a `Token` stream and producing
+The expression parser builds an expression consuming tokens. For this purpose, the stream type can be specified for each
+parser. If it's not the case, the default one is `char`.
+In the following example, the declaration `expr{Token}:{Expr}` denotes a parser consuming a `Token` stream and producing
 an `Expr`.
 
 ```rust
@@ -192,7 +192,7 @@ match response {
 
 # Celma language internal design
 
-Celma is an embedded language in Rust for building simple parsers.
+Celma is an embedded language in Rust used to build simple parsers.
 The language is processed when Rust is compiled. To this end, we
 identify two steps. The first is to analyse the language using a
 syntax analyser in a direct style. Then, this parser is invoked
@@ -201,7 +201,7 @@ to Rust to manage the language in Rust.
 
 ## V0
 
-In V0, transpilation is a direct style generation of Parsec without any
+In V0, transpilation is a direct style of generation of Parsec without any
 optimisations. To this end, the `AST` is translated directly into a parser 
 using the `core` library.
 cf. [celma parser in direct style](https://github.com/d-plaindoux/celma/blob/master/lang/v0/parser/src/parser.rs).
@@ -228,7 +228,7 @@ test json_data        ... bench:     126,348 ns/iter (+/- 5,283)     = 81 MB/s
 
 ## V1
 
-This version targets an aggressive and an efficient parser compilation. For this
+This version targets an aggressive and efficient parser compilation. For this
 purpose the compilation follows a traditional control and data flow inspired by 
 the following papers:
 - [A Typed, Algebraic Approach to Parsing](https://www.cl.cam.ac.uk/~jdy22/papers/a-typed-algebraic-approach-to-parsing.pdf)    nd
@@ -237,12 +237,12 @@ the following papers:
 ### Celma AST generation 
 
 First, we express [Celma in Celma](https://github.com/d-plaindoux/celma/blob/master/lang/v1/parser/src/parser.rs).
-This gives us an AST denoting parsers expressed using the Celma language i.e. Celma(v1) thanks to Celma(v0).
+This gives us an AST denoting parsers expressed using the Celma language, i.e. Celma(v1), thanks to Celma(v0).
 
 ### Normalisation
 
 The first step is to produce the **Deterministic Greibach Normal Form** 
-of a given grammar. For this purpose we have a first AST for the grammar
+of a given grammar. For this purpose, we have a first AST for the grammar
 abstract denotation.
 
 NOTE: Work in progress
