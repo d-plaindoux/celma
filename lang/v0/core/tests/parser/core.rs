@@ -27,7 +27,7 @@ mod tests_core {
     fn it_parse_and_returns_unit() {
         let response = returns(()).parse(CharStream::new("a"));
 
-        assert_eq!(response.fold(|v, _, _| v == (), |_, _| false), true);
+        assert_eq!(response.fold(|v, _, _| matches!(v, ()), |_, _| false), true);
     }
 
     #[test]

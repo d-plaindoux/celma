@@ -30,7 +30,7 @@ use celma_v0_core::parser::satisfy::Satisfy;
 use celma_v0_core::parser::specs::Combine;
 use celma_v0_core::parser::specs::Parse;
 use celma_v0_core::stream::array_stream::ArrayStream;
-use celma_v0_core::stream::position::Position;
+use celma_v0_core::stream::position::IndexPosition;
 use celma_v0_core::stream::specs::Len;
 use celma_v0_core::stream::specs::Stream;
 
@@ -62,7 +62,7 @@ fn basic_any(bencher: &mut Bencher) {
     do_parse(
         parser,
         bencher,
-        ArrayStream::new_with_position(&data, <usize>::new()),
+        ArrayStream::new_with_position(&data, IndexPosition::default()),
     );
 }
 
@@ -74,7 +74,7 @@ fn basic_a(bencher: &mut Bencher) {
     do_parse(
         parser,
         bencher,
-        ArrayStream::new_with_position(&data, <usize>::new()),
+        ArrayStream::new_with_position(&data, IndexPosition::default()),
     );
 }
 
@@ -86,7 +86,7 @@ fn basic_a_or_b(bencher: &mut Bencher) {
     do_parse(
         parser,
         bencher,
-        ArrayStream::new_with_position(&data, <usize>::new()),
+        ArrayStream::new_with_position(&data, IndexPosition::default()),
     );
 }
 
@@ -98,7 +98,7 @@ fn basic_a_and_b(bencher: &mut Bencher) {
     do_parse(
         parser,
         bencher,
-        ArrayStream::new_with_position(&data, <usize>::new()),
+        ArrayStream::new_with_position(&data, IndexPosition::default()),
     );
 }
 
@@ -114,7 +114,7 @@ fn basic_delimited_string(bencher: &mut Bencher) {
     do_parse(
         parser,
         bencher,
-        ArrayStream::new_with_position(&data, <usize>::new()),
+        ArrayStream::new_with_position(&data, IndexPosition::default()),
     );
 }
 

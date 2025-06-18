@@ -98,6 +98,7 @@ mod tests_transpiler {
     }
 
     #[test]
+    #[allow(clippy::unused_unit)]
     fn it_parse_with_recursive_parser() {
         parsec_rules!(
             let parens = ('(' parens ')')? -> { () }

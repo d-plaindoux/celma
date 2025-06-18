@@ -46,11 +46,7 @@ mod tests_transpiler {
     where
         S: Stream<Item = Token>,
     {
-        Satisfy::new((), |v, _| match v {
-            Token::Int(_) => true,
-            _ => false,
-        })
-        .map(|v| match v {
+        Satisfy::new((), |v, _| matches!(v, Token::Int(_))).map(|v| match v {
             Token::Int(i) => i,
             _ => panic!(),
         })
@@ -65,7 +61,7 @@ mod tests_transpiler {
             _ => false,
         })
         .map(|v| match v {
-            Token::Keyword(s) => s.clone(),
+            Token::Keyword(s) => s,
             _ => panic!(),
         })
     }

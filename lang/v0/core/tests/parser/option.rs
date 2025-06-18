@@ -25,7 +25,7 @@ mod tests_option {
     fn it_parse_zero_character() {
         let response = a_char('a').opt().parse(CharStream::new(""));
 
-        assert_eq!(response.fold(|v, _, _| v == None, |_, _| false), true);
+        assert_eq!(response.fold(|v, _, _| v.is_none(), |_, _| false), true);
     }
 
     #[test]
