@@ -1,5 +1,5 @@
 [package]
-name = "celma_v1"
+name = "celma_v1_normalizer"
 version = "0.1.0"
 authors = ["dplaindoux <d.plaindoux@fungus.fr>"]
 edition = "2024"

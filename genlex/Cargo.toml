@@ -1,5 +1,5 @@
 [package]
-name = "celma_extension"
+name = "celma_genlex"
 version = "0.1.0"
 authors = ["d-plaindoux <d.plaindoux@free.fr>"]
 edition = "2024"

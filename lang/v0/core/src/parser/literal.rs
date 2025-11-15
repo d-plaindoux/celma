@@ -63,7 +63,7 @@ where
     }
 }
 
-pub fn string(s: &str) -> Chars {
+pub fn string<'a>(s: &'a str) -> Chars<'a> {
     Chars(s)
 }
 

@@ -15,7 +15,7 @@
  */
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub enum ASTGrammar<A> {
+pub enum AST<A> {
     Epsilon(),
     Bottom(),
     Var(String),
@@ -31,7 +31,6 @@ pub enum ASTGrammar<A> {
 }
 
 /*
-   PN : ASTParsec -> (string -> ASTParsec) -> string list -> ASTGrammar
    PN : ASTParsec -> (string -> ASTParsec) -> string list -> ASTGrammar
 
    PN[PIdent(n)]gl          = Var(n)               if n in l
