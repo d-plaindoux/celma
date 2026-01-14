@@ -24,9 +24,9 @@ use crate::parser::specs::Parse;
 use crate::stream::specs::Stream;
 
 #[derive(Copy, Clone)]
-pub struct Satisfy<E, I, C>(C, E, PhantomData<I>, PhantomData<C>)
-where
-    E: Fn(&I, &C) -> bool;
+pub struct Satisfy<E, I, C>(C, E, PhantomData<I>, PhantomData<C>);
+// where
+//     E: Fn(&I, &C) -> bool;
 
 impl<E, I, C> Satisfy<E, I, C>
 where

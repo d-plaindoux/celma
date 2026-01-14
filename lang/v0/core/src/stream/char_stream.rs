@@ -18,14 +18,16 @@ use crate::stream::position::Position;
 use crate::stream::specs::Len;
 use crate::stream::specs::Stream;
 
+use super::position::LineColumnPosition;
+
 #[derive(Clone)]
 pub struct CharStream<'a, P>(&'a str, P)
 where
     P: Position;
 
-impl<'a> CharStream<'a, (usize, usize, usize)> {
+impl<'a> CharStream<'a, LineColumnPosition<char>> {
     pub fn new(v: &'a str) -> Self {
-        Self::new_with_position(v, <(usize, usize, usize)>::new())
+        Self::new_with_position(v, LineColumnPosition::default())
     }
 }
 
@@ -40,7 +42,7 @@ where
 
 impl<P> Stream for CharStream<'_, P>
 where
-    P: Position + Clone,
+    P: Position<Item = char> + Clone,
 {
     type Item = char;
     type Pos = P;
@@ -55,10 +57,7 @@ where
         if let Some(c) = option {
             (
                 option,
-                CharStream(
-                    self.0.get(1..self.0.len()).unwrap_or(""),
-                    self.1.step(c == '\n'),
-                ),
+                CharStream(self.0.get(1..self.0.len()).unwrap_or(""), self.1.step(&c)),
             )
         } else {
             (None, CharStream(self.0, self.1.clone()))

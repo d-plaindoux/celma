@@ -18,3 +18,6 @@ harness = false
 [[bench]]
 name = "iter_bench"
 harness = false
+
+[lints]
+workspace = true

@@ -26,7 +26,6 @@ use celma_v0_core::parser::or::OrOperation;
 use celma_v0_core::parser::repeat::RepeatOperation;
 use celma_v0_core::parser::specs::{Combine, Parse};
 use celma_v0_core::stream::specs::Stream;
-use std::ops::Range;
 
 use celma_v0_ast::syntax::ASTParsec::{
     PAtom, PAtoms, PBind, PCheck, PChoice, PCode, PEpsilon, PIdent, PMap, PNot, POptional, PRepeat,
@@ -49,19 +48,10 @@ fn ident<'a, S>() -> impl Parse<String, S> + Combine<String> + 'a
 where
     S: Stream<Item = char> + 'a,
 {
-    (char_in_range(Range {
-        start: 'A',
-        end: 'Z',
-    })
-    .or(char_in_range(Range {
-        start: 'a',
-        end: 'z',
-    }))
-    .or(char_in_range(Range {
-        start: '0',
-        end: '9',
-    }))
-    .or(a_char('_')))
+    (char_in_range('A'..='Z')
+        .or(char_in_range('a'..='z'))
+        .or(char_in_range('0'..='9'))
+        .or(a_char('_')))
     .rep()
     .map(|v| v.into_iter().collect())
     .bind(|s| {
